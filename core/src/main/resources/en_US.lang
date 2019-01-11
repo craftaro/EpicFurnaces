@@ -1,0 +1,55 @@
+#General Messages
+
+general.nametag.prefix= "&8[&6EpicFurnaces&8]"
+general.nametag.next= "&9Next"
+general.nametag.back= "&9Back"
+general.nametag.nameformat= "&eLevel %level% &fFurnace"
+general.hologram.outoffuel= "&cNo Fuel"
+general.hologram.stats= "&a%in%&7/&c%out%";
+
+#Interface Messages
+
+interface.furnace.upgradewithxp= "&aUpgrade with XP"
+interface.furnace.upgradewithxplore= "&7Cost: &a%cost% Levels"
+interface.furnace.upgradewitheconomy= "&aUpgrade with ECO"
+interface.furnace.upgradewitheconomylore= "&7Cost: &a$%cost%"
+interface.furnace.currentlevel= "&6Furnace Level &7%level%"
+interface.furnace.level= "&6Next Level &7%level%"
+interface.furnace.performance= "&7Performance: &6%amount%"
+interface.furnace.reward= "&7Reward: &6%amount%"
+interface.furnace.performancetitle= "&a&lPerformance"
+interface.furnace.rewardtitle= "&c&lReward"
+interface.furnace.fueldurationtitle= "&7&lFuel Duration"
+interface.furnace.fuelduration= "&7Fuel Duration: &6%amount%"
+interface.furnace.fuelshare= "&7Fuel Share: &6%amount%&7."
+interface.furnace.fuelsharetitle= "&6&lFuel Share"
+interface.furnace.fuelshareinfo= "&7This furnace will power other|&7furnaces within a &6%amount%&7 block radius."
+interface.furnace.overheat= "&7Overheat: &6%amount%&7."
+interface.furnace.overheattitle= "&6&lOverheat"
+interface.furnace.overheatinfo= "&7This furnace will melt snow |&7and ice within a &6%amount%&7 block radius."
+interface.furnace.performanceinfo= "&7This furnaces performance is |&7currently boosted an extra &6%amount%%&7. | |&7Performance boosts the speed in |&7which a furnace processes |&7materials."
+interface.furnace.rewardinfo= "&7This furnace currently |&7has a &6%amount%%&7 chance of |&7producing multiple resources."
+interface.furnace.fueldurationinfo= "&7This furnaces fuel duration is |&7currently boosted by &6%amount%%&7. | |&7Fuel Duration boosts how long |&7fuel in the furnace lasts."
+interface.furnace.smeltedx= "&7Smelted &6%amount% Materials&7."
+interface.furnace.tolevel= "&6%amount% %type%s &7away from leveling up."
+interface.furnace.remotefurnace= "&5&lRemote Control"
+interface.furnace.remotefurnacelore= "&7Left-Click to assign a nickname.|&7Right-Click to give yourself |&7remote access.|&7Current nickname is: &6%nickname%&7."
+interface.furnace.utilize= "|&7To utilize remote access|&7use the command:|&6/EF Remote %nickname%"
+interface.furnace.remotelist= "&7Players with remote access:"
+interface.furnace.alreadymaxed= "&7This furnace is already maxed out!"
+interface.button.boostedstats= "&a&lCurrently boosted!|&7Reward multiplied by &6%amount%x&7.|&7Expires in &6%time%&7."
+
+#Command Messages
+
+command.give.success= "&7You have been given a &6level %level% &7Furnace."
+
+#Event Messages
+
+event.general.nopermission= "&cYou do not have permission to do that."
+event.upgrade.cannotafford= "&cYou cannot afford this upgrade."
+event.upgrade.success= "&7You successfully upgraded this furnace to &6level %level%&7!"
+event.upgrade.maxed= "&7You maxed out this furnace at &6level %level%&7."
+event.remote.enter= "&7Enter a unique nickname for the furnace."
+event.remote.notfound= "&cRemote furnace not found."
+event.remote.nicknamesuccess= "&aNickname set successfully."
+event.remote.nicknameinuse= "&cThat nickname is already in use."

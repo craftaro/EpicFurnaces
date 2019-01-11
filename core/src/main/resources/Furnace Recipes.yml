@@ -1,0 +1,161 @@
+# TurboCharged furnace Recipe file
+Recipes:
+  DIAMOND_SWORD:
+    result: DIAMOND
+    amount: 2
+  DIAMOND_PICKAXE:
+    result: DIAMOND
+    amount: 3
+  DIAMOND_AXE:
+    result: DIAMOND
+    amount: 3
+  DIAMOND_SHOVEL:
+    result: DIAMOND
+    amount: 1
+  DIAMOND_HOE:
+    result: DIAMOND
+    amount: 2
+  DIAMOND_HELMET:
+    result: DIAMOND
+    amount: 5
+  DIAMOND_CHESTPLATE:
+    result: DIAMOND
+    amount: 8
+  DIAMOND_LEGGINGS:
+    result: DIAMOND
+    amount: 7
+  DIAMOND_BOOTS:
+    result: DIAMOND
+    amount: 4
+  IRON_SWORD:
+    result: IRON_INGOT
+    amount: 2
+  IRON_PICKAXE:
+    result: IRON_INGOT
+    amount: 3
+  IRON_AXE:
+    result: IRON_INGOT
+    amount: 3
+  IRON_SHOVEL:
+    result: IRON_INGOT
+    amount: 1
+  IRON_HOE:
+    result: IRON_INGOT
+    amount: 2
+  IRON_HELMET:
+    result: IRON_INGOT
+    amount: 5
+  IRON_CHESTPLATE:
+    result: IRON_INGOT
+    amount: 8
+  IRON_LEGGINGS:
+    result: IRON_INGOT
+    amount: 7
+  IRON_BOOTS:
+    result: IRON_INGOT
+    amount: 4
+  GOLDEN_SWORD:
+    result: GOLD_INGOT
+    amount: 2
+  GOLDEN_PICKAXE:
+    result: GOLD_INGOT
+    amount: 3
+  GOLDEN_AXE:
+    result: GOLD_INGOT
+    amount: 3
+  GOLDEN_SHOVEL:
+    result: GOLD_INGOT
+    amount: 1
+  GOLDEN_HOE:
+    result: GOLD_INGOT
+    amount: 2
+  GOLDEN_HELMET:
+    result: GOLD_INGOT
+    amount: 5
+  GOLDEN_CHESTPLATE:
+    result: GOLD_INGOT
+    amount: 8
+  GOLDEN_LEGGINGS:
+    result: GOLD_INGOT
+    amount: 7
+  GOLDEN_BOOTS:
+    result: GOLD_INGOT
+    amount: 4
+  CHAINMAIL_HELMET:
+    result: IRON_INGOT
+    amount: 3
+  CHAINMAIL_CHESTPLATE:
+    result: IRON_INGOT
+    amount: 5
+  CHAINMAIL_LEGGINGS:
+    result: IRON_INGOT
+    amount: 4
+  CHAINMAIL_BOOTS:
+    result: IRON_INGOT
+    amount: 2
+  LEATHER_HELMET:
+    result: LEATHER
+    amount: 5
+  LEATHER_CHESTPLATE:
+    result: LEATHER
+    amount: 8
+  LEATHER_LEGGINGS:
+    result: LEATHER
+    amount: 7
+  LEATHER_BOOTS:
+    result: LEATHER
+    amount: 4
+  STONE_SWORD:
+    result: COBBLESTONE
+    amount: 2
+  STONE_PICKAXE:
+    result: COBBLESTONE
+    amount: 3
+  STONE_AXE:
+    result: COBBLESTONE
+    amount: 3
+  STONE_SHOVEL:
+    result: COBBLESTONE
+    amount: 1
+  STONE_HOE:
+    result: COBBLESTONE
+    amount: 2
+  WOODEN_SWORD:
+    result: COAL
+    amount: 2
+  WOODEN_PICKAXE:
+    result: COAL
+    amount: 3
+  WOODEN_AXE:
+    result: COAL
+    amount: 3
+  WOODEN_SHOVEL:
+    result: COAL
+    amount: 1
+  WOODEN_HOE:
+    result: COAL
+    amount: 2
+  BOW:
+    result: COAL
+    amount: 3
+  FISHING_ROD:
+    result: COAL
+    amount: 3
+  COMPASS:
+    result: IRON_INGOT
+    amount: 4
+  CLOCK:
+    result: GOLD_INGOT
+    amount: 4
+  SHEARS:
+    result: IRON_INGOT
+    amount: 2
+  BUCKET:
+    result: IRON_INGOT
+    amount: 3
+  MINECART:
+    result: IRON_INGOT
+    amount: 5
+  FLINT_AND_STEEL:
+    result: IRON_INGOT
+    amount: 1

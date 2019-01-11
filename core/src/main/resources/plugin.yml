@@ -1,0 +1,13 @@
+name: EpicFurnaces
+version: ${project.version}
+main: com.songoda.epicfurnaces.EpicFurnaces
+authors: [Brianna, GB6]
+website: https://songoda.com/
+depend: [Arconix]
+softdepend: [PlotSquared, GriefPrevention, USkyBlock, SkyBlock, WorldGuard, Factions]
+commands:
+  epicfurnaces:
+    description: I have no idea.
+    default: true
+    aliases: [ef]
+    usage: /<command> [reload]

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4">
+  <component name="FacetManager">
+    <facet type="minecraft" name="Minecraft">
+      <configuration>
+        <autoDetectTypes>
+          <platformType>SPIGOT</platformType>
+        </autoDetectTypes>
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/${project.build.directory}/classes" />
+      <excludeFolder url="file://$MODULE_DIR$/${project.build.directory}/test-classes" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.spigotmc:spigot:1.13.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: net.milkbowl:vault:LATEST" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: com.songoda:arconix:LATEST" level="project" />
+    <orderEntry type="module" module-name="manager" />
+    <orderEntry type="library" name="Maven: org.spigot:spigot-api:1.8.8-R0.1" level="project" />
+    <orderEntry type="module" module-name="craftbukkit-1-8-r1" />
+    <orderEntry type="module" module-name="craftbukkit-1-8-r3" />
+    <orderEntry type="module" module-name="craftbukkit-1-9" />
+    <orderEntry type="module" module-name="craftbukkit-1-8-r2" />
+    <orderEntry type="module" module-name="askyblock" />
+    <orderEntry type="module" module-name="griefprevention" />
+    <orderEntry type="module" module-name="kingdoms" />
+    <orderEntry type="module" module-name="plotsquared" />
+    <orderEntry type="module" module-name="towny" />
+    <orderEntry type="module" module-name="uskyblock" />
+    <orderEntry type="module" module-name="redprotect" />
+    <orderEntry type="module" module-name="factions" />
+  </component>
+</module>
