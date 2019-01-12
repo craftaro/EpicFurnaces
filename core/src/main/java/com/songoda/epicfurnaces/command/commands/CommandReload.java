@@ -1,8 +1,8 @@
 package com.songoda.epicfurnaces.command.commands;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.command.AbstractCommand;
+import com.songoda.epicfurnaces.utils.StringUtils;
 import org.bukkit.command.CommandSender;
 
 public class CommandReload extends AbstractCommand {
@@ -16,7 +16,7 @@ public class CommandReload extends AbstractCommand {
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         instance.reload();
-        sender.sendMessage(TextComponent.formatText(instance.getReferences().getPrefix() + "&7Configuration and Language files reloaded."));
+        sender.sendMessage(StringUtils.formatText(instance.getLocale().getPrefix() + "&7Configuration and Language files reloaded."));
         return ReturnType.SUCCESS;
     }
 

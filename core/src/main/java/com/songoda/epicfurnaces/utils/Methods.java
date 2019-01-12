@@ -1,81 +1,80 @@
 package com.songoda.epicfurnaces.utils;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.epicfurnaces.EpicFurnaces;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 /**
  * Created by songoda on 2/25/2017.
  */
 public class Methods {
 
-    public static ItemStack getGlass() {
-        try {
-            EpicFurnaces plugin = EpicFurnaces.getInstance();
-            return Arconix.pl().getApi().getGUI().getGlass(plugin.getConfig().getBoolean("Interfaces.Replace Glass Type 1 With Rainbow Glass"), plugin.getConfig().getInt("Interfaces.Glass Type 1"));
-        } catch (Exception e) {
-            Debugger.runReport(e);
+    private static EpicFurnaces instance;
+
+    public static void init(EpicFurnaces main) {
+        instance = main;
+    }
+
+    public static ItemStack getGlass(Boolean rainbow, int type) {
+        int randomNum = 1 + (int) (Math.random() * 6.0D);
+        ItemStack glass;
+
+        if (rainbow) {
+            glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) randomNum);
+        } else {
+            glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) type);
         }
-        return null;
+
+        ItemMeta glassMeta = glass.getItemMeta();
+        glassMeta.setDisplayName("§l");
+        glass.setItemMeta(glassMeta);
+        return glass;
     }
 
     public static void particles(Block b, Player p) {
-        try {
-            EpicFurnaces plugin = EpicFurnaces.getInstance();
-            if (plugin.getConfig().getBoolean("settings.On-upgrade-particles")) {
-                Location location = b.getLocation();
-                location.setX(location.getX() + .5);
-                location.setY(location.getY() + .5);
-                location.setZ(location.getZ() + .5);
-                //TODO: particles
-                //p.getWorld().spawnParticle(org.bukkit.Particle.valueOf(plugin.getConfig().getString("Main.Upgrade Particle Type")), location, 200, .5, .5, .5);
-            }
-        } catch (Exception e) {
-            Debugger.runReport(e);
+        EpicFurnaces plugin = instance;
+        if (plugin.getConfig().getBoolean("settings.On-upgrade-particles")) {
+            Location location = b.getLocation();
+            location.setX(location.getX() + .5);
+            location.setY(location.getY() + .5);
+            location.setZ(location.getZ() + .5);
+            //TODO: particles
+            //p.getWorld().spawnParticle(org.bukkit.Particle.valueOf(plugin.getConfig().getString("Main.Upgrade Particle Type")), location, 200, .5, .5, .5);
         }
     }
 
     public static ItemStack getBackgroundGlass(boolean type) {
-        try {
-            EpicFurnaces plugin = EpicFurnaces.getInstance();
-            if (type)
-                return Arconix.pl().getApi().getGUI().getGlass(false, plugin.getConfig().getInt("Interfaces.Glass Type 2"));
-            else
-                return Arconix.pl().getApi().getGUI().getGlass(false, plugin.getConfig().getInt("Interfaces.Glass Type 3"));
-        } catch (Exception e) {
-            Debugger.runReport(e);
+        if (type) {
+            return getGlass(false, instance.getConfig().getInt("Interfaces.Glass Type 2"));
         }
-        return null;
+
+        return getGlass(false, instance.getConfig().getInt("Interfaces.Glass Type 3"));
     }
 
-    public static String cleanString(String typ) {
-        try {
-            String type = typ.replaceAll("_", " ");
-            type = ChatColor.stripColor(type.substring(0, 1).toUpperCase() + type.toLowerCase().substring(1));
-            return type;
-        } catch (Exception e) {
-            Debugger.runReport(e);
+    public static String serializeLocation(Location location) {
+        if (location == null) {
+            return "";
         }
-        return null;
+        return "w:" + location.getWorld().getName() + "x:" + location.getBlockX() + "y:" + location.getBlockY() + "z:" + location.getBlockZ();
     }
 
-    public static String formatName(int level, int uses, boolean full) {
-        try {
-            String name = EpicFurnaces.getInstance().getLocale().getMessage("general.nametag.nameformat", level);
-
-            String info = "";
-            if (full) {
-                info += Arconix.pl().getApi().format().convertToInvisibleString(level + ":" + uses + ":");
-            }
-
-            return info + Arconix.pl().getApi().format().formatText(name);
-        } catch (Exception e) {
-            Debugger.runReport(e);
+    public static Location deserializeLocation(String string) {
+        if (string == null || string.isEmpty()) {
+            return null;
         }
-        return null;
+        string = string.replace("y:", ":").replace("z:", ":").replace("w:", "").replace("x:", ":").replace("/", ".");
+        String[] args = string.split(":");
+        World world = Bukkit.getWorld(args[0]);
+        int x = Integer.parseInt(args[1]);
+        int y = Integer.parseInt(args[2]);
+        int z = Integer.parseInt(args[3]);
+        return new Location(world, x, y, z, 0.0F, 0.0F);
+    }
+
+    public static ItemStack getGlass() {
+        return getGlass(instance.getConfig().getBoolean("Interfaces.Replace Glass Type 1 With Rainbow Glass"), instance.getConfig().getInt("Interfaces.Glass Type 1"));
     }
 }

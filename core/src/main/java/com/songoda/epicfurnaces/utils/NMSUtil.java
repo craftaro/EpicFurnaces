@@ -33,7 +33,7 @@ public class NMSUtil {
         }
     }
 
-    public static Class<?> getCraftClass(String className) throws ClassNotFoundException {
+    public static Class<?> getCraftClass(String className) {
         try {
             String fullName = "org.bukkit.craftbukkit." + getVersion() + className;
             return Class.forName(fullName);

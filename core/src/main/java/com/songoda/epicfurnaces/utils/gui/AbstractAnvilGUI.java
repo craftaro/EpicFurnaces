@@ -23,6 +23,7 @@ import java.util.Objects;
 
 public class AbstractAnvilGUI {
 
+    private final EpicFurnaces instance;
     private static Class<?> BlockPosition;
     private static Class<?> PacketPlayOutOpenWindow;
     private static Class<?> ContainerAnvil;
@@ -37,7 +38,8 @@ public class AbstractAnvilGUI {
     private Inventory inv;
     private Listener listener;
 
-    public AbstractAnvilGUI(final Player player, final AnvilClickEventHandler handler) {
+    public AbstractAnvilGUI(EpicFurnaces instance, final Player player, final AnvilClickEventHandler handler) {
+        this.instance = instance;
         loadClasses();
         this.player = player;
         this.handler = handler;
@@ -84,8 +86,8 @@ public class AbstractAnvilGUI {
                 if (!inv.equals(AbstractAnvilGUI.this.inv)) return;
                 inv.clear();
                 OnClose onClose = getOnClose();
-                Bukkit.getScheduler().scheduleSyncDelayedTask(EpicFurnaces.getInstance(), () -> {
-                    if (onClose != null) onClose.OnClose(player, inv);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
+                    if (onClose != null) onClose.onClose(player, inv);
                     destroy();
                 }, 1L);
             }
@@ -98,7 +100,7 @@ public class AbstractAnvilGUI {
             }
         };
 
-        Bukkit.getPluginManager().registerEvents(listener, EpicFurnaces.getInstance());
+        Bukkit.getPluginManager().registerEvents(listener, instance);
     }
 
     private void loadClasses() {

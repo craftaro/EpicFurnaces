@@ -4,7 +4,6 @@ import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.StorageItem;
 import com.songoda.epicfurnaces.storage.StorageRow;
-import com.songoda.epicfurnaces.utils.Debugger;
 import org.apache.commons.io.FileUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
@@ -23,21 +22,21 @@ public class StorageYaml extends Storage {
 
     @Override
     public boolean containsGroup(String group) {
-        return dataFile.getConfig().contains("data." + group);
+        return dataFile.contains("data." + group);
     }
 
     @Override
     public List<StorageRow> getRowsByGroup(String group) {
         List<StorageRow> rows = new ArrayList<>();
-        ConfigurationSection currentSection = dataFile.getConfig().getConfigurationSection("data." + group);
+        ConfigurationSection currentSection = dataFile.getConfigurationSection("data." + group);
         for (String key : currentSection.getKeys(false)) {
 
             Map<String, StorageItem> items = new HashMap<>();
-            ConfigurationSection currentSection2 = dataFile.getConfig().getConfigurationSection("data." + group + "." + key);
+            ConfigurationSection currentSection2 = dataFile.getConfigurationSection("data." + group + "." + key);
             for (String key2 : currentSection2.getKeys(false)) {
                 String path = "data." + group + "." + key + "." + key2;
-                items.put(key2, new StorageItem(dataFile.getConfig().get(path) instanceof MemorySection
-                        ? convertToInLineList(path) : dataFile.getConfig().get(path)));
+                items.put(key2, new StorageItem(dataFile.get(path) instanceof MemorySection
+                        ? convertToInLineList(path) : dataFile.get(path)));
             }
             if (items.isEmpty()) continue;
             StorageRow row = new StorageRow(key, items);
@@ -48,8 +47,8 @@ public class StorageYaml extends Storage {
 
     private String convertToInLineList(String path) {
         StringBuilder converted = new StringBuilder();
-        for (String key : dataFile.getConfig().getConfigurationSection(path).getKeys(false)) {
-            converted.append(key).append(":").append(dataFile.getConfig().getInt(path + "." + key)).append(";");
+        for (String key : dataFile.getConfigurationSection(path).getKeys(false)) {
+            converted.append(key).append(":").append(dataFile.getInt(path + "." + key)).append(";");
         }
         return converted.toString();
     }
@@ -65,14 +64,14 @@ public class StorageYaml extends Storage {
     @Override
     public void doSave() {
         try {
-            dataFile.getConfig().set("data", null); // Clear file
+            dataFile.set("data", null); // Clear file
 
             File data = new File(instance.getDataFolder() + "/data.yml");
             File dataClone = new File(instance.getDataFolder() + "/data-backup-" + System.currentTimeMillis() + ".yml");
             try {
                 FileUtils.copyFile(data, dataClone);
             } catch (IOException e) {
-                Debugger.runReport(e);
+                e.printStackTrace();
             }
             Deque<File> backups = new ArrayDeque<>();
             for (File file : Objects.requireNonNull(instance.getDataFolder().listFiles())) {
@@ -85,19 +84,18 @@ public class StorageYaml extends Storage {
             }
 
             for (Map.Entry<String, Object> entry : toSave.entrySet()) {
-                dataFile.getConfig().set(entry.getKey(), entry.getValue());
+                dataFile.set(entry.getKey(), entry.getValue());
             }
 
-            dataFile.saveConfig();
-
+            instance.save("data");
             toSave.clear();
         } catch (NullPointerException e) {
-            Debugger.runReport(e);
+            e.printStackTrace();
         }
     }
 
     @Override
     public void closeConnection() {
-        dataFile.saveConfig();
+        instance.save("data");
     }
 }

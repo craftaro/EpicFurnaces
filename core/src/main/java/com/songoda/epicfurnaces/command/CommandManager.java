@@ -1,8 +1,8 @@
 package com.songoda.epicfurnaces.command;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.command.commands.*;
+import com.songoda.epicfurnaces.utils.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -27,7 +27,6 @@ public class CommandManager implements CommandExecutor {
 
         addCommand(new CommandReload(instance, commandEpicFurnaces));
         addCommand(new CommandRemote(instance, commandEpicFurnaces));
-        addCommand(new CommandSettings(instance, commandEpicFurnaces));
         addCommand(new CommandGive(instance, commandEpicFurnaces));
         addCommand(new CommandBoost(instance, commandEpicFurnaces));
     }
@@ -53,7 +52,7 @@ public class CommandManager implements CommandExecutor {
                 }
             }
         }
-        commandSender.sendMessage(instance.getReferences().getPrefix() + TextComponent.formatText("&7The command you entered does not exist or is spelt incorrectly."));
+        commandSender.sendMessage(instance.getLocale().getPrefix() + StringUtils.formatText("&7The command you entered does not exist or is spelt incorrectly."));
         return true;
     }
 
@@ -65,12 +64,12 @@ public class CommandManager implements CommandExecutor {
         if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
             AbstractCommand.ReturnType returnType = command.runCommand(sender, strings);
             if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
-                sender.sendMessage(instance.getReferences().getPrefix() + TextComponent.formatText("&cInvalid Syntax!"));
-                sender.sendMessage(instance.getReferences().getPrefix() + TextComponent.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
+                sender.sendMessage(instance.getLocale().getPrefix() + StringUtils.formatText("&cInvalid Syntax!"));
+                sender.sendMessage(instance.getLocale().getPrefix() + StringUtils.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
             }
             return;
         }
-        sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.general.nopermission"));
+        sender.sendMessage(instance.getLocale().getPrefix() + instance.getLocale().getMessage("event.general.nopermission"));
     }
 
     public List<AbstractCommand> getCommands() {

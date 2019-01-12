@@ -63,16 +63,13 @@
             <id>maven.sainttx.com</id>
             <url>http://maven.sainttx.com/nexus/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>filoghost-repo</id>
+            <url>https://ci.filoghost.me/instance/repository/everything/</url>
+        </repository>
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.13.2</version>
-            <scope>provided</scope>
-        </dependency>
-
         <dependency>
             <groupId>net.milkbowl</groupId>
             <artifactId>vault</artifactId>
@@ -81,86 +78,84 @@
         </dependency>
 
         <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>arconix</artifactId>
-            <version>LATEST</version>
+            <groupId>com.gmail.filoghost.holographicdisplays</groupId>
+            <artifactId>holographicdisplays-api</artifactId>
+            <version>2.3.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>manager</artifactId>
             <version>4.0.19</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>craftbukkit-1-8-r1</artifactId>
-            <version>4.0.19</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>craftbukkit-1-8-r3</artifactId>
-            <version>4.0.19</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>craftbukkit-1-9</artifactId>
-            <version>4.0.19</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>craftbukkit-1-8-r2</artifactId>
-            <version>4.0.19</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>askyblock</artifactId>
             <version>4.0.19</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>griefprevention</artifactId>
             <version>4.0.19</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>kingdoms</artifactId>
             <version>4.0.19</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>plotsquared</artifactId>
             <version>4.0.19</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>towny</artifactId>
             <version>4.0.19</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>uskyblock</artifactId>
             <version>4.0.19</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>redprotect</artifactId>
             <version>4.0.19</version>
             <scope>compile</scope>
         </dependency>
+
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>factions</artifactId>
+            <version>4.0.19</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>worldguard</artifactId>
+            <version>4.0.19</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>worldguard6</artifactId>
             <version>4.0.19</version>
             <scope>compile</scope>
         </dependency>

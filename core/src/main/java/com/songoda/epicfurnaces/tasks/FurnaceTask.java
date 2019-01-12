@@ -1,8 +1,7 @@
 package com.songoda.epicfurnaces.tasks;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.epicfurnaces.EpicFurnaces;
-import com.songoda.epicfurnaces.furnace.FurnaceObject;
+import com.songoda.epicfurnaces.objects.FurnaceObject;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -21,13 +20,11 @@ public class FurnaceTask extends BukkitRunnable {
         this.plugin = plugin;
     }
 
-    public static FurnaceTask startTask(EpicFurnaces plugin) {
+    public static void startTask(EpicFurnaces plugin) {
         if (instance == null) {
             instance = new FurnaceTask(plugin);
             instance.runTaskTimer(plugin, 0, plugin.getConfig().getInt("Main.Furnace Tick Speed"));
         }
-
-        return instance;
     }
 
     @Override
@@ -51,7 +48,8 @@ public class FurnaceTask extends BukkitRunnable {
                 continue;
             }
 
-            if (furnace.getLocation().getBlock().getType() != Material.FURNACE && furnace.getLocation().getBlock().getType() != plugin.getBukkitEnums().getBurningFurnace()) {
+            if (furnace.getLocation().getBlock().getType() != Material.FURNACE &&
+                    furnace.getLocation().getBlock().getType() != plugin.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
                 continue;
             }
 
@@ -116,7 +114,7 @@ public class FurnaceTask extends BukkitRunnable {
 
             Block block = location.getBlock();
 
-            if (block.getType() != Material.FURNACE && block.getType() != plugin.getBukkitEnums().getBurningFurnace()) {
+            if (block.getType() != Material.FURNACE && block.getType() != plugin.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
                 continue;
             }
 
@@ -160,7 +158,8 @@ public class FurnaceTask extends BukkitRunnable {
         float pz = (float) (0 + (Math.random() * 1));
 
         if (plugin.getConfig().getBoolean("Main.Overheat Particles")) {
-            Arconix.pl().getApi().packetLibrary.getParticleManager().broadcastParticle(location, px, .5F, pz, 0, "SMOKE_NORMAL", 25);
+            //TODO: Particles
+//            Arconix.pl().getApi().packetLibrary.getParticleManager().broadcastParticle(location, px, .5F, pz, 0, "SMOKE_NORMAL", 25);
         }
     }
 }

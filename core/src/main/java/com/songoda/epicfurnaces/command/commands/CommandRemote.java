@@ -2,8 +2,9 @@ package com.songoda.epicfurnaces.command.commands;
 
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.command.AbstractCommand;
-import com.songoda.epicfurnaces.furnace.FurnaceObject;
+import com.songoda.epicfurnaces.objects.FurnaceObject;
 import org.bukkit.block.Block;
+import org.bukkit.block.Furnace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -21,11 +22,11 @@ public class CommandRemote extends AbstractCommand {
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         if (!instance.getConfig().getBoolean("Main.Access Furnaces Remotely") || !sender.hasPermission("EpicFurnaces.Remote")) {
-            sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.general.nopermission"));
+            sender.sendMessage(instance.getLocale().getPrefix() + instance.getLocale().getMessage("event.general.nopermission"));
             return ReturnType.FAILURE;
         }
 
-        if (!instance.getDataFile().getConfig().contains("data.charged")) {
+        if (!instance.getConfiguration("data").contains("data.charged")) {
             return ReturnType.FAILURE;
         }
 
@@ -47,15 +48,15 @@ public class CommandRemote extends AbstractCommand {
                     continue;
                 }
                 Block b = furnace.getLocation().getBlock();
-                org.bukkit.block.Furnace furnaceBlock = (org.bukkit.block.Furnace) b.getState();
+                Furnace furnaceBlock = (Furnace) b.getState();
                 ((Player) sender).openInventory(furnaceBlock.getInventory());
                 return ReturnType.SUCCESS;
             }
 
-            sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.general.nopermission"));
+            sender.sendMessage(instance.getLocale().getPrefix() + instance.getLocale().getMessage("event.general.nopermission"));
             return ReturnType.SUCCESS;
         }
-        sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.remote.notfound"));
+        sender.sendMessage(instance.getLocale().getPrefix() + instance.getLocale().getMessage("event.remote.notfound"));
         return ReturnType.FAILURE;
     }
 
@@ -71,6 +72,6 @@ public class CommandRemote extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return "Remote control your furnace.";
+        return "Remote control your objects.";
     }
 }

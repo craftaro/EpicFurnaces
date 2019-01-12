@@ -1,9 +1,9 @@
 package com.songoda.epicfurnaces.command.commands;
 
-import com.songoda.arconix.plugin.Arconix;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.command.AbstractCommand;
-import com.songoda.epicfurnaces.furnace.Level;
+import com.songoda.epicfurnaces.objects.Level;
+import com.songoda.epicfurnaces.utils.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,11 +26,11 @@ public class CommandGive extends AbstractCommand {
         Level level = instance.getLevelManager().getLowestLevel();
         Player player;
         if (args.length != 1 && Bukkit.getPlayer(args[1]) == null) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&cThat player does not exist or is currently offline."));
+            sender.sendMessage(instance.getLocale().getPrefix() + StringUtils.formatText("&cThat player does not exist or is currently offline."));
             return ReturnType.FAILURE;
         } else if (args.length == 1) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage(instance.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&cYou need to be a player to give a farm item to yourself."));
+                sender.sendMessage(instance.getLocale().getPrefix() + StringUtils.formatText("&cYou need to be a player to give a farm item to yourself."));
                 return ReturnType.FAILURE;
             }
             player = (Player) sender;
@@ -40,14 +40,14 @@ public class CommandGive extends AbstractCommand {
 
 
         if (args.length >= 3 && !instance.getLevelManager().isLevel(Integer.parseInt(args[2]))) {
-            sender.sendMessage(instance.getReferences().getPrefix() + Arconix.pl().getApi().format().formatText("&cNot a valid level... The current valid levels are: &4" + instance.getLevelManager().getLowestLevel().getLevel() + "-" + instance.getLevelManager().getHighestLevel().getLevel() + "&c."));
+            sender.sendMessage(instance.getLocale().getPrefix() + StringUtils.formatText("&cNot a valid level... The current valid levels are: &4" + instance.getLevelManager().getLowestLevel().getLevel() + "-" + instance.getLevelManager().getHighestLevel().getLevel() + "&c."));
             return ReturnType.FAILURE;
         } else if (args.length != 1) {
 
             level = instance.getLevelManager().getLevel(Integer.parseInt(args[2]));
         }
-        player.getInventory().addItem(instance.createLeveledFurnace(level.getLevel(), 0));
-        player.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("command.give.success", level.getLevel()));
+        player.getInventory().addItem(instance.furnaceManager.createLeveledFurnace(level.getLevel(), 0, instance));
+        player.sendMessage(instance.getLocale().getPrefix() + instance.getLocale().getMessage("command.give.success", level.getLevel()));
 
         return ReturnType.SUCCESS;
     }
@@ -64,6 +64,6 @@ public class CommandGive extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return "Give a leveled furnace to a player.";
+        return "Give a leveled objects to a player.";
     }
 }

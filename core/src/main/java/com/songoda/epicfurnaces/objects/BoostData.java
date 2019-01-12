@@ -1,4 +1,4 @@
-package com.songoda.epicfurnaces.boost;
+package com.songoda.epicfurnaces.objects;
 
 import java.util.Objects;
 import java.util.UUID;

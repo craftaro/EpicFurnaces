@@ -12,10 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A fast API to easily create advanced GUI.
@@ -407,8 +404,6 @@ public class FastInv implements InventoryHolder {
         }
 
         /**
-         * Gets the {@link InventoryAction}
-         *
          * @return The action of the event
          */
         public InventoryAction getAction() {
@@ -416,8 +411,6 @@ public class FastInv implements InventoryHolder {
         }
 
         /**
-         * Gets the {@link ClickType} of the event.
-         *
          * @return The click type
          */
         public ClickType getClickType() {

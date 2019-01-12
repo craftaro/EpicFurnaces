@@ -374,4 +374,7 @@ public class Locale {
         return true;
     }
 
+    public String getPrefix() {
+        return getMessage("general.nametag.prefix") + " ";
+    }
 }

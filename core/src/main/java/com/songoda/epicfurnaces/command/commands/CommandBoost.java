@@ -1,10 +1,9 @@
 package com.songoda.epicfurnaces.command.commands;
 
-import com.songoda.arconix.api.methods.formatting.TextComponent;
-import com.songoda.arconix.api.methods.math.AMath;
 import com.songoda.epicfurnaces.EpicFurnaces;
-import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.command.AbstractCommand;
+import com.songoda.epicfurnaces.objects.BoostData;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -26,10 +25,10 @@ public class CommandBoost extends AbstractCommand {
         }
 
         if (Bukkit.getPlayer(args[1]) == null) {
-            sender.sendMessage(TextComponent.formatText(instance.getReferences().getPrefix() + "&cThat player does not exist..."));
+            sender.sendMessage(com.songoda.epicfurnaces.utils.StringUtils.formatText(instance.getLocale().getPrefix() + "&cThat player does not exist..."));
             return ReturnType.FAILURE;
-        } else if (!AMath.isInt(args[2])) {
-            sender.sendMessage(TextComponent.formatText(instance.getReferences().getPrefix() + "&6" + args[2] + " &7is not a number..."));
+        } else if (!StringUtils.isNumeric(args[2])) {
+            sender.sendMessage(com.songoda.epicfurnaces.utils.StringUtils.formatText(instance.getLocale().getPrefix() + "&6" + args[2] + " &7is not a number..."));
             return ReturnType.FAILURE;
         } else {
             Calendar c = Calendar.getInstance();
@@ -56,7 +55,7 @@ public class CommandBoost extends AbstractCommand {
                     c.add(Calendar.YEAR, Integer.parseInt(arr2[1]));
                     time = " &7for &6" + arr2[1] + " years&7.";
                 } else {
-                    sender.sendMessage(TextComponent.formatText(instance.getReferences().getPrefix() + "&7" + args[3] + " &7is invalid."));
+                    sender.sendMessage(com.songoda.epicfurnaces.utils.StringUtils.formatText(instance.getLocale().getPrefix() + "&7" + args[3] + " &7is invalid."));
                     return ReturnType.SUCCESS;
                 }
             } else {
@@ -65,7 +64,7 @@ public class CommandBoost extends AbstractCommand {
 
             BoostData boostData = new BoostData(Integer.parseInt(args[2]), c.getTime().getTime(), Bukkit.getPlayer(args[1]).getUniqueId());
             instance.getBoostManager().addBoostToPlayer(boostData);
-            sender.sendMessage(TextComponent.formatText(instance.getReferences().getPrefix() + "&7Successfully boosted &6" + Bukkit.getPlayer(args[1]).getName() + "'s &7furnaces reward amounts by &6" + args[2] + "x" + time));
+            sender.sendMessage(com.songoda.epicfurnaces.utils.StringUtils.formatText(instance.getLocale().getPrefix() + "&7Successfully boosted &6" + Bukkit.getPlayer(args[1]).getName() + "'s &7furnaces reward amounts by &6" + args[2] + "x" + time));
         }
         return ReturnType.FAILURE;
     }
@@ -82,6 +81,6 @@ public class CommandBoost extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return "This allows you to boost a players furnace reward amounts by a multiplier (Put 2 for double, 3 for triple and so on).";
+        return "This allows you to boost a players objects reward amounts by a multiplier (Put 2 for double, 3 for triple and so on).";
     }
 }

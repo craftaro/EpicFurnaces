@@ -1,21 +1,18 @@
 package com.songoda.epicfurnaces.storage;
 
-import com.songoda.arconix.api.utils.ConfigWrapper;
 import com.songoda.epicfurnaces.EpicFurnaces;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.List;
 
 public abstract class Storage {
 
     protected final EpicFurnaces instance;
-    protected final ConfigWrapper dataFile;
+    protected final FileConfiguration dataFile;
 
     public Storage(EpicFurnaces instance) {
         this.instance = instance;
-        this.dataFile = new ConfigWrapper(instance, "", "data.yml");
-        this.dataFile.createNewFile(null, "EpicFurnaces Data File");
-        this.dataFile.getConfig().options().copyDefaults(true);
-        this.dataFile.saveConfig();
+        this.dataFile = instance.getConfiguration("data");
     }
 
     public abstract boolean containsGroup(String group);

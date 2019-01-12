@@ -1,4 +1,4 @@
-package com.songoda.epicfurnaces.furnace;
+package com.songoda.epicfurnaces.objects;
 
 import com.songoda.epicfurnaces.EpicFurnaces;
 
@@ -7,23 +7,21 @@ import java.util.List;
 
 public class Level {
 
-    private int level, costExperiance, costEconomy, performance, fuelDuration, overheat, fuelShare;
-
+    private final EpicFurnaces instance;
+    private int level, costExperience, costEconomy, performance, fuelDuration, overheat, fuelShare;
     private String reward;
-
     private List<String> description = new ArrayList<>();
 
-    Level(int level, int costExperience, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare) {
+    public Level(EpicFurnaces instance, int level, int costExperience, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare) {
+        this.instance = instance;
         this.level = level;
-        this.costExperiance = costExperience;
+        this.costExperience = costExperience;
         this.costEconomy = costEconomy;
         this.performance = performance;
         this.reward = reward;
         this.fuelDuration = fuelDuration;
         this.overheat = overheat;
         this.fuelShare = fuelShare;
-
-        EpicFurnaces instance = EpicFurnaces.getInstance();
 
         if (performance != 0)
             description.add(instance.getLocale().getMessage("interface.furnace.performance", performance + "%"));
@@ -77,8 +75,8 @@ public class Level {
     }
 
 
-    public int getCostExperiance() {
-        return costExperiance;
+    public int getCostExperience() {
+        return costExperience;
     }
 
 
