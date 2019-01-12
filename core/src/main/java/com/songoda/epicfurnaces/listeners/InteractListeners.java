@@ -35,7 +35,7 @@ public class InteractListeners implements Listener {
         Block block = event.getClickedBlock();
 
         if (!player.hasPermission("EpicFurnaces.overview")
-                || !instance.canBuild(player, event.getClickedBlock().getLocation())
+                || !instance.getHookManager().canBuild(player, event.getClickedBlock().getLocation())
                 || event.getAction() != Action.LEFT_CLICK_BLOCK
                 || player.isSneaking()
                 || (block.getType() != Material.FURNACE && block.getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType())
@@ -44,7 +44,6 @@ public class InteractListeners implements Listener {
         }
 
         event.setCancelled(true);
-
-        instance.getFurnaceManager().getFurnace(block.getLocation()).openOverview(player);
+        instance.getFurnaceManager().getFurnace(block.getLocation()).orElseGet(() -> instance.getFurnaceManager().createFurnace(block.getLocation())).openOverview(player);
     }
 }

@@ -15,6 +15,7 @@ import com.songoda.epicfurnaces.utils.BukkitEnums;
 import com.songoda.epicfurnaces.utils.Methods;
 import com.songoda.epicfurnaces.utils.StringUtils;
 import com.songoda.epicfurnaces.utils.gui.FastInv;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -25,6 +26,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -56,8 +58,8 @@ public class EpicFurnaces extends JavaPlugin {
     private Locale locale;
     private Storage storage;
     private HologramManager hologramManager;
+    private Economy economy;
     private int currentVersion;
-
 
     @Override
     public void onEnable() {
@@ -106,12 +108,14 @@ public class EpicFurnaces extends JavaPlugin {
         this.levelManager = new LevelManager(this);
         this.hookManager = new HookManager(this);
 
+        setupEconomy();
         checkStorage();
-        Bukkit.getScheduler().runTaskLater(this, furnaceManager::loadFurnaces, 10);
-
+        levelManager.loadLevelManager();
         setupRecipes();
 
         int timeout = getConfig().getInt("Main.Auto Save Interval In Seconds") * 60 * 20;
+
+        Bukkit.getScheduler().runTaskLater(this, furnaceManager::loadFurnaces, 10);
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::saveToFile, timeout, timeout);
 
         // Start Tasks
@@ -236,7 +240,6 @@ public class EpicFurnaces extends JavaPlugin {
 
     }
 
-
     public void save(String configuration) {
         try {
             File configurationFile = new File(getDataFolder(), configuration + ".yml");
@@ -244,6 +247,15 @@ public class EpicFurnaces extends JavaPlugin {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean setupEconomy() {
+        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
+        if (economyProvider != null) {
+            economy = economyProvider.getProvider();
+        }
+
+        return (economy != null);
     }
 
     private boolean checkVersion() {
@@ -333,5 +345,9 @@ public class EpicFurnaces extends JavaPlugin {
 
     public Storage getStorage() {
         return storage;
+    }
+
+    public Economy getEconomy() {
+        return economy;
     }
 }

@@ -10,7 +10,6 @@ import com.songoda.epicfurnaces.utils.Methods;
 import com.songoda.epicfurnaces.utils.gui.ItemBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -26,24 +25,22 @@ public class FurnaceManager {
         this.instance = instance;
     }
 
-    public void addFurnace(Location location, FurnaceObject furnace) {
+    public FurnaceObject addFurnace(Location location, FurnaceObject furnace) {
         instance.getHologramManager().updateHologram(furnace);
         registeredFurnaces.put(roundLocation(location), furnace);
+        return furnace;
+    }
+
+    public FurnaceObject createFurnace(Location location) {
+        return addFurnace(location, new FurnaceObject(instance, location, instance.getLevelManager().getLowestLevel(), null, 0, 0, new ArrayList<>(), null));
     }
 
     public void removeFurnace(Location location) {
-        instance.getHologramManager().updateHologram(registeredFurnaces.remove(location));
+        instance.getHologramManager().remove(registeredFurnaces.remove(location));
     }
 
-    public FurnaceObject getFurnace(Location location) {
-        if (!registeredFurnaces.containsKey(location)) {
-            addFurnace(location, new FurnaceObject(instance, location, instance.getLevelManager().getLowestLevel(), null, 0, 0, new ArrayList<>(), null));
-        }
-        return registeredFurnaces.get(location);
-    }
-
-    public FurnaceObject getFurnace(Block block) {
-        return getFurnace(block.getLocation());
+    public Optional<FurnaceObject> getFurnace(Location location) {
+        return Optional.ofNullable(registeredFurnaces.get(location));
     }
 
     public int getFurnaceLevel(ItemStack item) {
@@ -57,7 +54,6 @@ public class FurnaceManager {
         }
 
         return 1;
-
     }
 
     public int getFurnaceUses(ItemStack item) {

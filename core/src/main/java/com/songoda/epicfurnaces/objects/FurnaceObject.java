@@ -4,7 +4,6 @@ import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.menus.OverviewMenu;
 import com.songoda.epicfurnaces.utils.NMSUtil;
 import com.songoda.epicfurnaces.utils.StringUtils;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -13,11 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.plugin.RegisteredServiceProvider;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -103,7 +98,7 @@ public class FurnaceObject {
         if (rand >= num
                 || e.getResult().getType().equals(Material.SPONGE)
                 || instance.getConfig().getBoolean("Main.No Rewards From Custom Recipes")
-                && instance.getFurnaceRecipeFile().getConfig().contains("Recipes." + i.getSmelting().getType().toString())) {
+                && instance.getConfiguration("Furnace Recipes").contains("Recipes." + i.getSmelting().getType().toString())) {
             return;
         }
 
@@ -128,37 +123,28 @@ public class FurnaceObject {
         if (!instance.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1))
             return;
 
-        int cost;
-        if (type.equals("XP")) {
-            cost = level.getCostExperience();
-        } else {
-            cost = level.getCostEconomy();
-        }
+        int cost = type.equals("XP") ? level.getCostExperience() : level.getCostEconomy();
         Level level = instance.getLevelManager().getLevel(this.level.getLevel() + 1);
 
         if (type.equals("ECO")) {
-            if (instance.getServer().getPluginManager().getPlugin("Vault") != null) {
-                RegisteredServiceProvider<Economy> rsp = instance.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
-                net.milkbowl.vault.economy.Economy econ = rsp.getProvider();
-                if (econ.has(player, cost)) {
-                    econ.withdrawPlayer(player, cost);
-                    upgradeFinal(level, player);
-                } else {
-                    player.sendMessage(instance.getLocale().getMessage("event.upgrade.cannotafford"));
-                }
-            } else {
-                player.sendMessage("Vault is not installed.");
-            }
-        } else if (type.equals("XP")) {
-            if (player.getLevel() >= cost || player.getGameMode() == GameMode.CREATIVE) {
-                if (player.getGameMode() != GameMode.CREATIVE) {
-                    player.setLevel(player.getLevel() - cost);
-                }
+            if (instance.getEconomy().has(player, cost)) {
+                instance.getEconomy().withdrawPlayer(player, cost);
                 upgradeFinal(level, player);
-            } else {
-                player.sendMessage(instance.getLocale().getMessage("event.upgrade.cannotafford"));
+                return;
             }
+            player.sendMessage(instance.getLocale().getMessage("event.upgrade.cannotafford"));
+            return;
         }
+
+        if (player.getLevel() >= cost || player.getGameMode() == GameMode.CREATIVE) {
+            if (player.getGameMode() != GameMode.CREATIVE) {
+                player.setLevel(player.getLevel() - cost);
+            }
+            upgradeFinal(level, player);
+            return;
+        }
+
+        player.sendMessage(instance.getLocale().getMessage("event.upgrade.cannotafford"));
     }
 
     private void upgradeFinal(Level level, Player player) {
@@ -171,14 +157,17 @@ public class FurnaceObject {
         }
 
         Location loc = location.clone().add(.5, .5, .5);
-        player.getWorld().playEffect(loc, Effect.valueOf(instance.getConfig().getString("Main.Upgrade Particle Type")), 200);
+        player.getWorld().playEffect(loc, instance.getBukkitEnums().getParticle(instance.getConfig().getString("Main.Upgrade Particle Type")), 200);
 
         if (instance.getConfig().getBoolean("Main.Use Sounds")) {
             if (instance.getLevelManager().getHighestLevel() == level) {
                 //TODO: Sound
-                player.playSound(player.getLocation(), instance.getBukkitEnums().getLevelUp(), 0.6F, 15.0F);
+                player.playSound(player.getLocation(), instance.getBukkitEnums().getSound("ENTITY_PLAYER_LEVELUP"), 0.6F, 15.0F);
             } else {
-                player.playSound(player.getLocation(), instance.getBukkitEnums().getLevelUp(), 2F, 25.0F);
+                player.playSound(player.getLocation(), instance.getBukkitEnums().getSound("ENTITY_PLAYER_LEVELUP"), 2F, 25.0F);
+                player.playSound(player.getLocation(), instance.getBukkitEnums().getSound("BLOCK_NOTE_BLOCK_CHIME"), 2F, 25.0F);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> player.playSound(player.getLocation(), instance.getBukkitEnums().getSound("BLOCK_NOTE_BLOCK_CHIME"), 1.2F, 35.0F), 5L);
+                Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> player.playSound(player.getLocation(), instance.getBukkitEnums().getSound("BLOCK_NOTE_BLOCK_CHIME"), 1.8F, 35.0F), 10L);
             }
         }
     }
@@ -240,44 +229,47 @@ public class FurnaceObject {
 
 
     public List<Location> getRadius(boolean overHeat) {
-        if (overHeat)
+        if (overHeat) {
             return radiusOverheat.isEmpty() ? null : Collections.unmodifiableList(radiusOverheat);
-        else
+        } else {
             return radiusFuelShare.isEmpty() ? null : Collections.unmodifiableList(radiusFuelShare);
-
+        }
     }
 
 
     public void addToRadius(Location location, boolean overHeat) {
-        if (overHeat)
+        if (overHeat) {
             radiusOverheat.add(location);
-        else
+        } else {
             radiusFuelShare.add(location);
-
+        }
     }
 
 
     public void clearRadius(boolean overHeat) {
-        if (overHeat)
+        if (overHeat) {
             radiusOverheat.clear();
-        else
+        } else {
             radiusFuelShare.clear();
+        }
     }
 
 
     public int getRadiusLast(boolean overHeat) {
-        if (overHeat)
+        if (overHeat) {
             return radiusOverheatLast;
-        else
+        } else {
             return radiusFuelShareLast;
+        }
     }
 
 
     public void setRadiusLast(int radiusLast, boolean overHeat) {
-        if (overHeat)
+        if (overHeat) {
             this.radiusOverheatLast = radiusLast;
-        else
+        } else {
             this.radiusFuelShareLast = radiusLast;
+        }
     }
 
 
@@ -318,20 +310,7 @@ public class FurnaceObject {
 
 
     public int getPerformanceTotal() {
-        try {
-            String equation = "(" + level.getPerformance() + " / 100) * 200";
-            if (!cache.containsKey(equation)) {
-                ScriptEngineManager mgr = new ScriptEngineManager();
-                ScriptEngine engine = mgr.getEngineByName("JavaScript");
-                int num = (int) Math.round(Double.parseDouble(engine.eval("(" + level.getPerformance() + " / 100) * 200").toString()));
-                cache.put(equation, num);
-                return num;
-            }
-            return cache.get(equation);
-        } catch (ScriptException e) {
-            e.printStackTrace();
-        }
-        return 0;
+        return (int) Math.round((level.getPerformance() / 100.0) * 200);
     }
 
 

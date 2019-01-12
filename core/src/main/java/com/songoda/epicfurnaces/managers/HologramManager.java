@@ -14,6 +14,7 @@ import org.bukkit.block.Furnace;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class HologramManager {
     private final Map<FurnaceObject, Hologram> hologramMap;
@@ -72,9 +73,10 @@ public class HologramManager {
             Hologram hologram;
 
             if (!hologramMap.containsKey(furnaceObject)) {
-                boolean inFront = instance.getConfig().getBoolean("Main.Hologram in front");
                 BlockFace direction = ((org.bukkit.material.Furnace) furnaceBlock.getData()).getFacing();
-                Location location = inFront ? furnaceObject.getLocation().getBlock().getRelative(direction).getLocation().add(0.5, 0.8, 0.5) : furnaceBlock.getLocation().add(0.5, 1.8, 0.5);
+                Location location = instance.getConfig().getBoolean("Main.Hologram in front") ?
+                        furnaceObject.getLocation().getBlock().getRelative(direction).getLocation().add(0.5, 0.8, 0.5) :
+                        furnaceBlock.getLocation().add(0.5, 1.8, 0.5);
                 hologram = HologramsAPI.createHologram(instance, location);
             } else {
                 hologram = hologramMap.get(furnaceObject);
@@ -90,6 +92,10 @@ public class HologramManager {
             }
             hologramMap.put(furnaceObject, hologram);
         });
+    }
+
+    public void remove(FurnaceObject furnaceObject) {
+        Optional.ofNullable(hologramMap.remove(furnaceObject)).ifPresent(Hologram::delete);
     }
 
 

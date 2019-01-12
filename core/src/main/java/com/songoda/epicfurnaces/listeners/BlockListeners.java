@@ -59,7 +59,6 @@ public class BlockListeners implements Listener {
         ItemStack item = event.getItemInHand();
         Location location = event.getBlock().getLocation();
 
-//        if (instance.getFurnaceManager().getFurnaceLevel(item) != 1) {
         if (instance.getBlacklistHandler().isBlacklisted(event.getPlayer())) {
             event.setCancelled(true);
             return;
@@ -75,7 +74,6 @@ public class BlockListeners implements Listener {
                 event.getPlayer().getUniqueId());
 
         instance.getFurnaceManager().addFurnace(location, furnaceObject);
-//        }
 
     }
 
@@ -87,7 +85,7 @@ public class BlockListeners implements Listener {
 
         Block block = event.getBlock();
 
-        if (block.getType() != Material.FURNACE) {
+        if (block.getType() != Material.FURNACE && block.getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
             return;
         }
 
@@ -95,13 +93,13 @@ public class BlockListeners implements Listener {
             return;
         }
 
-        FurnaceObject furnace = instance.getFurnaceManager().getFurnace(block);
-        int level = instance.getFurnaceManager().getFurnace(block).getLevel().getLevel();
+        FurnaceObject furnace = instance.getFurnaceManager().getFurnace(block.getLocation()).orElseGet(() -> instance.getFurnaceManager().createFurnace(block.getLocation()));
+        int level = furnace.getLevel().getLevel();
 
         if (level != 0) {
             event.setCancelled(true);
 
-            ItemStack item = instance.furnaceManager.createLeveledFurnace(level, furnace.getUses(), instance);
+            ItemStack item = instance.getFurnaceManager().createLeveledFurnace(level, furnace.getUses(), instance);
 
             event.getBlock().setType(Material.AIR);
             event.getBlock().getLocation().getWorld().dropItemNaturally(event.getBlock().getLocation(), item);

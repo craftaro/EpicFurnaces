@@ -12,8 +12,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import static com.songoda.epicfurnaces.EpicFurnaces.save;
-
 public class HookManager {
     private final EpicFurnaces instance;
     private Set<ProtectionPluginHook> protectionHooks;
@@ -43,7 +41,7 @@ public class HookManager {
         configuration.addDefault("hooks." + hookPlugin.getName(), true);
         if (!configuration.getBoolean("hooks." + hookPlugin.getName(), true)) return;
         configuration.options().copyDefaults(true);
-        save(instance, "hooks");
+        instance.save("hooks");
 
         protectionHooks.add(hook);
         instance.getLogger().info("Registered protection hook for plugin: " + hook.getPlugin().getName() + " v" + hook.getPlugin().getDescription().getVersion());

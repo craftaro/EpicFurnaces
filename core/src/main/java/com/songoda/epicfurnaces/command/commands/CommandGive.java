@@ -46,7 +46,7 @@ public class CommandGive extends AbstractCommand {
 
             level = instance.getLevelManager().getLevel(Integer.parseInt(args[2]));
         }
-        player.getInventory().addItem(instance.furnaceManager.createLeveledFurnace(level.getLevel(), 0, instance));
+        player.getInventory().addItem(instance.getFurnaceManager().createLeveledFurnace(level.getLevel(), 0, instance));
         player.sendMessage(instance.getLocale().getPrefix() + instance.getLocale().getMessage("command.give.success", level.getLevel()));
 
         return ReturnType.SUCCESS;

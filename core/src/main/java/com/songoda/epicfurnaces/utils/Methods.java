@@ -1,9 +1,9 @@
 package com.songoda.epicfurnaces.utils;
 
 import com.songoda.epicfurnaces.EpicFurnaces;
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -23,27 +23,15 @@ public class Methods {
         ItemStack glass;
 
         if (rainbow) {
-            glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) randomNum);
+            glass = new ItemStack(instance.getBukkitEnums().getMaterial("WHITE_STAINED_GLASS_PANE").getType(), 1, (short) randomNum);
         } else {
-            glass = new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) type);
+            glass = new ItemStack(instance.getBukkitEnums().getMaterial("WHITE_STAINED_GLASS_PANE").getType(), 1, (short) type);
         }
 
         ItemMeta glassMeta = glass.getItemMeta();
         glassMeta.setDisplayName("§l");
         glass.setItemMeta(glassMeta);
         return glass;
-    }
-
-    public static void particles(Block b, Player p) {
-        EpicFurnaces plugin = instance;
-        if (plugin.getConfig().getBoolean("settings.On-upgrade-particles")) {
-            Location location = b.getLocation();
-            location.setX(location.getX() + .5);
-            location.setY(location.getY() + .5);
-            location.setZ(location.getZ() + .5);
-            //TODO: particles
-            //p.getWorld().spawnParticle(org.bukkit.Particle.valueOf(plugin.getConfig().getString("Main.Upgrade Particle Type")), location, 200, .5, .5, .5);
-        }
     }
 
     public static ItemStack getBackgroundGlass(boolean type) {

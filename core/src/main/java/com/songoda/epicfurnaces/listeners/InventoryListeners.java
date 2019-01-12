@@ -1,6 +1,7 @@
 package com.songoda.epicfurnaces.listeners;
 
 import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.objects.FurnaceObject;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
@@ -33,7 +34,7 @@ public class InventoryListeners implements Listener {
                 || event.getDestination().getItem(0).getAmount() != 1) {
             return;
         }
-        instance.getFurnaceManager().getFurnace(((Furnace) event.getDestination().getHolder()).getLocation()).updateCook();
+        instance.getFurnaceManager().getFurnace(((Furnace) event.getDestination().getHolder()).getLocation()).ifPresent(FurnaceObject::updateCook);
     }
 
     @EventHandler
@@ -43,7 +44,7 @@ public class InventoryListeners implements Listener {
                 && event.getSlotType() == CRAFTING) {
             Block block;
             block = ((Furnace) event.getInventory().getHolder()).getLocation().getBlock();
-            instance.getFurnaceManager().getFurnace(block).updateCook();
+            instance.getFurnaceManager().getFurnace(block.getLocation()).ifPresent(FurnaceObject::updateCook);
         }
 
         if (event.getSlot() == 64537 || event.getInventory().getType() != ANVIL || event.getAction() == NOTHING) {

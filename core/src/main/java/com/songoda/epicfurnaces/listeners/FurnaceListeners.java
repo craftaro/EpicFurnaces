@@ -9,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 
+import java.util.Optional;
+
 /**
  * Created by songoda on 2/26/2017.
  */
@@ -29,10 +31,10 @@ public class FurnaceListeners implements Listener {
             return;
         }
 
-        FurnaceObject furnace = instance.getFurnaceManager().getFurnace(b.getLocation());
+        Optional<FurnaceObject> furnace = instance.getFurnaceManager().getFurnace(event.getBlock().getLocation());
 
-        if (furnace != null && event.getSource().getType() != instance.getBukkitEnums().getMaterial("WET_SPONGE").getType()) {
-            furnace.plus(event);
+        if (furnace.isPresent() && event.getSource().getType() != instance.getBukkitEnums().getMaterial("WET_SPONGE").getType()) {
+            furnace.get().plus(event);
         }
     }
 
@@ -42,8 +44,8 @@ public class FurnaceListeners implements Listener {
             return;
         }
 
-        FurnaceObject furnace = instance.getFurnaceManager().getFurnace(event.getBlock().getLocation());
-        Level level = furnace != null ? furnace.getLevel() : instance.getLevelManager().getLowestLevel();
+        Optional<FurnaceObject> furnace = instance.getFurnaceManager().getFurnace(event.getBlock().getLocation());
+        Level level = furnace.isPresent() ? furnace.get().getLevel() : instance.getLevelManager().getLowestLevel();
 
         if (level.getFuelDuration() != 0) {
             return;

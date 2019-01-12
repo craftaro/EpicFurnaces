@@ -6,30 +6,31 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Furnace;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class FurnaceTask extends BukkitRunnable {
 
-    private static FurnaceTask instance;
-
-    private final EpicFurnaces plugin;
+    private static FurnaceTask plugin;
+    private final EpicFurnaces instance;
 
     private FurnaceTask(EpicFurnaces plugin) {
-        this.plugin = plugin;
+        this.instance = plugin;
     }
 
     public static void startTask(EpicFurnaces plugin) {
-        if (instance == null) {
-            instance = new FurnaceTask(plugin);
-            instance.runTaskTimer(plugin, 0, plugin.getConfig().getInt("Main.Furnace Tick Speed"));
+        if (FurnaceTask.plugin == null) {
+            FurnaceTask.plugin = new FurnaceTask(plugin);
+            FurnaceTask.plugin.runTaskTimer(plugin, 0, plugin.getConfig().getInt("Main.Furnace Tick Speed"));
         }
     }
 
     @Override
     public void run() {
-        for (FurnaceObject furnace : plugin.getFurnaceManager().getFurnaces().values()) {
+        for (FurnaceObject furnace : instance.getFurnaceManager().getFurnaces().values()) {
             Location furnaceLocation = furnace.getLocation();
 
             if (furnaceLocation == null) {
@@ -37,7 +38,7 @@ public class FurnaceTask extends BukkitRunnable {
             }
 
             if (furnaceLocation.getWorld() == null) {
-                plugin.getFurnaceManager().removeFurnace(furnaceLocation);
+                instance.getFurnaceManager().removeFurnace(furnaceLocation);
                 continue;
             }
 
@@ -49,11 +50,11 @@ public class FurnaceTask extends BukkitRunnable {
             }
 
             if (furnace.getLocation().getBlock().getType() != Material.FURNACE &&
-                    furnace.getLocation().getBlock().getType() != plugin.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
+                    furnace.getLocation().getBlock().getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
                 continue;
             }
 
-            if (((org.bukkit.block.Furnace) furnaceLocation.getBlock().getState()).getBurnTime() == 0) {
+            if (((Furnace) furnaceLocation.getBlock().getState()).getBurnTime() == 0) {
                 continue;
             }
 
@@ -114,14 +115,14 @@ public class FurnaceTask extends BukkitRunnable {
 
             Block block = location.getBlock();
 
-            if (block.getType() != Material.FURNACE && block.getType() != plugin.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
+            if (block.getType() != Material.FURNACE && block.getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
                 continue;
             }
 
-            FurnaceObject other = plugin.getFurnaceManager().getFurnace(block);
+            Optional<FurnaceObject> other = instance.getFurnaceManager().getFurnace(block.getLocation());
 
-            if (furnace != other) {
-                org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) block.getState());
+            if (other.isPresent() && furnace.equals(other.get())) {
+                Furnace furnaceBlock = ((Furnace) block.getState());
 
                 if (furnaceBlock.getBurnTime() == 0) {
                     furnaceBlock.setBurnTime((short) 100);
@@ -157,9 +158,8 @@ public class FurnaceTask extends BukkitRunnable {
         float px = (float) (0 + (Math.random() * 1));
         float pz = (float) (0 + (Math.random() * 1));
 
-        if (plugin.getConfig().getBoolean("Main.Overheat Particles")) {
-            //TODO: Particles
-//            Arconix.pl().getApi().packetLibrary.getParticleManager().broadcastParticle(location, px, .5F, pz, 0, "SMOKE_NORMAL", 25);
+        if (instance.getConfig().getBoolean("Main.Overheat Particles")) {
+            location.getWorld().playEffect(location, instance.getBukkitEnums().getParticle("SMOKE_NORMAL"), 25);
         }
     }
 }

@@ -12,15 +12,6 @@
         <module>hooks</module>
     </modules>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.13.2</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
     <build>
         <defaultGoal>clean install</defaultGoal>
         <plugins>

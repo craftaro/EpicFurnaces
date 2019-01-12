@@ -15,7 +15,7 @@ public class HologramTask extends BukkitRunnable {
     public static void startTask(EpicFurnaces plugin) {
         if (task == null) {
             task = new HologramTask(plugin);
-            task.runTaskTimer(plugin, 0, 20);
+            task.runTaskTimer(plugin, 0, 20L);
         }
     }
 

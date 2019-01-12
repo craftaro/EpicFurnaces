@@ -1,21 +1,55 @@
 package com.songoda.epicfurnaces.utils;
 
 import com.songoda.epicfurnaces.EpicFurnaces;
+import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 public class BukkitEnums {
     private final EpicFurnaces instance;
+    private final Map<String, String> soundMap = new HashMap<String, String>() {{
+        put("ENTITY_PLAYER_LEVELUP", "LEVEL_UP");
+        put("BLOCK_NOTE_BLOCK_CHIME", "NOTE_PLING");
+        put("NAN", "NAN");
+    }};
+
+    private final Map<String, String> particleMap = new HashMap<String, String>() {{
+        put("SMOKE", "SMOKE_NORMAL");
+        put("SPELL_WITCH", "MOBSPAWNER_FLAMES");
+        put("NAN", "NAN");
+    }};
 
     public BukkitEnums(EpicFurnaces instance) {
         this.instance = instance;
     }
 
-    public Sound getLevelUp() {
-        return Sound.valueOf(instance.getCurrentVersion() > 9 ? "PLAYER_LEVEL_UP" : "LEVEL_UP");
+    public Sound getSound(String name) {
+        if (Arrays.stream(Sound.values()).anyMatch(s -> s.toString().equalsIgnoreCase(name))) {
+            return Sound.valueOf(name.toUpperCase());
+        }
+
+        if (Arrays.stream(Sound.values()).anyMatch(s -> s.toString().equalsIgnoreCase(soundMap.getOrDefault(name, "NAN")))) {
+            return Sound.valueOf(soundMap.get(name.toUpperCase()));
+        }
+
+        return null;
+    }
+
+    public Effect getParticle(String name) {
+        if (Arrays.stream(Effect.values()).anyMatch(s -> s.toString().equalsIgnoreCase(name))) {
+            return Effect.valueOf(name.toUpperCase());
+        }
+
+        if (Arrays.stream(Effect.values()).anyMatch(s -> s.toString().equalsIgnoreCase(particleMap.getOrDefault(name, "NAN")))) {
+            return Effect.valueOf(particleMap.get(name.toUpperCase()));
+        }
+
+        return null;
     }
 
     public ItemStack getMaterial(String string) {
