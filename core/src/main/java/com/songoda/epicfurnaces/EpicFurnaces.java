@@ -62,7 +62,7 @@ public class EpicFurnaces extends JavaPlugin {
     public void onEnable() {
         Bukkit.getConsoleSender().sendMessage(formatText("&a============================="));
         Bukkit.getConsoleSender().sendMessage(formatText("&7EpicFurnaces " + this.getDescription().getVersion() + " by &5Songoda <3&7!"));
-        Bukkit.getConsoleSender().sendMessage(formatText("&aAction: &3Enabling&7..."));
+        Bukkit.getConsoleSender().sendMessage(formatText("&7Action: &aEnabling&7..."));
 
         if (!checkVersion()) {
             getPluginLoader().disablePlugin(this);
