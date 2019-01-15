@@ -7,13 +7,11 @@ import java.util.List;
 
 public class Level {
 
-    private final EpicFurnaces instance;
+    private List<String> description = new ArrayList<>();
     private int level, costExperience, costEconomy, performance, fuelDuration, overheat, fuelShare;
     private String reward;
-    private List<String> description = new ArrayList<>();
 
     public Level(EpicFurnaces instance, int level, int costExperience, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare) {
-        this.instance = instance;
         this.level = level;
         this.costExperience = costExperience;
         this.costEconomy = costEconomy;

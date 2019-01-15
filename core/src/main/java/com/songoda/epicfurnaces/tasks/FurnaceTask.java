@@ -2,6 +2,7 @@ package com.songoda.epicfurnaces.tasks;
 
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.objects.FurnaceObject;
+import com.songoda.epicfurnaces.objects.FurnaceObject.BoostType;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -9,8 +10,9 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.Furnace;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static com.songoda.epicfurnaces.objects.FurnaceObject.BoostType.*;
 
 public class FurnaceTask extends BukkitRunnable {
 
@@ -69,12 +71,12 @@ public class FurnaceTask extends BukkitRunnable {
     }
 
     private void overheat(FurnaceObject furnace) {
-        if (furnace.getRadius(true) == null || furnace.getRadiusLast(true) != furnace.getLevel().getOverheat()) {
-            furnace.setRadiusLast(furnace.getLevel().getOverheat(), true);
-            cache(furnace, true);
+        if (furnace.getRadius(OVERHEAT) == null || furnace.getRadiusLast(OVERHEAT) != furnace.getLevel().getOverheat()) {
+            furnace.setRadiusLast(furnace.getLevel().getOverheat(), OVERHEAT);
+            cache(furnace, OVERHEAT);
         }
 
-        for (Location location : furnace.getRadius(true)) {
+        for (Location location : furnace.getRadius(OVERHEAT)) {
             int random = ThreadLocalRandom.current().nextInt(0, 10);
 
             if (random != 1) {
@@ -101,12 +103,12 @@ public class FurnaceTask extends BukkitRunnable {
     }
 
     private void fuelShare(FurnaceObject furnace) {
-        if (furnace.getRadius(false) == null || furnace.getRadiusLast(false) != furnace.getLevel().getOverheat()) {
-            furnace.setRadiusLast(furnace.getLevel().getOverheat(), false);
-            cache(furnace, false);
+        if (furnace.getRadius(FUEL_SHARE) == null || furnace.getRadiusLast(FUEL_SHARE) != furnace.getLevel().getFuelShare()) {
+            furnace.setRadiusLast(furnace.getLevel().getFuelShare(), FUEL_SHARE);
+            cache(furnace, FUEL_SHARE);
         }
 
-        for (Location location : furnace.getRadius(false)) {
+        for (Location location : furnace.getRadius(FUEL_SHARE)) {
             int random = ThreadLocalRandom.current().nextInt(0, 10);
 
             if (random != 1) {
@@ -119,24 +121,25 @@ public class FurnaceTask extends BukkitRunnable {
                 continue;
             }
 
-            Optional<FurnaceObject> other = instance.getFurnaceManager().getFurnace(block.getLocation());
+            FurnaceObject other = instance.getFurnaceManager().getFurnace(block.getLocation()).orElseGet(() -> instance.getFurnaceManager().createFurnace(block.getLocation()));
 
-            if (other.isPresent() && furnace.equals(other.get())) {
-                Furnace furnaceBlock = ((Furnace) block.getState());
-
-                if (furnaceBlock.getBurnTime() == 0) {
-                    furnaceBlock.setBurnTime((short) 100);
-                    furnaceBlock.update();
-                    broadcastParticles(location);
-                }
+            if (furnace.equals(other)) {
+                continue;
             }
 
+            Furnace furnaceBlock = ((Furnace) block.getState());
+
+            if (furnaceBlock.getBurnTime() == 0) {
+                furnaceBlock.setBurnTime((short) 200);
+                furnaceBlock.update();
+                broadcastParticles(location);
+            }
         }
     }
 
-    private void cache(FurnaceObject furnace, boolean overheat) {
+    private void cache(FurnaceObject furnace, BoostType boostType) {
         Block block = furnace.getLocation().getBlock();
-        int radius = 3 * (overheat ? furnace.getLevel().getOverheat() : furnace.getLevel().getFuelShare());
+        int radius = 3 * (boostType == OVERHEAT ? furnace.getLevel().getOverheat() : furnace.getLevel().getFuelShare());
         int rSquared = radius * radius;
         int bx = block.getX();
         int by = block.getY();
@@ -147,7 +150,7 @@ public class FurnaceTask extends BukkitRunnable {
                 for (int fz = -radius; fz <= radius; fz++) {
                     if ((fx * fx) + (fz * fz) <= rSquared) {
                         Location location = new Location(block.getWorld(), bx + fx, by + fy, bz + fz);
-                        furnace.addToRadius(location, overheat);
+                        furnace.addToRadius(location, boostType);
                     }
                 }
             }
@@ -155,11 +158,8 @@ public class FurnaceTask extends BukkitRunnable {
     }
 
     private void broadcastParticles(Location location) {
-        float px = (float) (0 + (Math.random() * 1));
-        float pz = (float) (0 + (Math.random() * 1));
-
         if (instance.getConfig().getBoolean("Main.Overheat Particles")) {
-            location.getWorld().playEffect(location, instance.getBukkitEnums().getParticle("SMOKE_NORMAL"), 25);
+            instance.getCraftBukkitHook().broadcastParticle(location, "SMOKE", 25, "SMOKE_NORMAL");
         }
     }
 }

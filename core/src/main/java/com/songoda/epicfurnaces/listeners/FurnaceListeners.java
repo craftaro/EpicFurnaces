@@ -3,7 +3,6 @@ package com.songoda.epicfurnaces.listeners;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.objects.FurnaceObject;
 import com.songoda.epicfurnaces.objects.Level;
-import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
@@ -24,8 +23,6 @@ public class FurnaceListeners implements Listener {
 
     @EventHandler
     public void onCook(FurnaceSmeltEvent event) {
-        Block b = event.getBlock();
-
         if ((event.getBlock().isBlockPowered() && instance.getConfig().getBoolean("Main.Redstone Deactivates Furnaces")) || event.getResult() == null) {
             event.setCancelled(true);
             return;

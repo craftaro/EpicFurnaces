@@ -3,7 +3,6 @@ package com.songoda.epicfurnaces.command.commands;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.command.AbstractCommand;
 import com.songoda.epicfurnaces.objects.FurnaceObject;
-import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,9 +25,9 @@ public class CommandRemote extends AbstractCommand {
             return ReturnType.FAILURE;
         }
 
-        if (!instance.getConfiguration("data").contains("data.charged")) {
+        /*if (!instance.getConfiguration("data").contains("data.charged")) {
             return ReturnType.FAILURE;
-        }
+        }*/
 
         if (args.length < 2) {
             return ReturnType.SYNTAX_ERROR;
@@ -37,7 +36,9 @@ public class CommandRemote extends AbstractCommand {
         String furnaceName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
         for (FurnaceObject furnace : instance.getFurnaceManager().getFurnaces().values()) {
-            if (furnace.getNickname() == null) continue;
+            if (furnace.getNickname() == null) {
+                continue;
+            }
 
             if (!furnace.getNickname().equalsIgnoreCase(furnaceName)) {
                 continue;
@@ -47,8 +48,8 @@ public class CommandRemote extends AbstractCommand {
                 if (!uuid.equals(((Player) sender).getUniqueId())) {
                     continue;
                 }
-                Block b = furnace.getLocation().getBlock();
-                Furnace furnaceBlock = (Furnace) b.getState();
+
+                Furnace furnaceBlock = (Furnace) furnace.getLocation().getBlock().getState();
                 ((Player) sender).openInventory(furnaceBlock.getInventory());
                 return ReturnType.SUCCESS;
             }

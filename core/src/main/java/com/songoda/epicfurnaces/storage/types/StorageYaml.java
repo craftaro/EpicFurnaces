@@ -63,11 +63,14 @@ public class StorageYaml extends Storage {
 
     @Override
     public void doSave() {
+        if (toSave.isEmpty()) {
+            return;
+        }
         try {
             dataFile.set("data", null); // Clear file
 
             File data = new File(instance.getDataFolder() + "/data.yml");
-            File dataClone = new File(instance.getDataFolder() + "/data-backup-" + System.currentTimeMillis() + ".yml");
+            File dataClone = new File(instance.getDataFolder() + "/backup/data-backup-" + System.currentTimeMillis() + ".yml");
             try {
                 FileUtils.copyFile(data, dataClone);
             } catch (IOException e) {

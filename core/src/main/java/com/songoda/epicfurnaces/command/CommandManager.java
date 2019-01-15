@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.songoda.epicfurnaces.command.AbstractCommand.ReturnType.SYNTAX_ERROR;
+
 public class CommandManager implements CommandExecutor {
 
     private EpicFurnaces instance;
@@ -63,7 +65,7 @@ public class CommandManager implements CommandExecutor {
         }
         if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {
             AbstractCommand.ReturnType returnType = command.runCommand(sender, strings);
-            if (returnType == AbstractCommand.ReturnType.SYNTAX_ERROR) {
+            if (returnType == SYNTAX_ERROR) {
                 sender.sendMessage(instance.getLocale().getPrefix() + StringUtils.formatText("&cInvalid Syntax!"));
                 sender.sendMessage(instance.getLocale().getPrefix() + StringUtils.formatText("&7The valid syntax is: &6" + command.getSyntax() + "&7."));
             }

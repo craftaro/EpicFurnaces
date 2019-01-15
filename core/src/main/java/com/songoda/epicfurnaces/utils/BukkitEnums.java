@@ -1,7 +1,6 @@
 package com.songoda.epicfurnaces.utils;
 
 import com.songoda.epicfurnaces.EpicFurnaces;
-import org.bukkit.Effect;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.inventory.ItemStack;
@@ -18,12 +17,6 @@ public class BukkitEnums {
         put("NAN", "NAN");
     }};
 
-    private final Map<String, String> particleMap = new HashMap<String, String>() {{
-        put("SMOKE", "SMOKE_NORMAL");
-        put("SPELL_WITCH", "MOBSPAWNER_FLAMES");
-        put("NAN", "NAN");
-    }};
-
     public BukkitEnums(EpicFurnaces instance) {
         this.instance = instance;
     }
@@ -35,18 +28,6 @@ public class BukkitEnums {
 
         if (Arrays.stream(Sound.values()).anyMatch(s -> s.toString().equalsIgnoreCase(soundMap.getOrDefault(name, "NAN")))) {
             return Sound.valueOf(soundMap.get(name.toUpperCase()));
-        }
-
-        return null;
-    }
-
-    public Effect getParticle(String name) {
-        if (Arrays.stream(Effect.values()).anyMatch(s -> s.toString().equalsIgnoreCase(name))) {
-            return Effect.valueOf(name.toUpperCase());
-        }
-
-        if (Arrays.stream(Effect.values()).anyMatch(s -> s.toString().equalsIgnoreCase(particleMap.getOrDefault(name, "NAN")))) {
-            return Effect.valueOf(particleMap.get(name.toUpperCase()));
         }
 
         return null;

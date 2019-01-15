@@ -35,6 +35,10 @@ public class FurnaceManager {
         return addFurnace(location, new FurnaceObject(instance, location, instance.getLevelManager().getLowestLevel(), null, 0, 0, new ArrayList<>(), null));
     }
 
+    public void removeFurnace(FurnaceObject furnaceObject) {
+        removeFurnace(furnaceObject.getLocation());
+    }
+
     public void removeFurnace(Location location) {
         instance.getHologramManager().remove(registeredFurnaces.remove(location));
     }

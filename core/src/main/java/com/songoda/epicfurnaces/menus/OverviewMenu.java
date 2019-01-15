@@ -81,7 +81,7 @@ public class OverviewMenu extends FastInv {
 
         ItemBuilder fuelShare = new ItemBuilder(instance.getBukkitEnums().getMaterial(instance.getConfig().getString("Interfaces.FuelShare Icon")));
         fuelShare.name(instance.getLocale().getMessage("interface.furnace.fuelsharetitle"));
-        parts = instance.getLocale().getMessage("interface.furnace.fuelshareinfo", furnace.getLevel().getOverheat() * 3).split("\\|");
+        parts = instance.getLocale().getMessage("interface.furnace.fuelshareinfo", furnace.getLevel().getFuelShare() * 3).split("\\|");
         fuelShare.lore(Arrays.stream(parts).map(StringUtils::formatText).collect(Collectors.toList()));
 
         ItemBuilder xp = new ItemBuilder(instance.getBukkitEnums().getMaterial(instance.getConfig().getString("Interfaces.XP Icon")));

@@ -3,6 +3,7 @@ package com.songoda.epicfurnaces;
 import com.gb6.songoda.epicfurnaces.hooks.PlotSquaredHook;
 import com.songoda.epicfurnaces.command.CommandManager;
 import com.songoda.epicfurnaces.handlers.BlacklistHandler;
+import com.songoda.epicfurnaces.hook.CraftBukkitHook;
 import com.songoda.epicfurnaces.hooks.*;
 import com.songoda.epicfurnaces.listeners.*;
 import com.songoda.epicfurnaces.managers.*;
@@ -26,7 +27,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -35,15 +35,11 @@ import org.json.simple.parser.JSONParser;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import static com.songoda.epicfurnaces.utils.StringUtils.formatText;
 import static java.util.Arrays.asList;
 
 public class EpicFurnaces extends JavaPlugin {
@@ -59,19 +55,21 @@ public class EpicFurnaces extends JavaPlugin {
     private Storage storage;
     private HologramManager hologramManager;
     private Economy economy;
+    private CraftBukkitHook craftBukkitHook;
     private int currentVersion;
 
     @Override
     public void onEnable() {
-        Bukkit.getConsoleSender().sendMessage(StringUtils.formatText("&a============================="));
-        Bukkit.getConsoleSender().sendMessage(StringUtils.formatText("&7EpicFurnaces " + this.getDescription().getVersion() + " by &5Songoda <3&7!"));
+        Bukkit.getConsoleSender().sendMessage(formatText("&a============================="));
+        Bukkit.getConsoleSender().sendMessage(formatText("&7EpicFurnaces " + this.getDescription().getVersion() + " by &5Songoda <3&7!"));
+        Bukkit.getConsoleSender().sendMessage(formatText("&aAction: &3Enabling&7..."));
 
         if (!checkVersion()) {
             getPluginLoader().disablePlugin(this);
             return;
         }
 
-        for (String name : asList("config", "data", "hooks", "Furnace Recipes", "blacklist")) {
+        for (String name : asList("config", "data", "hooks", "blacklist", "Furnace Recipes")) {
             File file = new File(getDataFolder(), name + ".yml");
             if (!file.exists()) {
                 file.getParentFile().mkdirs();
@@ -107,8 +105,8 @@ public class EpicFurnaces extends JavaPlugin {
         this.hologramManager = new HologramManager(this);
         this.levelManager = new LevelManager(this);
         this.hookManager = new HookManager(this);
+        this.economy = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
 
-        setupEconomy();
         checkStorage();
         levelManager.loadLevelManager();
         setupRecipes();
@@ -147,11 +145,15 @@ public class EpicFurnaces extends JavaPlugin {
             }
         }
 
-        Bukkit.getConsoleSender().sendMessage(StringUtils.formatText("&a============================="));
+        Bukkit.getConsoleSender().sendMessage(formatText("&a============================="));
     }
 
     @Override
     public void onDisable() {
+        Bukkit.getConsoleSender().sendMessage(formatText("&a============================="));
+        Bukkit.getConsoleSender().sendMessage(formatText("&7EpicFurnaces " + this.getDescription().getVersion() + " by &5Songoda <3&7!"));
+        Bukkit.getConsoleSender().sendMessage(formatText("&7Action: &cDisabling&7..."));
+        Bukkit.getConsoleSender().sendMessage(formatText("&a============================="));
         hologramManager.clearAll();
         saveToFile();
     }
@@ -218,18 +220,16 @@ public class EpicFurnaces extends JavaPlugin {
         ConfigurationSection cs = getConfiguration("Furnace Recipes").getConfigurationSection("Recipes");
 
         for (String key : cs.getKeys(false)) {
-            Material item;
-            try {
-                item = Material.valueOf(key.toUpperCase());
-            } catch (IllegalArgumentException e) {
+            Material item = Material.matchMaterial(key.toUpperCase());
+
+            if (item == null) {
                 getLogger().info("Invalid material from recipes files: " + key.toUpperCase());
                 continue;
             }
 
-            Material result;
-            try {
-                result = Material.valueOf(cs.getString(key.toUpperCase() + ".result"));
-            } catch (IllegalArgumentException e) {
+            Material result = Material.matchMaterial(cs.getString(key.toUpperCase() + ".result"));
+
+            if (result == null) {
                 getLogger().info("Invalid material from recipes files: " + cs.getString(key.toUpperCase() + ".result"));
                 continue;
             }
@@ -249,18 +249,10 @@ public class EpicFurnaces extends JavaPlugin {
         }
     }
 
-    private boolean setupEconomy() {
-        RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager().getRegistration(Economy.class);
-        if (economyProvider != null) {
-            economy = economyProvider.getProvider();
-        }
-
-        return (economy != null);
-    }
-
     private boolean checkVersion() {
         String version = getServer().getClass().getPackage().getName().split("\\.")[3];
         currentVersion = Integer.parseInt(version.split("_")[1]);
+        craftBukkitHook = currentVersion >= 13 ? new CraftBukkitHook113() : new CraftBukkitHook18();
         int workingVersion = 8;
 
         if (currentVersion < workingVersion) {
@@ -274,28 +266,6 @@ public class EpicFurnaces extends JavaPlugin {
             return false;
         }
 
-        File config = new File(getDataFolder(), "Furnace Recipes.yml");
-        if (!config.exists()) {
-            saveResource("Furnace Recipes.yml", false);
-        }
-
-        if (currentVersion < 13) {
-            getLogger().info("Converting recipes to fit server version...");
-
-            Charset charset = StandardCharsets.UTF_8;
-            Path path = Paths.get(config.getAbsolutePath());
-
-            try {
-                String content = new String(Files.readAllBytes(path), charset);
-                content = content.replaceAll("GOLDEN", "GOLD")
-                        .replaceAll("SHOVEL", "SPADE")
-                        .replaceAll("WOODEN", "WOOD")
-                        .replaceAll("CLOCK", "WATCH");
-                Files.write(path, content.getBytes(charset));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         return true;
     }
 
@@ -327,10 +297,6 @@ public class EpicFurnaces extends JavaPlugin {
         return locale;
     }
 
-    public int getCurrentVersion() {
-        return currentVersion;
-    }
-
     public BukkitEnums getBukkitEnums() {
         return bukkitEnums;
     }
@@ -349,5 +315,9 @@ public class EpicFurnaces extends JavaPlugin {
 
     public Economy getEconomy() {
         return economy;
+    }
+
+    public CraftBukkitHook getCraftBukkitHook() {
+        return craftBukkitHook;
     }
 }

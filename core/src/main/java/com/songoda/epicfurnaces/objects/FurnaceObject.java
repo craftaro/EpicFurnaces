@@ -17,6 +17,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
 
+import static com.songoda.epicfurnaces.objects.FurnaceObject.BoostType.*;
+
 /**
  * Created by songoda on 3/7/2017.
  */
@@ -31,7 +33,6 @@ public class FurnaceObject {
     private List<Location> radiusOverheat = new ArrayList<>();
     private List<Location> radiusFuelShare = new ArrayList<>();
     private List<String> accessList;
-    private Map<String, Integer> cache = new HashMap<>();
 
     public FurnaceObject(EpicFurnaces instance, Location location, Level level, String nickname, int uses, int toLevel, List<String> accessList, UUID placedBy) {
         this.instance = instance;
@@ -157,11 +158,10 @@ public class FurnaceObject {
         }
 
         Location loc = location.clone().add(.5, .5, .5);
-        player.getWorld().playEffect(loc, instance.getBukkitEnums().getParticle(instance.getConfig().getString("Main.Upgrade Particle Type")), 200);
+        instance.getCraftBukkitHook().broadcastParticle(loc, instance.getConfig().getString("Main.Upgrade Particle Type"), 200);
 
-        if (instance.getConfig().getBoolean("Main.Use Sounds")) {
+        if (instance.getConfig().getBoolean("Main.Sounds Enabled")) {
             if (instance.getLevelManager().getHighestLevel() == level) {
-                //TODO: Sound
                 player.playSound(player.getLocation(), instance.getBukkitEnums().getSound("ENTITY_PLAYER_LEVELUP"), 0.6F, 15.0F);
             } else {
                 player.playSound(player.getLocation(), instance.getBukkitEnums().getSound("ENTITY_PLAYER_LEVELUP"), 2F, 25.0F);
@@ -228,46 +228,50 @@ public class FurnaceObject {
     }
 
 
-    public List<Location> getRadius(boolean overHeat) {
-        if (overHeat) {
+    public List<Location> getRadius(BoostType boostType) {
+        if (boostType == OVERHEAT) {
             return radiusOverheat.isEmpty() ? null : Collections.unmodifiableList(radiusOverheat);
-        } else {
+        } else if (boostType == FUEL_SHARE) {
             return radiusFuelShare.isEmpty() ? null : Collections.unmodifiableList(radiusFuelShare);
         }
+
+        return null;
     }
 
 
-    public void addToRadius(Location location, boolean overHeat) {
-        if (overHeat) {
+    public void addToRadius(Location location, BoostType boostType) {
+        if (boostType == OVERHEAT) {
             radiusOverheat.add(location);
-        } else {
+        } else if (boostType == FUEL_SHARE) {
             radiusFuelShare.add(location);
         }
     }
 
 
-    public void clearRadius(boolean overHeat) {
-        if (overHeat) {
+    public void clearRadius(BoostType boostType) {
+        if (boostType == OVERHEAT) {
             radiusOverheat.clear();
-        } else {
+        } else if (boostType == FUEL_SHARE) {
             radiusFuelShare.clear();
         }
     }
 
 
-    public int getRadiusLast(boolean overHeat) {
-        if (overHeat) {
+    public int getRadiusLast(BoostType boostType) {
+        if (boostType == OVERHEAT) {
             return radiusOverheatLast;
-        } else {
+        } else if (boostType == FUEL_SHARE) {
             return radiusFuelShareLast;
         }
+
+        return 0;
     }
 
 
-    public void setRadiusLast(int radiusLast, boolean overHeat) {
-        if (overHeat) {
+    public void setRadiusLast(int radiusLast, BoostType boostType) {
+        if (boostType == OVERHEAT) {
             this.radiusOverheatLast = radiusLast;
-        } else {
+        } else if (boostType == FUEL_SHARE) {
             this.radiusFuelShareLast = radiusLast;
         }
     }
@@ -326,5 +330,9 @@ public class FurnaceObject {
 
     public int getUses() {
         return uses;
+    }
+
+    public enum BoostType {
+        OVERHEAT, FUEL_SHARE
     }
 }
