@@ -3,8 +3,8 @@ version: ${project.version}
 main: com.songoda.epicfurnaces.EpicFurnaces
 authors: [Brianna, GB6]
 website: https://songoda.com/
-depend: [HolographicDisplays, Vault]
-softdepend: [PlotSquared, GriefPrevention, USkyBlock, SkyBlock, WorldGuard, Factions]
+depend: [Vault]
+softdepend: [PlotSquared, GriefPrevention, USkyBlock, SkyBlock, WorldGuard, Factions, HolographicDisplays]
 commands:
   epicfurnaces:
     description: Default command for the EpicFurnaces plugin.

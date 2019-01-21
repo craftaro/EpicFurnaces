@@ -26,7 +26,7 @@ public class FurnaceManager {
     }
 
     public FurnaceObject addFurnace(Location location, FurnaceObject furnace) {
-        instance.getHologramManager().updateHologram(furnace);
+        instance.getHologramManager().ifPresent(manager -> manager.updateHologram(furnace));
         registeredFurnaces.put(roundLocation(location), furnace);
         return furnace;
     }
@@ -40,7 +40,7 @@ public class FurnaceManager {
     }
 
     public void removeFurnace(Location location) {
-        instance.getHologramManager().remove(registeredFurnaces.remove(location));
+        instance.getHologramManager().ifPresent(manager -> manager.remove(registeredFurnaces.remove(location)));
     }
 
     public Optional<FurnaceObject> getFurnace(Location location) {
@@ -118,7 +118,12 @@ public class FurnaceManager {
                 instance.getBoostManager().addBoostToPlayer(boostData);
             }
         }
-        getFurnaces().values().forEach(furnace -> instance.getHologramManager().updateHologram(furnace));
+
+        if (!instance.getConfig().getBoolean("Main.Furnaces Have Holograms")) {
+            return;
+        }
+
+        getFurnaces().values().forEach(furnace -> instance.getHologramManager().ifPresent(manager -> manager.updateHologram(furnace)));
     }
 
     public void saveToFile() {
