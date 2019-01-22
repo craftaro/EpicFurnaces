@@ -83,8 +83,8 @@
         <dependency>
             <groupId>com.gmail.filoghost.holographicdisplays</groupId>
             <artifactId>holographicdisplays</artifactId>
-            <version>2.3.3-SNAPSHOT</version>
-            <scope>LATEST</scope>
+            <version>LATEST</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
