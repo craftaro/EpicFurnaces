@@ -5,7 +5,7 @@
     <parent>
         <artifactId>hooks</artifactId>
         <groupId>com.songoda</groupId>
-        <version>4.1.1</version>
+        <version>4.1.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -21,19 +21,19 @@
         <dependency>
             <groupId>org</groupId>
             <artifactId>kingdoms</artifactId>
-            <version>LATEST</version>
+            <version>13.0.9</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>manager</artifactId>
-            <version>4.1.1</version>
+            <version>4.1.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>manager</artifactId>
-            <version>4.1.1</version>
+            <version>4.1.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>

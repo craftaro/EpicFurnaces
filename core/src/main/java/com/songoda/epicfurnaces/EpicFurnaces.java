@@ -5,10 +5,7 @@ import com.songoda.epicfurnaces.command.CommandManager;
 import com.songoda.epicfurnaces.handlers.BlacklistHandler;
 import com.songoda.epicfurnaces.hook.CraftBukkitHook;
 import com.songoda.epicfurnaces.hooks.*;
-import com.songoda.epicfurnaces.listeners.BlockListeners;
-import com.songoda.epicfurnaces.listeners.FurnaceListeners;
-import com.songoda.epicfurnaces.listeners.InteractListeners;
-import com.songoda.epicfurnaces.listeners.InventoryListeners;
+import com.songoda.epicfurnaces.listeners.*;
 import com.songoda.epicfurnaces.managers.*;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.types.StorageMysql;
@@ -35,16 +32,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.songoda.epicfurnaces.utils.StringUtils.formatText;
 import static java.util.Arrays.asList;
@@ -75,8 +66,6 @@ public class EpicFurnaces extends JavaPlugin {
             getPluginLoader().disablePlugin(this);
             return;
         }
-
-        Bukkit.getConsoleSender().sendMessage(formatText("Holographic displays " + (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays") ? "found, enabling support for holograms!" : "not found, holograms will not work.")));
 
         for (String name : asList("config", "data", "hooks", "blacklist", "Furnace Recipes")) {
             File file = new File(getDataFolder(), name + ".yml");
@@ -115,7 +104,7 @@ public class EpicFurnaces extends JavaPlugin {
         this.hookManager = new HookManager(this);
         this.economy = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
 
-        if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays")) {
+        if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays") && getConfig().getBoolean("Main.Furnaces Have Holograms")) {
             this.hologramManager = new HologramManager(this);
         }
 
@@ -134,7 +123,8 @@ public class EpicFurnaces extends JavaPlugin {
 
         // Register Listeners
         PluginManager pluginManager = Bukkit.getPluginManager();
-        new HashSet<>(asList(new BlockListeners(this),
+        new HashSet<>(asList(
+                new BlockListeners(this),
                 new FurnaceListeners(this),
                 new InteractListeners(this),
                 new InventoryListeners(this))).forEach(listener -> pluginManager.registerEvents(listener, this));
@@ -167,6 +157,7 @@ public class EpicFurnaces extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(formatText("&7Action: &cDisabling&7..."));
         Bukkit.getConsoleSender().sendMessage(formatText("&a============================="));
         getHologramManager().ifPresent(HologramManager::clearAll);
+        this.hologramManager = null;
         saveToFile();
     }
 

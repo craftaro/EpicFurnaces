@@ -7,7 +7,7 @@
     <parent>
         <artifactId>hooks</artifactId>
         <groupId>com.songoda</groupId>
-        <version>4.1.1</version>
+        <version>4.1.2</version>
     </parent>
 
     <artifactId>factions</artifactId>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>manager</artifactId>
-            <version>4.1.1</version>
+            <version>4.1.2</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
