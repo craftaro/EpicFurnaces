@@ -5,17 +5,17 @@ import com.songoda.epicfurnaces.command.AbstractCommand;
 import com.songoda.epicfurnaces.utils.StringUtils;
 import org.bukkit.command.CommandSender;
 
-public class CommandEpicFurnaces extends AbstractCommand {
+public class CommandHelp extends AbstractCommand {
     private final EpicFurnaces instance;
 
-    public CommandEpicFurnaces(EpicFurnaces instance) {
-        super("EpicFurnaces", null, false);
+    public CommandHelp(EpicFurnaces instance, AbstractCommand parent) {
+        super("help", parent, false);
         this.instance = instance;
 
     }
 
     @Override
-    protected ReturnType runCommand(CommandSender sender, String... args) {
+    protected AbstractCommand.ReturnType runCommand(CommandSender sender, String... args) {
         sender.sendMessage("");
         sender.sendMessage(StringUtils.formatText(instance.getLocale().getPrefix() + "&7Version " + instance.getDescription().getVersion() + " Created with <3 by &5&l&oSongoda"));
 
@@ -31,7 +31,7 @@ public class CommandEpicFurnaces extends AbstractCommand {
 
     @Override
     public String getDescription() {
-        return "Displays this page.";
+        return "Displays the help page.";
     }
 
     @Override
@@ -41,6 +41,6 @@ public class CommandEpicFurnaces extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/ef";
+        return "/ef help";
     }
 }

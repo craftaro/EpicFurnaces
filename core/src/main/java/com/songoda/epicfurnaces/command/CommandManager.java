@@ -31,6 +31,7 @@ public class CommandManager implements CommandExecutor {
         addCommand(new CommandRemote(instance, commandEpicFurnaces));
         addCommand(new CommandGive(instance, commandEpicFurnaces));
         addCommand(new CommandBoost(instance, commandEpicFurnaces));
+        addCommand(new CommandHelp(instance, commandEpicFurnaces));
     }
 
     private AbstractCommand addCommand(AbstractCommand abstractCommand) {

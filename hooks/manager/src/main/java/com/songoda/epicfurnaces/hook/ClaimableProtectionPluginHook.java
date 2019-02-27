@@ -33,5 +33,4 @@ public interface ClaimableProtectionPluginHook extends ProtectionPluginHook {
      * @return the unique String ID. null if no claim exists
      */
     String getClaimID(String name);
-
 }

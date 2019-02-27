@@ -16,10 +16,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.spigot</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.8.8-R0.1</version>
-            <scope>compile</scope>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.8.8</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

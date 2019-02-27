@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class Locale {
 
     private static final List<Locale> LOCALES = Lists.newArrayList();
-    private static final Pattern NODE_PATTERN = Pattern.compile("(\\w+(?:\\.{1}\\w+)*)\\s*=\\s*\"(.*)\"");
+    private static final Pattern NODE_PATTERN = Pattern.compile("(\\w+(?:\\.\\w+)*)\\s*=\\s*\"(.*)\"");
     private static final String FILE_EXTENSION = ".lang";
     private static JavaPlugin plugin;
     private static File localeFolder;

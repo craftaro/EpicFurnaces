@@ -58,13 +58,6 @@
         </resources>
     </build>
 
-    <repositories>
-        <repository>
-            <id>maven.sainttx.com</id>
-            <url>http://maven.sainttx.com/nexus/content/groups/public/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
@@ -72,84 +65,72 @@
             <version>1.13.2</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>net.milkbowl</groupId>
-            <artifactId>vault</artifactId>
-            <version>1.7.1</version>
-            <scope>provided</scope>
-        </dependency>
-
         <dependency>
             <groupId>com.gmail.filoghost.holographicdisplays</groupId>
-            <artifactId>holographicdisplays</artifactId>
-            <version>LATEST</version>
+            <artifactId>holographicdisplays-api</artifactId>
+            <version>2.3.2</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.songoda</groupId>
-            <artifactId>manager</artifactId>
+            <artifactId>craftbukkit-1-13</artifactId>
             <version>4.1.2</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>craftbukkit-1-8</artifactId>
+            <version>4.1.2</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>askyblock</artifactId>
             <version>4.1.2</version>
             <scope>compile</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>griefprevention</artifactId>
-            <version>4.1.2</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>kingdoms</artifactId>
-            <version>4.1.2</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>plotsquared</artifactId>
-            <version>4.1.2</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>towny</artifactId>
-            <version>4.1.2</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>uskyblock</artifactId>
-            <version>4.1.2</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>redprotect</artifactId>
-            <version>4.1.2</version>
-            <scope>compile</scope>
-        </dependency>
-
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>factions</artifactId>
             <version>4.1.2</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>griefprevention</artifactId>
+            <version>4.1.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>kingdoms</artifactId>
+            <version>4.1.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>plotsquared</artifactId>
+            <version>4.1.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>redprotect</artifactId>
+            <version>4.1.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>towny</artifactId>
+            <version>4.1.2</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>uskyblock</artifactId>
+            <version>4.1.2</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>worldguard</artifactId>
@@ -157,31 +138,16 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-
             <groupId>com.songoda</groupId>
             <artifactId>worldguard6</artifactId>
             <version>4.1.2</version>
             <scope>compile</scope>
         </dependency>
-
         <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>craftbukkit-1-8</artifactId>
-            <version>4.1.2</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>craftbukkit-1-13</artifactId>
-            <version>4.1.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>craftbukkit-1-13</artifactId>
-            <version>4.1.2</version>
-            <scope>compile</scope>
+            <groupId>net.milkbowl</groupId>
+            <artifactId>vault</artifactId>
+            <version>1.7.1</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>
