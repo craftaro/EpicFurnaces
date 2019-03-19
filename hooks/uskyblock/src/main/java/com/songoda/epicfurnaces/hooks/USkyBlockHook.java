@@ -1,6 +1,5 @@
-package com.songoda.epicfurnaces;
+package com.songoda.epicfurnaces.hooks;
 
-import com.songoda.epicfurnaces.hook.ClaimableProtectionPluginHook;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

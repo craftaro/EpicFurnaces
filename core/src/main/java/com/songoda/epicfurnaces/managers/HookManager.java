@@ -2,7 +2,7 @@ package com.songoda.epicfurnaces.managers;
 
 import com.google.common.base.Preconditions;
 import com.songoda.epicfurnaces.EpicFurnaces;
-import com.songoda.epicfurnaces.hook.ProtectionPluginHook;
+import com.songoda.epicfurnaces.hooks.ProtectionPluginHook;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -27,8 +27,8 @@ public class HookManager {
     }
 
     private void registerProtectionHook(ProtectionPluginHook hook) {
-        Preconditions.checkNotNull(hook, "Cannot register null hook");
-        Preconditions.checkNotNull(hook.getPlugin(), "Protection plugin hook returns null plugin instance (#getPlugin())");
+        Preconditions.checkNotNull(hook, "Cannot register null hooks");
+        Preconditions.checkNotNull(hook.getPlugin(), "Protection plugin hooks returns null plugin instance (#getPlugin())");
 
         JavaPlugin hookPlugin = hook.getPlugin();
         for (ProtectionPluginHook existingHook : protectionHooks) {
@@ -44,7 +44,7 @@ public class HookManager {
         instance.save("hooks");
 
         protectionHooks.add(hook);
-        instance.getLogger().info("Registered protection hook for plugin: " + hook.getPlugin().getName() + " v" + hook.getPlugin().getDescription().getVersion());
+        instance.getLogger().info("Registered protection hooks for plugin: " + hook.getPlugin().getName() + " v" + hook.getPlugin().getDescription().getVersion());
     }
 
     public boolean canBuild(Player player, Location location) {

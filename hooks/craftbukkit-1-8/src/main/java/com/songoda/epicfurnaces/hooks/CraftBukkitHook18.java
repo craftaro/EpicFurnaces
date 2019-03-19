@@ -1,6 +1,5 @@
 package com.songoda.epicfurnaces.hooks;
 
-import com.songoda.epicfurnaces.hook.CraftBukkitHook;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 

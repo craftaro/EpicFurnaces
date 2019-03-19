@@ -37,7 +37,6 @@ Database:
   Username: PUT_USERNAME_HERE
   Password: PUT_PASSWORD_HERE
 System:
-  Download Needed Data Files: true
   Language Mode: en_US
   Debugger Enabled: false
 settings:

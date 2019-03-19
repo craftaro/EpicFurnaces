@@ -1,6 +1,5 @@
 package com.songoda.epicfurnaces.hooks;
 
-import com.songoda.epicfurnaces.hook.ClaimableProtectionPluginHook;
 import com.wasteofplastic.askyblock.ASkyBlock;
 import com.wasteofplastic.askyblock.ASkyBlockAPI;
 import com.wasteofplastic.askyblock.Island;

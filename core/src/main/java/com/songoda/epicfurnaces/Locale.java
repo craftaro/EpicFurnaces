@@ -3,6 +3,7 @@ package com.songoda.epicfurnaces;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -47,7 +48,7 @@ public class Locale {
 
         if (this.reloadMessages()) return;
 
-        plugin.getLogger().info("Loaded locale " + fileName);
+        Bukkit.getConsoleSender().sendMessage("Loaded locale " + fileName);
     }
 
     /**
@@ -88,7 +89,7 @@ public class Locale {
             if (localeExists(localeValues[0] + "_" + localeValues[1])) continue;
 
             LOCALES.add(new Locale(localeValues[0], localeValues[1]));
-            plugin.getLogger().info("Found and loaded locale \"" + fileName + "\"");
+            Bukkit.getConsoleSender().sendMessage("Found and loaded locale \"" + fileName + "\"");
         }
     }
 

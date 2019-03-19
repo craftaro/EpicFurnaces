@@ -127,6 +127,10 @@ public class FurnaceTask extends BukkitRunnable {
                 continue;
             }
 
+            if (((Furnace) furnace.getLocation().getBlock().getState()).getInventory().getFuel() == null) {
+                continue;
+            }
+
             Furnace furnaceBlock = ((Furnace) block.getState());
 
             if (furnaceBlock.getBurnTime() == 0) {

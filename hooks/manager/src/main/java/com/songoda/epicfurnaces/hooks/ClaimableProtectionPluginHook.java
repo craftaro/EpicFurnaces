@@ -1,10 +1,10 @@
-package com.songoda.epicfurnaces.hook;
+package com.songoda.epicfurnaces.hooks;
 
 import org.bukkit.Location;
 
 /**
  * A more specific implementation of {@link ProtectionPluginHook} used internally by
- * EpicSpawners to retain more information about default hooks. Often times this
+ * EpicFurnaces to retain more information about default hooks. Often times this
  * interface is not recommended over the ProtectionPluginHook interface as its methods
  * will not often be used by implementation, though they are available if more information
  * is desired. It is, however, recommended to use the former

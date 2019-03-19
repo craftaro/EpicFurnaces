@@ -1,9 +1,7 @@
 package com.songoda.epicfurnaces;
 
-import com.gb6.songoda.epicfurnaces.hooks.PlotSquaredHook;
 import com.songoda.epicfurnaces.command.CommandManager;
 import com.songoda.epicfurnaces.handlers.BlacklistHandler;
-import com.songoda.epicfurnaces.hook.CraftBukkitHook;
 import com.songoda.epicfurnaces.hooks.*;
 import com.songoda.epicfurnaces.listeners.*;
 import com.songoda.epicfurnaces.managers.*;
@@ -17,6 +15,7 @@ import com.songoda.epicfurnaces.utils.Methods;
 import com.songoda.epicfurnaces.utils.StringUtils;
 import com.songoda.epicfurnaces.utils.gui.FastInv;
 import net.milkbowl.vault.economy.Economy;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -27,6 +26,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -102,7 +102,13 @@ public class EpicFurnaces extends JavaPlugin {
         this.bukkitEnums = new BukkitEnums(this);
         this.levelManager = new LevelManager(this);
         this.hookManager = new HookManager(this);
-        this.economy = getServer().getServicesManager().getRegistration(Economy.class).getProvider();
+
+        if (!setupEconomy()) {
+            getLogger().severe("Economy provider not found/not supported, disabling...");
+            Bukkit.getPluginManager().disablePlugin(this);
+            Bukkit.getConsoleSender().sendMessage(formatText("&a============================="));
+            return;
+        }
 
         if (Bukkit.getPluginManager().isPluginEnabled("HolographicDisplays") && getConfig().getBoolean("Main.Furnaces Have Holograms")) {
             this.hologramManager = new HologramManager(this);
@@ -138,6 +144,7 @@ public class EpicFurnaces extends JavaPlugin {
         if (pluginManager.isPluginEnabled("RedProtect")) hookManager.register(RedProtectHook::new);
         if (pluginManager.isPluginEnabled("Towny")) hookManager.register(TownyHook::new);
         if (pluginManager.isPluginEnabled("USkyBlock")) hookManager.register(USkyBlockHook::new);
+        if (pluginManager.isPluginEnabled("FabledSkyBlock")) hookManager.register(FabledSkyBlockHook::new);
 
         if (pluginManager.isPluginEnabled("WorldGuard")) {
             if (currentVersion >= 13) {
@@ -146,6 +153,8 @@ public class EpicFurnaces extends JavaPlugin {
                 hookManager.register(WorldGuard6Hook::new);
             }
         }
+
+        new Metrics(this);
 
         Bukkit.getConsoleSender().sendMessage(formatText("&a============================="));
     }
@@ -271,6 +280,19 @@ public class EpicFurnaces extends JavaPlugin {
 
         return true;
     }
+
+    private boolean setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        economy = rsp.getProvider();
+        return economy != null;
+    }
+
 
     public FileConfiguration getConfiguration(String name) {
         return configurations.get(name);

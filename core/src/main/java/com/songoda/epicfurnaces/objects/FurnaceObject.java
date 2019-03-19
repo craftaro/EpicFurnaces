@@ -4,29 +4,19 @@ import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.menus.OverviewMenu;
 import com.songoda.epicfurnaces.utils.NMSUtil;
 import com.songoda.epicfurnaces.utils.StringUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Furnace;
-import org.bukkit.craftbukkit.v1_13_R2.block.CraftFurnace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
-import static com.songoda.epicfurnaces.objects.FurnaceObject.BoostType.FUEL_SHARE;
-import static com.songoda.epicfurnaces.objects.FurnaceObject.BoostType.OVERHEAT;
+import static com.songoda.epicfurnaces.objects.FurnaceObject.BoostType.*;
 
 /**
  * Created by songoda on 3/7/2017.
@@ -99,16 +89,16 @@ public class FurnaceObject {
             level = instance.getLevelManager().getLevel(this.level.getLevel() + 1);
         }
 
-        this.updateCook();
+        updateCook();
 
-        FurnaceInventory i = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
+        FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
 
         int num = Integer.parseInt(reward);
         double rand = Math.random() * 100;
         if (rand >= num
                 || e.getResult().getType().equals(Material.SPONGE)
                 || instance.getConfig().getBoolean("Main.No Rewards From Custom Recipes")
-                && instance.getConfiguration("Furnace Recipes").contains("Recipes." + i.getSmelting().getType().toString())) {
+                && instance.getConfiguration("Furnace Recipes").contains("Recipes." + inventory.getSmelting().getType().toString())) {
             return;
         }
 
@@ -125,7 +115,6 @@ public class FurnaceObject {
         }
 
         e.getResult().setAmount(e.getResult().getAmount() + r);
-        e.setResult(new ItemStack(e.getResult().getType(), r));
     }
 
     public void upgrade(String type, Player player) {
@@ -188,22 +177,20 @@ public class FurnaceObject {
         String name = StringUtils.formatName(level.getLevel(), uses, false);
 
         try {
-            CraftFurnace craftFurnace = (CraftFurnace) location.getBlock().getState();
+            Furnace craftFurnace = (Furnace) location.getBlock().getState();
             craftFurnace.setCustomName(name);
             craftFurnace.update(true);
-        } catch (Exception e) {
+        } catch (Exception | Error e) {
             try {
                 Object craftFurnace = NMSUtil.getCraftClass("block.CraftFurnace").cast(location.getBlock().getState());
-                Field inventoryField = craftFurnace.getClass().getDeclaredField("furnace");
                 Method getTileEntity = craftFurnace.getClass().getDeclaredMethod("getTileEntity");
-
-                inventoryField.setAccessible(true);
-
                 Object tileEntity = getTileEntity.invoke(craftFurnace);
                 Method a = tileEntity.getClass().getDeclaredMethod("a", String.class);
                 a.invoke(tileEntity, name);
-            } catch (Exception ignore) {
+            } catch (Exception | Error ignore) {
             }
+        } finally {
+            location.getBlock().getState().update(true);
         }
     }
 

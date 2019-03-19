@@ -1,4 +1,4 @@
-package com.songoda.epicfurnaces.hook;
+package com.songoda.epicfurnaces.hooks;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;

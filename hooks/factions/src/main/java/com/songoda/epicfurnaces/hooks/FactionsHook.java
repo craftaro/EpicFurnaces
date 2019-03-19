@@ -1,11 +1,7 @@
 package com.songoda.epicfurnaces.hooks;
 
-import com.songoda.epicfurnaces.hook.ClaimableProtectionPluginHook;
 import me.markeh.factionsframework.FactionsFramework;
-import me.markeh.factionsframework.entities.FPlayer;
-import me.markeh.factionsframework.entities.FPlayers;
-import me.markeh.factionsframework.entities.Faction;
-import me.markeh.factionsframework.entities.Factions;
+import me.markeh.factionsframework.entities.*;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;

@@ -1,6 +1,5 @@
 package com.songoda.epicfurnaces.hooks;
 
-import com.songoda.epicfurnaces.hook.ProtectionPluginHook;
 import me.ryanhamshire.GriefPrevention.Claim;
 import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import org.bukkit.Location;

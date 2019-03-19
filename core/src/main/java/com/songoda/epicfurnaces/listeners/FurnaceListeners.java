@@ -23,7 +23,7 @@ public class FurnaceListeners implements Listener {
 
     @EventHandler
     public void onCook(FurnaceSmeltEvent event) {
-        if ((event.getBlock().isBlockPowered() && instance.getConfig().getBoolean("Main.Redstone Deactivates Furnaces")) || event.getResult() == null) {
+        if ((event.getBlock().isBlockPowered() && instance.getConfig().getBoolean("Main.Redstone Deactivates Furnaces"))) {
             event.setCancelled(true);
             return;
         }
@@ -51,5 +51,6 @@ public class FurnaceListeners implements Listener {
         int num = level.getFuelDuration();
         int per = (event.getBurnTime() / 100) * num;
         event.setBurnTime(event.getBurnTime() + per);
+        System.out.println("editting burn time");
     }
 }
