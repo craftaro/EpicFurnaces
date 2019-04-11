@@ -3,7 +3,7 @@ stages:
 
 variables:
     name: "EpicFurnaces"
-    path: "/builds/Songoda/$name"
+    path: "/builds/$CI_PROJECT_PATH"
     version: "4.1.2"
 
 build:
