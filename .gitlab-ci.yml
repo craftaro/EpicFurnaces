@@ -1,10 +1,10 @@
 stages:
-- build
+  - build
 
 variables:
-    name: "EpicFurnaces"
-    path: "/builds/$CI_PROJECT_PATH"
-    version: "4.1.2"
+  name: "EpicFurnaces"
+  path: "/builds/$CI_PROJECT_PATH"
+  version: "4.1.2"
 
 build:
   stage: build
@@ -14,8 +14,8 @@ build:
     - find $path/ -type f -name "*.yml" -print0 | xargs -0 sed -i -e s/maven-version-number/$version/g
     - mvn clean package
     - find $path/ -depth -path '*original*' -delete
-    - mv -v $path/target/*.jar $path
+    - mv $path/core/target/*.jar $path/
   artifacts:
     name: $name-$version
     paths:
-    - "$path/*.jar"
+      - "$path/*.jar"
