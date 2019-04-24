@@ -4,12 +4,10 @@ import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.StorageItem;
 import com.songoda.epicfurnaces.storage.StorageRow;
-import org.apache.commons.io.FileUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class StorageYaml extends Storage {
@@ -72,7 +70,7 @@ public class StorageYaml extends Storage {
             File data = new File(instance.getDataFolder() + "/data.yml");
             File dataClone = new File(instance.getDataFolder() + "/backup/data-backup-" + System.currentTimeMillis() + ".yml");
             try {
-                FileUtils.copyFile(data, dataClone);
+                copyFile(data, dataClone);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -100,5 +98,22 @@ public class StorageYaml extends Storage {
     @Override
     public void closeConnection() {
         instance.save("data");
+    }
+
+    private static void copyFile(File source, File dest) throws IOException {
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(source);
+            os = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } finally {
+            is.close();
+            os.close();
+        }
     }
 }
