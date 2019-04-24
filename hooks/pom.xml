@@ -25,8 +25,6 @@
         <module>griefprevention</module>
         <module>worldguard6</module>
         <module>worldguard7</module>
-        <module>craftbukkit-1-8</module>
-        <module>craftbukkit-1-13</module>
         <module>fabledskyblock</module>
     </modules>
 </project>
