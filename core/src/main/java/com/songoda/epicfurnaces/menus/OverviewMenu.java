@@ -53,8 +53,6 @@ public class OverviewMenu extends FastInv {
             for (String line : parts) {
                 currentLevel.addLore(StringUtils.formatText(line));
             }
-
-
         }
 
         fill(Methods.getGlass());
@@ -199,13 +197,13 @@ public class OverviewMenu extends FastInv {
         if (instance.getConfig().getBoolean("Main.Upgrade With XP") && accessor.hasPermission("EpicFurnaces.Upgrade.XP")) {
             addItem(11, xp.build(), event -> {
                 furnace.upgrade("XP", event.getPlayer());
-                event.getPlayer().closeInventory();
+                furnace.openOverview(event.getPlayer());
             });
         }
         if (instance.getConfig().getBoolean("Main.Upgrade With Economy") && accessor.hasPermission("EpicFurnaces.Upgrade.ECO")) {
             addItem(15, eco.build(), event -> {
                 furnace.upgrade("ECO", event.getPlayer());
-                event.getPlayer().closeInventory();
+                furnace.openOverview(event.getPlayer());
             });
         }
 

@@ -5,6 +5,7 @@ import com.songoda.epicfurnaces.objects.FurnaceObject;
 import com.songoda.epicfurnaces.objects.FurnaceObject.BoostType;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.Furnace;
@@ -163,7 +164,8 @@ public class FurnaceTask extends BukkitRunnable {
 
     private void broadcastParticles(Location location) {
         if (instance.getConfig().getBoolean("Main.Overheat Particles")) {
-            instance.getCraftBukkitHook().broadcastParticle(location, "SMOKE", 25, "SMOKE_NORMAL");
+            if (instance.getCurrentVersion() > 8)
+                location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location.getX(), location.getY(), location.getZ(), 25, 0, 0, 0, 0);
         }
     }
 }
