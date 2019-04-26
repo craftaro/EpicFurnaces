@@ -53,7 +53,6 @@ public class EpicFurnaces extends JavaPlugin {
     private Storage storage;
     private HologramManager hologramManager;
     private Economy economy;
-    private CraftBukkitHook craftBukkitHook;
     private int currentVersion;
 
     @Override
@@ -264,7 +263,6 @@ public class EpicFurnaces extends JavaPlugin {
     private boolean checkVersion() {
         String version = getServer().getClass().getPackage().getName().split("\\.")[3];
         currentVersion = Integer.parseInt(version.split("_")[1]);
-        craftBukkitHook = currentVersion >= 13 ? new CraftBukkitHook113() : new CraftBukkitHook18();
         int workingVersion = 8;
 
         if (currentVersion < workingVersion) {
@@ -342,7 +340,7 @@ public class EpicFurnaces extends JavaPlugin {
         return economy;
     }
 
-    public CraftBukkitHook getCraftBukkitHook() {
-        return craftBukkitHook;
+    public int getCurrentVersion() {
+        return currentVersion;
     }
 }

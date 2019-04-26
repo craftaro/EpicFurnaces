@@ -110,10 +110,6 @@ public class FurnaceObject {
         BoostData boostData = instance.getBoostManager().getBoost(placedBy);
         r = r * (boostData == null ? 1 : boostData.getMultiplier());
 
-        if (e.getResult() == null) {
-            return;
-        }
-
         e.getResult().setAmount(e.getResult().getAmount() + r);
     }
 
@@ -155,10 +151,12 @@ public class FurnaceObject {
         }
 
         Location loc = location.clone().add(.5, .5, .5);
-        instance.getCraftBukkitHook().broadcastParticle(loc, instance.getConfig().getString("Main.Upgrade Particle Type"), 200);
+
+        if (instance.getCurrentVersion() > 8)
+            location.getWorld().spawnParticle(Particle.valueOf(instance.getConfig().getString("Main.Upgrade Particle Type")), loc.getX(), loc.getY(), loc.getZ(), 200, .5, .5, .5);
 
         if (instance.getConfig().getBoolean("Main.Sounds Enabled")) {
-            if (instance.getLevelManager().getHighestLevel() == level) {
+            if (instance.getLevelManager().getHighestLevel() != level) {
                 player.playSound(player.getLocation(), instance.getBukkitEnums().getSound("ENTITY_PLAYER_LEVELUP"), 0.6F, 15.0F);
             } else {
                 player.playSound(player.getLocation(), instance.getBukkitEnums().getSound("ENTITY_PLAYER_LEVELUP"), 2F, 25.0F);

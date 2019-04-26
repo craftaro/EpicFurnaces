@@ -1,5 +1,5 @@
 name: EpicFurnaces
-version: ${project.version}
+version: maven-version-number
 main: com.songoda.epicfurnaces.EpicFurnaces
 authors: [Brianna, GB6]
 website: https://songoda.com/
