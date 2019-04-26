@@ -14,6 +14,9 @@ import com.songoda.epicfurnaces.utils.BukkitEnums;
 import com.songoda.epicfurnaces.utils.Methods;
 import com.songoda.epicfurnaces.utils.StringUtils;
 import com.songoda.epicfurnaces.utils.gui.FastInv;
+import com.songoda.epicfurnaces.utils.updateModules.LocaleModule;
+import com.songoda.update.Plugin;
+import com.songoda.update.SongodaUpdate;
 import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -86,9 +89,11 @@ public class EpicFurnaces extends JavaPlugin {
         Locale.saveDefaultLocale("en_US");
         this.locale = Locale.getLocale(getConfig().getString("System.Language Mode", langMode));
 
-        if (getConfig().getBoolean("System.Download Needed Data Files")) {
-            this.update();
-        }
+
+        //Running Songoda Updater
+        Plugin plugin = new Plugin(this, 22);
+        plugin.addModule(new LocaleModule());
+        SongodaUpdate.load(plugin);
 
         FastInv.init(this);
         Methods.init(this);
@@ -183,36 +188,6 @@ public class EpicFurnaces extends JavaPlugin {
         furnaceManager.saveToFile();
         boostManager.saveToFile();
         storage.doSave();
-    }
-
-    private void update() {
-        try {
-            URL url = new URL("http://update.songoda.com/index.php?plugin=" + getDescription().getName() + "&version=" + getDescription().getVersion());
-            URLConnection urlConnection = url.openConnection();
-            InputStream is = urlConnection.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-
-            int numCharsRead;
-            char[] charArray = new char[1024];
-            StringBuilder sb = new StringBuilder();
-            while ((numCharsRead = isr.read(charArray)) > 0) {
-                sb.append(charArray, 0, numCharsRead);
-            }
-            String jsonString = sb.toString();
-            JSONObject json = (JSONObject) new JSONParser().parse(jsonString);
-
-            JSONArray files = (JSONArray) json.get("neededFiles");
-            for (Object o : files) {
-                JSONObject file = (JSONObject) o;
-
-                if ("locale".equals(file.get("type"))) {
-                    InputStream in = new URL((String) file.get("link")).openStream();
-                    Locale.saveDefaultLocale(in, (String) file.get("name"));
-                }
-            }
-        } catch (Exception e) {
-            Bukkit.getLogger().warning("Failed to update.");
-        }
     }
 
     public void reload() {
