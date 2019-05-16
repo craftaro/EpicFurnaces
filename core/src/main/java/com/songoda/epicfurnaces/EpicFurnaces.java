@@ -2,9 +2,14 @@ package com.songoda.epicfurnaces;
 
 import com.songoda.epicfurnaces.command.CommandManager;
 import com.songoda.epicfurnaces.handlers.BlacklistHandler;
-import com.songoda.epicfurnaces.hooks.*;
-import com.songoda.epicfurnaces.listeners.*;
-import com.songoda.epicfurnaces.managers.*;
+import com.songoda.epicfurnaces.listeners.BlockListeners;
+import com.songoda.epicfurnaces.listeners.FurnaceListeners;
+import com.songoda.epicfurnaces.listeners.InteractListeners;
+import com.songoda.epicfurnaces.listeners.InventoryListeners;
+import com.songoda.epicfurnaces.managers.BoostManager;
+import com.songoda.epicfurnaces.managers.FurnaceManager;
+import com.songoda.epicfurnaces.managers.HologramManager;
+import com.songoda.epicfurnaces.managers.LevelManager;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.types.StorageMysql;
 import com.songoda.epicfurnaces.storage.types.StorageYaml;
@@ -31,14 +36,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
-import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
 
 import static com.songoda.epicfurnaces.utils.StringUtils.formatText;
 import static java.util.Arrays.asList;
@@ -50,7 +54,6 @@ public class EpicFurnaces extends JavaPlugin {
     private BukkitEnums bukkitEnums;
     private CommandManager commandManager;
     private FurnaceManager furnaceManager;
-    private HookManager hookManager;
     private LevelManager levelManager;
     private Locale locale;
     private Storage storage;
@@ -105,7 +108,6 @@ public class EpicFurnaces extends JavaPlugin {
         this.blacklistHandler = new BlacklistHandler(this);
         this.bukkitEnums = new BukkitEnums(this);
         this.levelManager = new LevelManager(this);
-        this.hookManager = new HookManager(this);
 
         if (!setupEconomy()) {
             getLogger().severe("Economy provider not found/not supported, disabling...");
@@ -138,25 +140,6 @@ public class EpicFurnaces extends JavaPlugin {
                 new FurnaceListeners(this),
                 new InteractListeners(this),
                 new InventoryListeners(this))).forEach(listener -> pluginManager.registerEvents(listener, this));
-
-        // Register default hooks
-        if (pluginManager.isPluginEnabled("ASkyBlock")) hookManager.register(ASkyBlockHook::new);
-        if (pluginManager.isPluginEnabled("FactionsFramework")) hookManager.register(FactionsHook::new);
-        if (pluginManager.isPluginEnabled("GriefPrevention")) hookManager.register(GriefPreventionHook::new);
-        if (pluginManager.isPluginEnabled("Kingdoms")) hookManager.register(KingdomsHook::new);
-        if (pluginManager.isPluginEnabled("PlotSquared")) hookManager.register(PlotSquaredHook::new);
-        if (pluginManager.isPluginEnabled("RedProtect")) hookManager.register(RedProtectHook::new);
-        if (pluginManager.isPluginEnabled("Towny")) hookManager.register(TownyHook::new);
-        if (pluginManager.isPluginEnabled("USkyBlock")) hookManager.register(USkyBlockHook::new);
-        if (pluginManager.isPluginEnabled("FabledSkyBlock")) hookManager.register(FabledSkyBlockHook::new);
-
-        if (pluginManager.isPluginEnabled("WorldGuard")) {
-            if (currentVersion >= 13) {
-                hookManager.register(WorldGuard7Hook::new);
-            } else {
-                hookManager.register(WorldGuard6Hook::new);
-            }
-        }
 
         new Metrics(this);
 
@@ -294,10 +277,6 @@ public class EpicFurnaces extends JavaPlugin {
 
     public Optional<HologramManager> getHologramManager() {
         return Optional.ofNullable(hologramManager);
-    }
-
-    public HookManager getHookManager() {
-        return hookManager;
     }
 
     public Storage getStorage() {

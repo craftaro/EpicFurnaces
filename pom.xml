@@ -9,7 +9,6 @@
 
     <modules>
         <module>core</module>
-        <module>hooks</module>
     </modules>
 
     <build>
