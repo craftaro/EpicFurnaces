@@ -125,7 +125,7 @@ public class EpicFurnaces extends JavaPlugin {
         int timeout = getConfig().getInt("Main.Auto Save Interval In Seconds") * 60 * 20;
 
         Bukkit.getScheduler().runTaskLater(this, furnaceManager::loadFurnaces, 10);
-        Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::saveToFile, timeout, timeout);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> storage.doSave(), timeout, timeout);
 
         // Start Tasks
         HologramTask.startTask(this);
@@ -171,7 +171,8 @@ public class EpicFurnaces extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(formatText("&a============================="));
         getHologramManager().ifPresent(HologramManager::clearAll);
         this.hologramManager = null;
-        saveToFile();
+        storage.doSave();
+        storage.closeConnection();
     }
 
     private void checkStorage() {
@@ -180,14 +181,6 @@ public class EpicFurnaces extends JavaPlugin {
         } else {
             this.storage = new StorageYaml(this);
         }
-    }
-
-    private void saveToFile() {
-        this.storage.closeConnection();
-        checkStorage();
-        furnaceManager.saveToFile();
-        boostManager.saveToFile();
-        storage.doSave();
     }
 
     public void reload() {

@@ -126,24 +126,6 @@ public class FurnaceManager {
         getFurnaces().values().forEach(furnace -> instance.getHologramManager().ifPresent(manager -> manager.updateHologram(furnace)));
     }
 
-    public void saveToFile() {
-        for (FurnaceObject furnace : getFurnaces().values()) {
-            if (furnace == null || furnace.getLocation() == null || furnace.getLocation().getWorld() == null) {
-                continue;
-            }
-            String locationStr = Methods.serializeLocation(furnace.getLocation());
-
-            instance.getStorage().prepareSaveItem("charged",
-                    new StorageItem("location", locationStr),
-                    new StorageItem("level", furnace.getLevel().getLevel()),
-                    new StorageItem("uses", furnace.getUses()),
-                    new StorageItem("tolevel", furnace.getToLevel()),
-                    new StorageItem("nickname", furnace.getNickname()),
-                    new StorageItem("accesslist", furnace.getOriginalAccessList()),
-                    new StorageItem("placedby", furnace.getPlacedBy() == null ? null : furnace.getPlacedBy().toString()));
-        }
-    }
-
     public Map<Location, FurnaceObject> getFurnaces() {
         return Collections.unmodifiableMap(registeredFurnaces);
     }

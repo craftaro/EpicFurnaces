@@ -39,12 +39,4 @@ public class BoostManager {
         }
         return null;
     }
-
-    public void saveToFile() {
-        for (BoostData boostData : getBoosts()) {
-            instance.getStorage().prepareSaveItem("boosts", new StorageItem("endtime", String.valueOf(boostData.getEndTime())),
-                    new StorageItem("amount", boostData.getMultiplier()),
-                    new StorageItem("uuid", boostData.getPlayer().toString()));
-        }
-    }
 }
