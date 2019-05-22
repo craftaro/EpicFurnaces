@@ -30,7 +30,7 @@ public class HologramTask extends BukkitRunnable {
         }
 
         instance.getFurnaceManager().getFurnaces().values().stream()
-                .filter(furnace -> furnace.getLocation() != null && furnace.getLocation().getWorld() != null && furnace.getLocation().getBlock() != null)
+                .filter(furnace -> furnace.getLocation().getBlock() != null)
                 .forEach(furnace -> instance.getHologramManager().ifPresent(manager -> manager.updateHologram(furnace)));
     }
 }

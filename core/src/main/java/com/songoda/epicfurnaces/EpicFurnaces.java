@@ -26,12 +26,14 @@ import net.milkbowl.vault.economy.Economy;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.FurnaceRecipe;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -156,6 +158,11 @@ public class EpicFurnaces extends JavaPlugin {
         this.hologramManager = null;
         storage.doSave();
         storage.closeConnection();
+
+        Map<Inventory, Location> loadedFurnaceInventories = this.furnaceManager.getLoadedFurnaceInventories();
+        for (Inventory inventory : loadedFurnaceInventories.keySet())
+            loadedFurnaceInventories.get(inventory).getChunk().load();
+        loadedFurnaceInventories.clear();
     }
 
     private void checkStorage() {

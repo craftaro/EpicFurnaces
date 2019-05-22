@@ -35,7 +35,7 @@ public class CommandRemote extends AbstractCommand {
 
         String furnaceName = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
-        for (FurnaceObject furnace : instance.getFurnaceManager().getFurnaces().values()) {
+        for (FurnaceObject furnace : instance.getFurnaceManager().getAllFurnaces().values()) {
             if (furnace.getNickname() == null) {
                 continue;
             }
@@ -50,6 +50,10 @@ public class CommandRemote extends AbstractCommand {
                 }
 
                 Furnace furnaceBlock = (Furnace) furnace.getLocation().getBlock().getState();
+
+                this.instance.getFurnaceManager().getLoadedFurnaceInventories().put(furnaceBlock.getInventory(), furnaceBlock.getLocation());
+                furnaceBlock.getChunk().load();
+
                 ((Player) sender).openInventory(furnaceBlock.getInventory());
                 return ReturnType.SUCCESS;
             }

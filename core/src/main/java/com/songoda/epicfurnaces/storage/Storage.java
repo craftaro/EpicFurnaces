@@ -29,7 +29,7 @@ public abstract class Storage {
 
     public void updateData(EpicFurnaces instance) {
         // Save game data
-        for (FurnaceObject furnace : instance.getFurnaceManager().getFurnaces().values()) {
+        for (FurnaceObject furnace : instance.getFurnaceManager().getAllFurnaces().values()) {
             if (furnace == null || furnace.getLocation() == null || furnace.getLocation().getWorld() == null) {
                 continue;
             }

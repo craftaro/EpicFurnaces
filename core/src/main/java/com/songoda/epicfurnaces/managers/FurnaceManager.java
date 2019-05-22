@@ -10,6 +10,7 @@ import com.songoda.epicfurnaces.utils.Methods;
 import com.songoda.epicfurnaces.utils.gui.ItemBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Location;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
@@ -19,6 +20,7 @@ import static org.bukkit.Material.FURNACE;
 public class FurnaceManager {
 
     private final Map<Location, FurnaceObject> registeredFurnaces = new HashMap<>();
+    private final Map<Inventory, Location> loadedFurnaceInventories = new HashMap<>();
     private final EpicFurnaces instance;
 
     public FurnaceManager(EpicFurnaces instance) {
@@ -126,7 +128,30 @@ public class FurnaceManager {
         getFurnaces().values().forEach(furnace -> instance.getHologramManager().ifPresent(manager -> manager.updateHologram(furnace)));
     }
 
+    public Map<Inventory, Location> getLoadedFurnaceInventories() {
+        return this.loadedFurnaceInventories;
+    }
+
+    /**
+     * Gets a Map of all furnaces that are in loaded chunks
+     *
+     * @return All furnaces in memory that are in loaded chunks
+     */
     public Map<Location, FurnaceObject> getFurnaces() {
-        return Collections.unmodifiableMap(registeredFurnaces);
+        Map<Location, FurnaceObject> furnaces = new HashMap<>();
+        for (Location location : this.registeredFurnaces.keySet())
+            if (location.getWorld() != null && location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4))
+                furnaces.put(location, this.registeredFurnaces.get(location));
+        return furnaces;
+    }
+
+    /**
+     * Gets a Map of all furnaces, regardless if they are in loaded chunks or not.
+     * Getting the furnace's block in an unloaded chunk will load the chunk.
+     *
+     * @return All furnaces in memory
+     */
+    public Map<Location, FurnaceObject> getAllFurnaces() {
+        return Collections.unmodifiableMap(this.registeredFurnaces);
     }
 }

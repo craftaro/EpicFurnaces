@@ -3,6 +3,7 @@ package com.songoda.epicfurnaces.objects;
 import com.songoda.epicfurnaces.EpicFurnaces;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Level {
@@ -39,7 +40,7 @@ public class Level {
 
 
     public List<String> getDescription() {
-        return new ArrayList<>(description);
+        return Collections.unmodifiableList(description);
     }
 
 
