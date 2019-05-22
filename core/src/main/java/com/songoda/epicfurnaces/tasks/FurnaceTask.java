@@ -45,13 +45,6 @@ public class FurnaceTask extends BukkitRunnable {
                 continue;
             }
 
-            int x = furnaceLocation.getBlockX() >> 4;
-            int z = furnaceLocation.getBlockZ() >> 4;
-
-            if (!furnaceLocation.getWorld().isChunkLoaded(x, z)) {
-                continue;
-            }
-
             if (furnace.getLocation().getBlock().getType() != Material.FURNACE &&
                     furnace.getLocation().getBlock().getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
                 continue;
@@ -135,7 +128,7 @@ public class FurnaceTask extends BukkitRunnable {
             Furnace furnaceBlock = ((Furnace) block.getState());
 
             if (furnaceBlock.getBurnTime() == 0) {
-                furnaceBlock.setBurnTime((short) 200);
+                furnaceBlock.setBurnTime((short) 205);
                 furnaceBlock.update();
                 broadcastParticles(location);
             }

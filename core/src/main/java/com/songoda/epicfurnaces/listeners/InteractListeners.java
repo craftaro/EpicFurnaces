@@ -35,7 +35,6 @@ public class InteractListeners implements Listener {
         Block block = event.getClickedBlock();
 
         if (!player.hasPermission("EpicFurnaces.overview")
-                || !instance.getHookManager().canBuild(player, event.getClickedBlock().getLocation())
                 || event.getAction() != Action.LEFT_CLICK_BLOCK
                 || player.isSneaking()
                 || (block.getType() != Material.FURNACE && block.getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType())

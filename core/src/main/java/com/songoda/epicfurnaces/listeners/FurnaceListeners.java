@@ -51,6 +51,5 @@ public class FurnaceListeners implements Listener {
         int num = level.getFuelDuration();
         int per = (event.getBurnTime() / 100) * num;
         event.setBurnTime(event.getBurnTime() + per);
-        System.out.println("editting burn time");
     }
 }

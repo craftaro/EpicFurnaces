@@ -2,14 +2,20 @@ package com.songoda.epicfurnaces.listeners;
 
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.objects.FurnaceObject;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Furnace;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Map;
 
 import static org.bukkit.event.inventory.InventoryAction.NOTHING;
 import static org.bukkit.event.inventory.InventoryType.*;
@@ -24,6 +30,18 @@ public class InventoryListeners implements Listener {
 
     public InventoryListeners(EpicFurnaces instance) {
         this.instance = instance;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onInventoryClose(InventoryCloseEvent event) {
+        Inventory inventory = event.getInventory();
+        Map<Inventory, Location> loadedFurnaceInventories = this.instance.getFurnaceManager().getLoadedFurnaceInventories();
+        Location location = loadedFurnaceInventories.get(inventory);
+        if (location == null)
+            return;
+
+        location.getChunk().unload();
+        loadedFurnaceInventories.remove(inventory);
     }
 
     @EventHandler
@@ -42,8 +60,7 @@ public class InventoryListeners implements Listener {
         if (event.getInventory().getType().equals(FURNACE)
                 && event.getInventory().getHolder() != null
                 && event.getSlotType() == CRAFTING) {
-            Block block;
-            block = ((Furnace) event.getInventory().getHolder()).getLocation().getBlock();
+            Block block = ((Furnace) event.getInventory().getHolder()).getLocation().getBlock();
             instance.getFurnaceManager().getFurnace(block.getLocation()).ifPresent(FurnaceObject::updateCook);
         }
 

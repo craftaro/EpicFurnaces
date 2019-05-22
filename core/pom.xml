@@ -131,76 +131,10 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>askyblock</artifactId>
-            <version>maven-version-number</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>factions</artifactId>
-            <version>maven-version-number</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>griefprevention</artifactId>
-            <version>maven-version-number</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>kingdoms</artifactId>
-            <version>maven-version-number</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>plotsquared</artifactId>
-            <version>maven-version-number</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>redprotect</artifactId>
-            <version>maven-version-number</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>towny</artifactId>
-            <version>maven-version-number</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>uskyblock</artifactId>
-            <version>maven-version-number</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>worldguard</artifactId>
-            <version>maven-version-number</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>worldguard6</artifactId>
-            <version>maven-version-number</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>net.milkbowl</groupId>
             <artifactId>vault</artifactId>
             <version>1.7.1</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.songoda</groupId>
-            <artifactId>fabledskyblock</artifactId>
-            <version>maven-version-number</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

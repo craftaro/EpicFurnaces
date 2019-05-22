@@ -39,7 +39,7 @@ public class MySQLDatabase {
                     ")");
 
         } catch (ClassNotFoundException | SQLException e) {
-            System.out.println("Database connection failed.");
+            instance.getLogger().severe("Database connection failed.");
         }
     }
 

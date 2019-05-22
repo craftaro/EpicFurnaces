@@ -165,7 +165,7 @@ public class OverviewMenu extends FastInv {
                     event.getPlayer().sendMessage(instance.getLocale().getPrefix() + instance.getLocale().getMessage("event.remote.enter"));
 
                     AbstractAnvilGUI anvilGUI = new AbstractAnvilGUI(instance, event.getPlayer(), anvilEvent -> {
-                        for (FurnaceObject other : instance.getFurnaceManager().getFurnaces().values()) {
+                        for (FurnaceObject other : instance.getFurnaceManager().getAllFurnaces().values()) {
                             if (other.getNickname() == null) {
                                 continue;
                             }
