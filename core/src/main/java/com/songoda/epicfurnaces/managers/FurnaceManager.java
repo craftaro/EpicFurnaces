@@ -94,8 +94,8 @@ public class FurnaceManager {
         if (storage.containsGroup("charged")) {
             for (StorageRow row : storage.getRowsByGroup("charged")) {
                 Location location = Methods.deserializeLocation(row.getKey());
-                if (location == null || location.getBlock() == null) {
-                    return;
+                if (location == null || location.getWorld() == null) {
+                    continue;
                 }
 
                 int level = row.get("level").asInt();
