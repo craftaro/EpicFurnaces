@@ -1,10 +1,11 @@
 name: EpicFurnaces
 version: maven-version-number
 main: com.songoda.epicfurnaces.EpicFurnaces
-authors: [Brianna, GB6]
+author: Songoda
 website: https://songoda.com/
 depend: [Vault]
 softdepend: [PlotSquared, GriefPrevention, USkyBlock, SkyBlock, WorldGuard, Factions, HolographicDisplays, FabledSkyBlock]
+api-version: 1.13
 commands:
   epicfurnaces:
     description: Default command for the EpicFurnaces plugin.
