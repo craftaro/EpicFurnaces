@@ -23,11 +23,8 @@ public class InteractListeners implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onClick(PlayerInteractEvent event) {
-        if (event.getClickedBlock() == null) {
-            return;
-        }
-
-        if (instance.getBlacklistHandler().isBlacklisted(event.getPlayer())) {
+        if (event.getClickedBlock() == null
+                && instance.getBlacklistHandler().isBlacklisted(event.getPlayer())) {
             return;
         }
 
@@ -37,11 +34,10 @@ public class InteractListeners implements Listener {
         if (!player.hasPermission("EpicFurnaces.overview")
                 || event.getAction() != Action.LEFT_CLICK_BLOCK
                 || player.isSneaking()
-                || (block.getType() != Material.FURNACE && block.getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType())
+                || (block.getType() != Material.FURNACE && !block.getType().name().equals("BURNING_FURNACE"))
                 || player.getInventory().getItemInHand().getType().name().contains("PICKAXE")) {
             return;
         }
-
         event.setCancelled(true);
         instance.getFurnaceManager().getFurnace(block.getLocation()).orElseGet(() -> instance.getFurnaceManager().createFurnace(block.getLocation())).openOverview(player);
     }

@@ -55,7 +55,7 @@ public class FurnaceObject {
 
     public void plus(FurnaceSmeltEvent e) {
         Block block = location.getBlock();
-        if (block.getType() != Material.FURNACE && block.getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
+        if (block.getType() != Material.FURNACE && !block.getType().name().equals("BURNING_FURNACE")) {
             return;
         }
 
@@ -168,7 +168,7 @@ public class FurnaceObject {
     }
 
     private void syncName() {
-        if (location.getBlock().getType() != Material.FURNACE && location.getBlock().getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
+        if (location.getBlock().getType() != Material.FURNACE && !location.getBlock().getType().name().equals("BURNING_FURNACE")) {
             return;
         }
 
@@ -194,7 +194,7 @@ public class FurnaceObject {
 
     public void updateCook() {
         Block block = location.getBlock();
-        if (block == null || (block.getType() != Material.FURNACE && block.getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType())) {
+        if (block == null || (block.getType() != Material.FURNACE && !block.getType().name().equals("BURNING_FURNACE"))) {
             return;
         }
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(instance, () -> {

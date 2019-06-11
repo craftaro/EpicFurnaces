@@ -92,7 +92,7 @@ public class BlockListeners implements Listener {
             return;
         }
 
-        if (event.getBlock().getType() != Material.FURNACE && event.getBlock().getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
+        if (event.getBlock().getType() != Material.FURNACE && !event.getBlock().getType().name().equals("BURNING_FURNACE")) {
             return;
         }
 

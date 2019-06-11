@@ -46,7 +46,7 @@ public class FurnaceTask extends BukkitRunnable {
             }
 
             if (furnace.getLocation().getBlock().getType() != Material.FURNACE &&
-                    furnace.getLocation().getBlock().getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
+                    !furnace.getLocation().getBlock().getType().name().equals("BURNING_FURNACE")) {
                 continue;
             }
 
@@ -111,7 +111,7 @@ public class FurnaceTask extends BukkitRunnable {
 
             Block block = location.getBlock();
 
-            if (block.getType() != Material.FURNACE && block.getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
+            if (block.getType() != Material.FURNACE && !block.getType().name().equals("BURNING_FURNACE")) {
                 continue;
             }
 

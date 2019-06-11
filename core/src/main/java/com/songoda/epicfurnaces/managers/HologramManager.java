@@ -28,7 +28,7 @@ public class HologramManager {
     public void updateHologram(FurnaceObject furnaceObject) {
         Bukkit.getScheduler().scheduleSyncDelayedTask(instance, () -> {
             if (furnaceObject.getLocation().getBlock().getType() != Material.FURNACE &&
-                    furnaceObject.getLocation().getBlock().getType() != instance.getBukkitEnums().getMaterial("BURNING_FURNACE").getType()) {
+                    !furnaceObject.getLocation().getBlock().getType().name().equals("BURNING_FURNACE")) {
                 if (hologramMap.containsKey(furnaceObject)) {
                     hologramMap.remove(furnaceObject).delete();
                 }
