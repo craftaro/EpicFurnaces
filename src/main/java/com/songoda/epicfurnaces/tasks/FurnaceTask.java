@@ -128,9 +128,7 @@ public class FurnaceTask extends BukkitRunnable {
                     if (EpicFurnaces.getInstance().isServerVersionAtLeast(ServerVersion.V1_9))
                         location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 25, xx, yy, zz, 1);
                 }
-
             }
-
         }
     }
 

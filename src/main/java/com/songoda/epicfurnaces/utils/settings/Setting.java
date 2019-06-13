@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public enum Setting {
 
-    o3("Main.Upgrade By Smelting Materials", true),
+    UPGRADE_BY_SMELTING("Main.Upgrade By Smelting Materials", true),
 
     UPGRADE_WITH_ECONOMY("Main.Upgrade With Economy", true,
             "Should you be able to upgrade furnaces with economy?"),
@@ -23,32 +23,32 @@ public enum Setting {
             "restarts. With that said it is advised to keep this enabled.",
             "If however you enjoy living on the edge, feel free to turn it off."),
 
-    o6("Main.Level Cost Multiplier", 50),
+    LEVEL_MULTIPLIER("Main.Level Cost Multiplier", 50),
 
-    o102("Main.Remember Furnace Item Levels", true),
+    FURNACE_ITEM("Main.Remember Furnace Item Levels", true,
+            "Should furnace levels be remembered when broken?"),
 
     HOLOGRAMS("Main.Furnaces Have Holograms", true),
 
-    o324("Main.Redstone Deactivates Furnaces", true),
+    REDSTONE_DEACTIVATES("Main.Redstone Deactivates Furnaces", true),
 
-    o11("Main.Furnace Upgrade Cost", "IRON_INGOT"),
-    o12("Main.Use Custom Recipes", true),
-    o13("Main.No Rewards From Custom Recipes", true),
+    UPGRADE_COST("Main.Furnace Upgrade Cost", "IRON_INGOT"),
+    CUSTOM_RECIPES("Main.Use Custom Recipes", true),
+    NO_REWARDS_FROM_RECIPES("Main.No Rewards From Custom Recipes", true),
 
     PARTICLE_TYPE("Main.Upgrade Particle Type", "SPELL_WITCH",
             "The type of particle shown when a furnace is upgraded."),
 
-    o18("Main.Access Furnaces Remotely", true),
+    REMOTE("Main.Access Furnaces Remotely", true),
 
-    o543("Main.Furnace Tick Speed", 10),
-    o5423("Main.Auto Save Interval In Seconds", 15),
-    o54("Main.Overheat Particles", true),
+    TICK_SPEED("Main.Furnace Tick Speed", 10),
+    OVERHEAT_PARTICLES("Main.Overheat Particles", true),
 
-    o14("Interfaces.Reward Icon", "GOLDEN_APPLE"),
-    o15("Interfaces.Performance Icon", "REDSTONE"),
-    o16("Interfaces.FuelShare Icon", "COAL_BLOCK"),
-    o316("Interfaces.FuelDuration Icon", "COAL"),
-    o162("Interfaces.Overheat Icon", "FIRE_CHARGE"),
+    REWARD_ICON("Interfaces.Reward Icon", "GOLDEN_APPLE"),
+    PERFORMANCE_ICON("Interfaces.Performance Icon", "REDSTONE"),
+    FUEL_SHARE_ICON("Interfaces.FuelShare Icon", "COAL_BLOCK"),
+    FUEL_DURATION_ICON("Interfaces.FuelDuration Icon", "COAL"),
+    OVERHEAT_ICON("Interfaces.Overheat Icon", EpicFurnaces.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ? "FIRE_CHARGE" : "FIREWORK_CHARGE"),
 
     VAULT_ECONOMY("Economy.Use Vault Economy", true,
             "Should Vault be used?"),
