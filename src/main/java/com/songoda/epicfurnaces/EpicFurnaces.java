@@ -18,6 +18,7 @@ import com.songoda.epicfurnaces.storage.StorageRow;
 import com.songoda.epicfurnaces.storage.types.StorageMysql;
 import com.songoda.epicfurnaces.storage.types.StorageYaml;
 import com.songoda.epicfurnaces.tasks.FurnaceTask;
+import com.songoda.epicfurnaces.tasks.HologramTask;
 import com.songoda.epicfurnaces.utils.ConfigWrapper;
 import com.songoda.epicfurnaces.utils.Methods;
 import com.songoda.epicfurnaces.utils.Metrics;
@@ -124,6 +125,7 @@ public class EpicFurnaces extends JavaPlugin {
 
         // Start Tasks
         FurnaceTask.startTask(this);
+        HologramTask.startTask(this);
 
         PluginManager pluginManager = Bukkit.getPluginManager();
 

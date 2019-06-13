@@ -34,7 +34,7 @@ public class InteractListeners implements Listener {
         if (!player.hasPermission("EpicFurnaces.overview")
                 || event.getAction() != Action.LEFT_CLICK_BLOCK
                 || player.isSneaking()
-                || (block.getType() != Material.FURNACE)
+                || (!block.getType().name().contains("FURNACE"))
                 || player.getInventory().getItemInHand().getType().name().contains("PICKAXE")) {
             return;
         }

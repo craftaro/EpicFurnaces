@@ -80,7 +80,7 @@ public class BlockListeners implements Listener {
             return;
         }
         Block block = event.getBlock();
-        if (block.getType() != Material.FURNACE) {
+        if (!block.getType().name().contains("FURNACE")) {
             return;
         }
         if (plugin.getBlacklistHandler().isBlacklisted(event.getPlayer())) {

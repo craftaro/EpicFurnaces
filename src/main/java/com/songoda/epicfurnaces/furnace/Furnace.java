@@ -61,7 +61,7 @@ public class Furnace {
 
     public void plus(FurnaceSmeltEvent e) {
         Block block = location.getBlock();
-        if (block.getType() != Material.FURNACE) return;
+        if (!block.getType().name().contains("FURNACE")) return;
 
         this.uses++;
         this.tolevel++;
@@ -115,12 +115,7 @@ public class Furnace {
         r = r * (boostData == null ? 1 : boostData.getMultiplier());
 
 
-        if (e.getResult() != null) {
-            e.getResult().setAmount(e.getResult().getAmount() + r);
-            return;
-        }
-
-        e.setResult(new ItemStack(e.getResult().getType(), r));
+        e.getResult().setAmount(e.getResult().getAmount() + r);
     }
 
     public void upgrade(Player player, CostType type) {
@@ -190,8 +185,7 @@ public class Furnace {
 
     public void updateCook() {
         Block block = location.getBlock();
-        if (block == null
-                || block.getType() != Material.FURNACE && !block.getType().name().equals("BURNING_FURNACE")) return;
+        if (!block.getType().name().contains("FURNACE")) return;
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             int num = getPerformanceTotal();

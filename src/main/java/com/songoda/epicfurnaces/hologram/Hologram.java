@@ -22,7 +22,7 @@ public abstract class Hologram {
         for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
             if (furnace.getLocation() == null || furnace.getLocation().getWorld() == null)
                 continue;
-            if (furnace.getLocation().getBlock().getType() != Material.FURNACE) continue;
+            if (!furnace.getLocation().getBlock().getType().name().contains("FURNACE")) continue;
 
             add(furnace);
         }
@@ -32,7 +32,7 @@ public abstract class Hologram {
         for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
             if (furnace.getLocation() == null || furnace.getLocation().getWorld() == null)
                 continue;
-            if (furnace.getLocation().getBlock().getType() != Material.FURNACE) continue;
+            if (!furnace.getLocation().getBlock().getType().name().contains("FURNACE")) continue;
 
             remove(furnace);
         }

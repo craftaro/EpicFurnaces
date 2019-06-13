@@ -50,7 +50,7 @@ public class FurnaceTask extends BukkitRunnable {
                 continue;
             }
 
-            if (furnace.getLocation().getBlock().getType() != Material.FURNACE)
+            if (!furnace.getLocation().getBlock().getType().name().contains("FURNACE"))
                 continue;
 
             if (((org.bukkit.block.Furnace) furnaceLocation.getBlock().getState()).getBurnTime() == 0) continue;
@@ -88,7 +88,7 @@ public class FurnaceTask extends BukkitRunnable {
                 float zz = (float) (0 + (Math.random() * .75));
 
                 if (EpicFurnaces.getInstance().isServerVersionAtLeast(ServerVersion.V1_9))
-                    location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 25, xx, yy, zz, 1);
+                    location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 25, xx, yy, zz, 0);
             }
             if (block.getType() == Material.SNOW) {
                 block.setType(Material.AIR);
@@ -111,7 +111,7 @@ public class FurnaceTask extends BukkitRunnable {
 
             Block block = location.getBlock();
 
-            if (block.getType() != Material.FURNACE) continue;
+            if (!block.getType().name().contains("FURNACE")) continue;
             Furnace furnace1 = plugin.getFurnaceManager().getFurnace(block);
             if (furnace == furnace1) continue;
             org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) block.getState());
@@ -126,7 +126,7 @@ public class FurnaceTask extends BukkitRunnable {
                     float zz = (float) (0 + (Math.random() * .75));
 
                     if (EpicFurnaces.getInstance().isServerVersionAtLeast(ServerVersion.V1_9))
-                        location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 25, xx, yy, zz, 1);
+                        location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 25, xx, yy, zz, 0);
                 }
             }
         }

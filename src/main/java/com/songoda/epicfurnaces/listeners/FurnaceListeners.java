@@ -22,16 +22,16 @@ public class FurnaceListeners implements Listener {
     }
 
     @EventHandler
-    public void onCook(FurnaceSmeltEvent e) {
-        Block b = e.getBlock();
-        if ((e.getBlock().isBlockPowered() && plugin.getConfig().getBoolean("Main.Redstone Deactivates Furnaces")) || e.getResult() == null) {
-            e.setCancelled(true);
+    public void onCook(FurnaceSmeltEvent event) {
+        Block block = event.getBlock();
+        if ((event.getBlock().isBlockPowered() && plugin.getConfig().getBoolean("Main.Redstone Deactivates Furnaces")) || event.getResult() == null) {
+            event.setCancelled(true);
             return;
         }
-        Furnace furnace = plugin.getFurnaceManager().getFurnace(b.getLocation());
+        Furnace furnace = plugin.getFurnaceManager().getFurnace(block.getLocation());
 
-        if (furnace != null && e.getSource().getType() != Material.valueOf("WET_SPONGE"))
-            furnace.plus(e);
+        if (furnace != null && !event.getSource().getType().name().contains("SPONGE"))
+            furnace.plus(event);
     }
 
     @EventHandler
