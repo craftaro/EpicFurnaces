@@ -1,9 +1,8 @@
 name: EpicFurnaces
 description: EpicFurnaces
 version: maven-version-number
-depend: [Arconix]
-softdepend: [PlotSquared, GriefPrevention, USkyBlock, SkyBlock, WorldGuard, Factions]
-main: com.songoda.epicfurnaces.EpicFurnacesPlugin
+softdepend: [HolographicDisplays, PlotSquared, GriefPrevention, USkyBlock, SkyBlock, WorldGuard, Factions]
+main: com.songoda.epicfurnaces.EpicFurnaces
 author: songoda
 api-version: 1.13
 commands:

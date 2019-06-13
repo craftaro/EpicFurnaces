@@ -1,4 +1,4 @@
-package com.songoda.epicspawners.utils.gui;
+package com.songoda.epicfurnaces.utils.gui;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;

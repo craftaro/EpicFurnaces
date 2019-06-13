@@ -1,4 +1,4 @@
-package com.songoda.epichoppers.economy;
+package com.songoda.epicfurnaces.economy;
 
 import org.bukkit.OfflinePlayer;
 

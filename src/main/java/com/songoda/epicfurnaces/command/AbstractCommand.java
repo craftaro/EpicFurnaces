@@ -1,6 +1,6 @@
 package com.songoda.epicfurnaces.command;
 
-import com.songoda.epicfurnaces.EpicFurnacesPlugin;
+import com.songoda.epicfurnaces.EpicFurnaces;
 import org.bukkit.command.CommandSender;
 
 public abstract class AbstractCommand {
@@ -27,7 +27,7 @@ public abstract class AbstractCommand {
         return noConsole;
     }
 
-    protected abstract ReturnType runCommand(EpicFurnacesPlugin instance, CommandSender sender, String... args);
+    protected abstract ReturnType runCommand(EpicFurnaces plugin, CommandSender sender, String... args);
 
     public abstract String getPermissionNode();
 

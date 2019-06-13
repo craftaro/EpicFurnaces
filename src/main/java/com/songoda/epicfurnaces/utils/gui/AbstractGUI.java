@@ -1,7 +1,7 @@
-package com.songoda.epicspawners.utils.gui;
+package com.songoda.epicfurnaces.utils.gui;
 
-import com.songoda.epicspawners.EpicSpawners;
-import com.songoda.epicspawners.utils.Methods;
+import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -125,7 +125,7 @@ public abstract class AbstractGUI implements Listener {
                 registerOnCloses();
         }
         constructGUI();
-        initializeListeners(EpicSpawners.getInstance());
+        initializeListeners(EpicFurnaces.getInstance());
         player.openInventory(inventory);
     }
 

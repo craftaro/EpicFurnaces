@@ -1,16 +1,15 @@
-package com.songoda.epichoppers.economy;
+package com.songoda.epicfurnaces.economy;
 
-import com.songoda.epichoppers.EpicHoppers;
+import com.songoda.epicfurnaces.EpicFurnaces;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 public class VaultEconomy implements Economy {
 
-    private final EpicHoppers plugin;
+    private final EpicFurnaces plugin;
 
     private final net.milkbowl.vault.economy.Economy vault;
 
-    public VaultEconomy(EpicHoppers plugin) {
+    public VaultEconomy(EpicFurnaces plugin) {
         this.plugin = plugin;
 
         this.vault = plugin.getServer().getServicesManager().

@@ -1,8 +1,7 @@
 package com.songoda.epicfurnaces.listeners;
 
-import com.songoda.epicfurnaces.EpicFurnacesPlugin;
-import com.songoda.epicfurnaces.furnace.EFurnace;
-import com.songoda.epicfurnaces.utils.Debugger;
+import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.furnace.Furnace;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -17,37 +16,31 @@ import org.bukkit.event.player.PlayerInteractEvent;
  */
 public class InteractListeners implements Listener {
 
-    private final EpicFurnacesPlugin instance;
+    private final EpicFurnaces plugin;
 
-    public InteractListeners(EpicFurnacesPlugin instance) {
-        this.instance = instance;
+    public InteractListeners(EpicFurnaces plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onClick(PlayerInteractEvent event) {
-        try {
-            if (event.getClickedBlock() == null) return;
+        if (event.getClickedBlock() == null) return;
 
-            if (instance.getBlacklistHandler().isBlacklisted(event.getPlayer())) {
-                return;
-            }
-            Player player = event.getPlayer();
-            Block block = event.getClickedBlock();
-            if (!player.hasPermission("EpicFurnaces.overview")
-                    || !instance.canBuild(player, event.getClickedBlock().getLocation())
-                    || event.getAction() != Action.LEFT_CLICK_BLOCK
-                    || player.isSneaking()
-                    || (block.getType() != Material.FURNACE)
-                    || player.getInventory().getItemInMainHand().getType().name().contains("PICKAXE")) {
-                return;
-            }
-
-            event.setCancelled(true);
-
-            ((EFurnace) instance.getFurnaceManager().getFurnace(block.getLocation())).openOverview(player);
-
-        } catch (Exception ee) {
-            Debugger.runReport(ee);
+        if (plugin.getBlacklistHandler().isBlacklisted(event.getPlayer())) {
+            return;
         }
+        Player player = event.getPlayer();
+        Block block = event.getClickedBlock();
+        if (!player.hasPermission("EpicFurnaces.overview")
+                || event.getAction() != Action.LEFT_CLICK_BLOCK
+                || player.isSneaking()
+                || (block.getType() != Material.FURNACE)
+                || player.getInventory().getItemInHand().getType().name().contains("PICKAXE")) {
+            return;
+        }
+
+        event.setCancelled(true);
+
+        plugin.getFurnaceManager().getFurnace(block.getLocation()).overview(player);
     }
 }

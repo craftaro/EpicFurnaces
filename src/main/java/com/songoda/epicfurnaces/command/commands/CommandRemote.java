@@ -1,8 +1,8 @@
 package com.songoda.epicfurnaces.command.commands;
 
-import com.songoda.epicfurnaces.EpicFurnacesPlugin;
-import com.songoda.epicfurnaces.api.furnace.Furnace;
+import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.command.AbstractCommand;
+import com.songoda.epicfurnaces.furnace.Furnace;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -16,13 +16,13 @@ public class CommandRemote extends AbstractCommand {
     }
 
     @Override
-    protected ReturnType runCommand(EpicFurnacesPlugin instance, CommandSender sender, String... args) {
+    protected ReturnType runCommand(EpicFurnaces plugin, CommandSender sender, String... args) {
 
-        if (!instance.getConfig().getBoolean("Main.Access Furnaces Remotely") || !sender.hasPermission("EpicFurnaces.Remote")) {
-            sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.general.nopermission"));
+        if (!plugin.getConfig().getBoolean("Main.Access Furnaces Remotely") || !sender.hasPermission("EpicFurnaces.Remote")) {
+            sender.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.general.nopermission"));
             return ReturnType.FAILURE;
         }
-        if (!instance.getDataFile().getConfig().contains("data.charged")) {
+        if (!plugin.getDataFile().getConfig().contains("data.charged")) {
             return ReturnType.FAILURE;
         }
         if (args.length < 2) return ReturnType.SYNTAX_ERROR;
@@ -32,11 +32,11 @@ public class CommandRemote extends AbstractCommand {
             name.append(" ").append(args[i]);
         }
         name = new StringBuilder(name.toString().trim());
-        for (Furnace furnace : instance.getFurnaceManager().getFurnaces().values()) {
+        for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
             if (furnace.getNickname() == null) continue;
 
             if (!furnace.getNickname().equalsIgnoreCase(name.toString())) {
-                sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.general.nopermission"));
+                sender.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.general.nopermission"));
                 continue;
             }
             for (UUID uuid : furnace.getAccessList()) {
@@ -50,7 +50,7 @@ public class CommandRemote extends AbstractCommand {
             }
 
         }
-        sender.sendMessage(instance.getReferences().getPrefix() + instance.getLocale().getMessage("event.remote.notfound"));
+        sender.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.remote.notfound"));
         return ReturnType.FAILURE;
     }
 

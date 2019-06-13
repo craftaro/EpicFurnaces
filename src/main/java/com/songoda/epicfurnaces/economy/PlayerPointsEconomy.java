@@ -1,17 +1,16 @@
-package com.songoda.epichoppers.economy;
+package com.songoda.epicfurnaces.economy;
 
-import com.songoda.epichoppers.EpicHoppers;
+import com.songoda.epicfurnaces.EpicFurnaces;
 import org.black_ixx.playerpoints.PlayerPoints;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 
 public class PlayerPointsEconomy implements Economy {
 
-    private final EpicHoppers plugin;
+    private final EpicFurnaces plugin;
 
     private final PlayerPoints playerPoints;
 
-    public PlayerPointsEconomy(EpicHoppers plugin) {
+    public PlayerPointsEconomy(EpicFurnaces plugin) {
         this.plugin = plugin;
 
         this.playerPoints = (PlayerPoints) plugin.getServer().getPluginManager().getPlugin("PlayerPoints");

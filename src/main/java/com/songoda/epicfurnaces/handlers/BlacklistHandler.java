@@ -1,8 +1,7 @@
 package com.songoda.epicfurnaces.handlers;
 
-import com.songoda.arconix.api.utils.ConfigWrapper;
-import com.songoda.epicfurnaces.EpicFurnacesPlugin;
-import com.songoda.epicfurnaces.utils.Debugger;
+import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.utils.ConfigWrapper;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -13,55 +12,38 @@ import java.util.List;
  */
 public class BlacklistHandler {
 
-    private ConfigWrapper blackFile = new ConfigWrapper(EpicFurnacesPlugin.getInstance(), "", "blacklist.yml");
+    private ConfigWrapper blackFile = new ConfigWrapper(EpicFurnaces.getInstance(), "", "blacklist.yml");
 
     public BlacklistHandler() {
-        try {
-            blackFile.createNewFile("Loading language file", "EpicFurnaces blacklist file");
-            loadBlacklistFile();
-        } catch (Exception e) {
-            Debugger.runReport(e);
-        }
+        blackFile.createNewFile("Loading language file", "EpicFurnaces blacklist file");
+        loadBlacklistFile();
     }
 
     public boolean isBlacklisted(Player player) {
-        boolean blacklisted = false;
-        try {
-            List<String> list = blackFile.getConfig().getStringList("settings.blacklist");
-            String cWorld = player.getWorld().getName();
-            for (String world : list) {
-                if (cWorld.equalsIgnoreCase(world)) {
-                    blacklisted = true;
-                }
+        List<String> list = blackFile.getConfig().getStringList("settings.blacklist");
+        String cWorld = player.getWorld().getName();
+        for (String world : list) {
+            if (cWorld.equalsIgnoreCase(world)) {
+                return true;
             }
-        } catch (Exception e) {
-            Debugger.runReport(e);
         }
-        return blacklisted;
+        return false;
     }
 
     private void loadBlacklistFile() {
-        try {
-            List<String> list = new ArrayList<>();
-            list.add("world2");
-            list.add("world3");
-            list.add("world4");
-            list.add("world5");
-            blackFile.getConfig().addDefault("settings.blacklist", list);
+        List<String> list = new ArrayList<>();
+        list.add("world2");
+        list.add("world3");
+        list.add("world4");
+        list.add("world5");
+        blackFile.getConfig().addDefault("settings.blacklist", list);
 
-            blackFile.getConfig().options().copyDefaults(true);
-            blackFile.saveConfig();
-        } catch (Exception e) {
-            Debugger.runReport(e);
-        }
+        blackFile.getConfig().options().copyDefaults(true);
+        blackFile.saveConfig();
     }
 
     public void reload() {
-        try {
-            blackFile.createNewFile("Loading blacklist file", "EpicFurnaces blacklist file");
-            loadBlacklistFile();
-        } catch (Exception e) {
-            Debugger.runReport(e);
-        }
+        blackFile.createNewFile("Loading blacklist file", "EpicFurnaces blacklist file");
+        loadBlacklistFile();
     }
 }

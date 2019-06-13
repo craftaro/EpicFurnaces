@@ -1,10 +1,8 @@
 package com.songoda.epicfurnaces.listeners;
 
-import com.songoda.epicfurnaces.EpicFurnacesPlugin;
-import com.songoda.epicfurnaces.api.furnace.Furnace;
-import com.songoda.epicfurnaces.api.furnace.Level;
-import com.songoda.epicfurnaces.furnace.EFurnace;
-import com.songoda.epicfurnaces.utils.Debugger;
+import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.furnace.Furnace;
+import com.songoda.epicfurnaces.furnace.levels.Level;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
@@ -17,44 +15,35 @@ import org.bukkit.event.inventory.FurnaceSmeltEvent;
  */
 public class FurnaceListeners implements Listener {
 
-    private final EpicFurnacesPlugin instance;
+    private final EpicFurnaces plugin;
 
-    public FurnaceListeners(EpicFurnacesPlugin instance) {
-        this.instance = instance;
+    public FurnaceListeners(EpicFurnaces plugin) {
+        this.plugin = plugin;
     }
 
     @EventHandler
     public void onCook(FurnaceSmeltEvent e) {
-        try {
-            Block b = e.getBlock();
-            if ((e.getBlock().isBlockPowered() && instance.getConfig().getBoolean("Main.Redstone Deactivates Furnaces")) || e.getResult() == null) {
-                e.setCancelled(true);
-                return;
-            }
-            Furnace furnace = instance.getFurnaceManager().getFurnace(b.getLocation());
-
-            if (furnace != null && e.getSource().getType() != Material.WET_SPONGE)
-                ((EFurnace) furnace).plus(e);
-        } catch (Exception ee) {
-            Debugger.runReport(ee);
+        Block b = e.getBlock();
+        if ((e.getBlock().isBlockPowered() && plugin.getConfig().getBoolean("Main.Redstone Deactivates Furnaces")) || e.getResult() == null) {
+            e.setCancelled(true);
+            return;
         }
+        Furnace furnace = plugin.getFurnaceManager().getFurnace(b.getLocation());
+
+        if (furnace != null && e.getSource().getType() != Material.valueOf("WET_SPONGE"))
+            furnace.plus(e);
     }
 
     @EventHandler
-    public void onFuel(FurnaceBurnEvent e) {
-        try {
-            if (e.getFuel() == null) return;
-            Furnace furnace = instance.getFurnaceManager().getFurnace(e.getBlock().getLocation());
+    public void onFuel(FurnaceBurnEvent event) {
+        Furnace furnace = plugin.getFurnaceManager().getFurnace(event.getBlock().getLocation());
 
-            Level level = furnace != null ? furnace.getLevel() : instance.getLevelManager().getLowestLevel();
+        Level level = furnace != null ? furnace.getLevel() : plugin.getLevelManager().getLowestLevel();
 
-            if (level.getFuelDuration() != 0) return;
+        if (level.getFuelDuration() != 0) return;
 
-            int num = level.getFuelDuration();
-            int per = (e.getBurnTime() / 100) * num;
-            e.setBurnTime(e.getBurnTime() + per);
-        } catch (Exception ee) {
-            Debugger.runReport(ee);
-        }
+        int num = level.getFuelDuration();
+        int per = (event.getBurnTime() / 100) * num;
+        event.setBurnTime(event.getBurnTime() + per);
     }
 }

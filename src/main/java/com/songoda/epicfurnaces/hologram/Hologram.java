@@ -1,142 +1,96 @@
-package com.songoda.ultimatekits.hologram;
+package com.songoda.epicfurnaces.hologram;
 
-import com.songoda.ultimatekits.UltimateKits;
-import com.songoda.ultimatekits.kit.Kit;
-import com.songoda.ultimatekits.kit.KitBlockData;
-import com.songoda.ultimatekits.kit.KitType;
-import com.songoda.ultimatekits.utils.Methods;
-import org.bukkit.Bukkit;
+import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.furnace.Furnace;
+import com.songoda.epicfurnaces.utils.Methods;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 public abstract class Hologram {
 
-    protected final UltimateKits instance;
+    protected final EpicFurnaces plugin;
 
-    Hologram(UltimateKits instance) {
-        this.instance = instance;
+    Hologram(EpicFurnaces plugin) {
+        this.plugin = plugin;
     }
 
     public void loadHolograms() {
-        Collection<KitBlockData> kitBlocks = instance.getKitManager().getKitLocations().values();
-        if (kitBlocks.size() == 0) return;
+        if (!plugin.getConfig().getBoolean("Main.Furnaces Have Holograms")) return;
 
-        for (KitBlockData data : kitBlocks) {
-            if (data.getWorld() == null) continue;
-                add(data);
+        for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
+            if (furnace.getLocation() == null || furnace.getLocation().getWorld() == null)
+                continue;
+            if (furnace.getLocation().getBlock().getType() != Material.FURNACE) continue;
+
+            add(furnace);
         }
     }
 
     public void unloadHolograms() {
-        Collection<KitBlockData> kitBlocks = instance.getKitManager().getKitLocations().values();
-        if (kitBlocks.size() == 0) return;
+        for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
+            if (furnace.getLocation() == null || furnace.getLocation().getWorld() == null)
+                continue;
+            if (furnace.getLocation().getBlock().getType() != Material.FURNACE) continue;
 
-        for (KitBlockData data : kitBlocks) {
-            if (data.getWorld() == null) continue;
-            remove(data);
+            remove(furnace);
         }
     }
 
-    public void add(KitBlockData data) {
-        format(data, Action.ADD);
+    public void add(Furnace furnace) {
+        format(furnace, Action.ADD);
     }
 
-    public void remove(KitBlockData data) {
-        format(data, Action.REMOVE);
+    public void remove(Furnace furnace) {
+        format(furnace, Action.REMOVE);
     }
 
-    public void remove(Kit kit) {
-        for (KitBlockData data : instance.getKitManager().getKitLocations().values()) {
-            if (data.getKit() != kit) continue;
-            remove(data);
+    public void update(Furnace furnace) {
+        format(furnace, Action.UPDATE);
+    }
+
+    private void format(Furnace furnace, Action action) {
+
+        org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) furnace.getLocation().getBlock().getState());
+
+        int performance = (furnaceBlock.getCookTime() - furnace.getPerformanceTotal()) <= 0 ? 0 : furnace.getPerformanceTotal();
+
+        float percent = (float) (furnaceBlock.getCookTime() - performance) / (200 - performance);
+
+        int progressBars = (int) (6 * percent) + (percent == 0 ? 0 : 1);
+        int leftOver = (6 - progressBars);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < progressBars; i++) {
+            sb.append("&a=");
         }
-    }
-
-    public void update(KitBlockData data) {
-        format(data, Action.UPDATE);
-    }
-
-    public void update(Kit kit) {
-        for (KitBlockData data : instance.getKitManager().getKitLocations().values()) {
-            if (data.getKit() != kit) continue;
-            update(data);
+        for (int i = 0; i < leftOver; i++) {
+            sb.append("&c=");
         }
-    }
-
-    private void format(KitBlockData data, Action action) {
-        if (data == null) return;
-        KitType kitType = data.getType();
 
         ArrayList<String> lines = new ArrayList<>();
 
-        List<String> order = instance.getConfig().getStringList("Main.Hologram Layout");
+        String progress = Methods.formatText(sb.toString());
 
-        Kit kit = data.getKit();
-
-        for (String o : order) {
-            switch (o.toUpperCase()) {
-                case "{TITLE}":
-                    String title = kit.getTitle();
-                    if (title == null) {
-                        lines.add(Methods.formatText("&5" + Methods.formatText(kit.getName(), true)));
-                    } else {
-                        lines.add(Methods.formatText("&5" + Methods.formatText(title)));
-                    }
-                    break;
-                case "{RIGHT-CLICK}":
-                    if (kitType == KitType.CRATE) {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.crate")));
-                        break;
-                    }
-                    if (kit.getLink() != null) {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.buylink")));
-                        break;
-                    }
-                    if (kit.getPrice() != 0) {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.buyeco", kit.getPrice() != 0 ? Methods.formatEconomy(kit.getPrice()) : instance.getLocale().getMessage("general.type.free"))));
-                    }
-                    break;
-                case "{LEFT-CLICK}":
-                    if (kitType == KitType.CLAIM) {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.daily")));
-                        break;
-                    }
-                    if (kit.getLink() == null && kit.getPrice() == 0) {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.previewonly")));
-                    } else {
-                        lines.add(Methods.formatText(instance.getLocale().getMessage("interface.hologram.preview")));
-                    }
-                    break;
-                default:
-                    lines.add(Methods.formatText(o));
-                    break;
-
-            }
+        if (furnaceBlock.getInventory().getFuel() == null) {
+            progress = plugin.getLocale().getMessage("general.hologram.outoffuel");
         }
 
-        double multi = .25 * lines.size();
-        Location location = data.getLocation();
-        Block b = location.getBlock();
-
-        if (data.isDisplayingItems()) multi += .40;
-
-        if (b.getType() == Material.TRAPPED_CHEST
-                || b.getType() == Material.CHEST
-                || b.getType().name().contains("SIGN")
-                || b.getType() == Material.ENDER_CHEST) multi -= .15;
-
-        location.add(0, multi, 0);
-
-        if (!data.showHologram()) {
-            remove(location);
-            return;
+        int inAmt = 0;
+        int outAmt = 0;
+        if (furnaceBlock.getInventory().getSmelting() != null) {
+            inAmt = furnaceBlock.getInventory().getSmelting().getAmount();
         }
+        if (furnaceBlock.getInventory().getResult() != null) {
+            outAmt = furnaceBlock.getInventory().getResult().getAmount();
+        }
+
+        String stats = plugin.getLocale().getMessage("general.hologram.stats", inAmt, outAmt > 64 ? 64 : outAmt);
+        lines.add(progress);
+        lines.add(stats);
+
+        Location location = furnace.getLocation();
 
         switch (action) {
             case UPDATE:
