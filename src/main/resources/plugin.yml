@@ -1,0 +1,14 @@
+name: EpicFurnaces
+description: EpicFurnaces
+version: maven-version-number
+depend: [Arconix]
+softdepend: [PlotSquared, GriefPrevention, USkyBlock, SkyBlock, WorldGuard, Factions]
+main: com.songoda.epicfurnaces.EpicFurnacesPlugin
+author: songoda
+api-version: 1.13
+commands:
+  EpicFurnaces:
+    description: I have no idea.
+    default: true
+    aliases: [ef]
+    usage: /<command> [reload]

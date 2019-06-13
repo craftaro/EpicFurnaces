@@ -1,0 +1,11 @@
+# EpicFurnaces furnace Recipe file
+Recipes:
+  DIAMOND_SWORD:
+    result: DIAMOND
+    amount: 2
+  DIAMOND_PICKAXE:
+    result: DIAMOND
+    amount: 3
+  DIAMOND_AXE:
+    result: DIAMOND
+    amount: 3
