@@ -4,7 +4,7 @@ import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.utils.Methods;
 import org.bukkit.Location;
-import org.bukkit.Material;
+import org.bukkit.block.BlockState;
 
 import java.util.ArrayList;
 
@@ -52,7 +52,16 @@ public abstract class Hologram {
 
     private void format(Furnace furnace, Action action) {
 
-        org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) furnace.getLocation().getBlock().getState());
+        Location location = furnace.getLocation();
+
+        if (!location.getWorld().isChunkLoaded(location.getBlockX() >> 4, location.getBlockZ() >> 4))
+            return;
+
+        BlockState state = furnace.getLocation().getBlock().getState();
+
+        if (!(state instanceof org.bukkit.block.Furnace)) return;
+
+        org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) state);
 
         int performance = (furnaceBlock.getCookTime() - furnace.getPerformanceTotal()) <= 0 ? 0 : furnace.getPerformanceTotal();
 
@@ -89,8 +98,6 @@ public abstract class Hologram {
         String stats = plugin.getLocale().getMessage("general.hologram.stats", inAmt, outAmt > 64 ? 64 : outAmt);
         lines.add(progress);
         lines.add(stats);
-
-        Location location = furnace.getLocation();
 
         switch (action) {
             case UPDATE:

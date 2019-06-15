@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -50,10 +51,11 @@ public class FurnaceTask extends BukkitRunnable {
                 continue;
             }
 
-            if (!furnace.getLocation().getBlock().getType().name().contains("FURNACE"))
-                continue;
+            BlockState state = furnace.getLocation().getBlock().getState();
 
-            if (((org.bukkit.block.Furnace) furnaceLocation.getBlock().getState()).getBurnTime() == 0) continue;
+            if (!(state instanceof org.bukkit.block.Furnace)) return;
+
+            if (((org.bukkit.block.Furnace) state).getBurnTime() == 0) continue;
 
             if (furnace.getLevel().getOverheat() != 0) {
                 overheat(furnace);
