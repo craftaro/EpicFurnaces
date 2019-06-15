@@ -33,6 +33,8 @@ public class HologramTask extends BukkitRunnable {
 
     @Override
     public void run() {
+        if (plugin.getHologram() == null) return;
+
         for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
             plugin.getHologram().update(furnace);
         }
