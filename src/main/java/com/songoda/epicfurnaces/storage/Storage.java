@@ -32,7 +32,10 @@ public abstract class Storage {
          * Dump FurnaceManager to file.
          */
         for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
-            if (furnace == null || furnace.getLocation() == null || furnace.getLocation().getWorld() == null) continue;
+            if (furnace == null
+                    || furnace.getLocation() == null
+                    || furnace.getLocation().getWorld() == null
+                    || furnace.getLevel() == null) continue;
             String locationStr = Methods.serializeLocation(furnace.getLocation());
 
             prepareSaveItem("charged", new StorageItem("location", locationStr),

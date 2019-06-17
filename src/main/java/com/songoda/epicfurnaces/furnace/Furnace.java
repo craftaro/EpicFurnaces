@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
