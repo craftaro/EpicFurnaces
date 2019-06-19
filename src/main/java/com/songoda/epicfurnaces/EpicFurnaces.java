@@ -169,7 +169,9 @@ public class EpicFurnaces extends JavaPlugin {
             if (storage.containsGroup("charged")) {
                 for (StorageRow row : storage.getRowsByGroup("charged")) {
                     Location location = Methods.unserializeLocation(row.getKey());
-                    if (location == null) return;
+                    if (location == null) continue;
+
+                    if (row.get("level").asInt() == 0) continue;
 
                     int level = row.get("level").asInt();
                     int uses = row.get("uses").asInt();
