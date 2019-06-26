@@ -157,7 +157,7 @@ public class GUIOverview extends AbstractGUI {
         itemmetaXP.setDisplayName(plugin.getLocale().getMessage("interface.furnace.upgradewithxp"));
         ArrayList<String> loreXP = new ArrayList<>();
         if (nextLevel != null)
-            loreXP.add(plugin.getLocale().getMessage("interface.furnace.upgradewithxplore", level.getCostExperience()));
+            loreXP.add(plugin.getLocale().getMessage("interface.furnace.upgradewithxplore", nextLevel.getCostExperience()));
         else
             loreXP.add(plugin.getLocale().getMessage("interface.furnace.alreadymaxed"));
         itemmetaXP.setLore(loreXP);
@@ -168,7 +168,7 @@ public class GUIOverview extends AbstractGUI {
         itemmetaECO.setDisplayName(plugin.getLocale().getMessage("interface.furnace.upgradewitheconomy"));
         ArrayList<String> loreECO = new ArrayList<>();
         if (nextLevel != null)
-            loreECO.add(plugin.getLocale().getMessage("interface.furnace.upgradewitheconomylore", Methods.formatEconomy(level.getCostEconomy())));
+            loreECO.add(plugin.getLocale().getMessage("interface.furnace.upgradewitheconomylore", Methods.formatEconomy(nextLevel.getCostEconomy())));
         else
             loreECO.add(plugin.getLocale().getMessage("interface.furnace.alreadymaxed"));
         itemmetaECO.setLore(loreECO);
