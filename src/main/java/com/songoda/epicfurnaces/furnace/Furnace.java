@@ -7,6 +7,7 @@ import com.songoda.epicfurnaces.gui.GUIOverview;
 import com.songoda.epicfurnaces.utils.CostType;
 import com.songoda.epicfurnaces.utils.Methods;
 import com.songoda.epicfurnaces.utils.ServerVersion;
+import com.songoda.epicfurnaces.utils.settings.Setting;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -65,7 +66,7 @@ public class Furnace {
         this.uses++;
         this.tolevel++;
 
-        int multi = plugin.getConfig().getInt("Main.Level Cost Multiplier");
+        int multi = Setting.LEVEL_MULTIPLIER.getInt();
 
         if (level.getReward() == null) return;
 
@@ -85,9 +86,9 @@ public class Furnace {
 
         int needed = ((multi * level.getLevel()) - tolevel) - 1;
 
-        if (plugin.getConfig().getBoolean("Main.Upgrade By Smelting Materials")
+        if (Setting.UPGRADE_BY_SMELTING.getBoolean()
                 && needed <= 0
-                && plugin.getConfig().contains("settings.levels.Level-" + (level.getLevel() + 1))) {
+                && plugin.getLevelManager().getLevel(level.getLevel() + 1) != null) {
             tolevel = 0;
             level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
         }
@@ -100,7 +101,7 @@ public class Furnace {
         double rand = Math.random() * 100;
         if (rand >= num
                 || e.getResult().equals(Material.SPONGE)
-                || plugin.getConfig().getBoolean("Main.No Rewards From Custom Recipes")
+                || Setting.NO_REWARDS_FROM_RECIPES.getBoolean()
                 && plugin.getFurnaceRecipeFile().getConfig().contains("Recipes." + i.getSmelting().getType().toString())) {
             return;
         }
