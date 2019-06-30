@@ -5,6 +5,7 @@ import com.songoda.epicfurnaces.command.AbstractCommand;
 import com.songoda.epicfurnaces.furnace.levels.Level;
 import com.songoda.epicfurnaces.utils.Methods;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -41,7 +42,7 @@ public class CommandGive extends AbstractCommand {
 
             level = plugin.getLevelManager().getLevel(Integer.parseInt(args[2]));
         }
-        player.getInventory().addItem(plugin.createLeveledFurnace(level.getLevel(), 0));
+        player.getInventory().addItem(plugin.createLeveledFurnace(Material.FURNACE, level.getLevel(), 0));
         player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.give.success", level.getLevel()));
 
         return ReturnType.SUCCESS;

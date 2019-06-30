@@ -96,7 +96,8 @@ public class BlockListeners implements Listener {
         if (level != 0) {
             event.setCancelled(true);
 
-            ItemStack item = plugin.createLeveledFurnace(level, furnace.getUses());
+            ItemStack item = plugin.createLeveledFurnace(block.getType().name().contains("BURNING") ? Material.FURNACE
+                            : block.getType(), level, furnace.getUses());
 
             event.getBlock().setType(Material.AIR);
             event.getBlock().getLocation().getWorld().dropItemNaturally(event.getBlock().getLocation(), item);

@@ -293,8 +293,8 @@ public class EpicFurnaces extends JavaPlugin {
         }
     }
 
-    public ItemStack createLeveledFurnace(int level, int uses) {
-        ItemStack item = new ItemStack(Material.FURNACE, 1);
+    public ItemStack createLeveledFurnace(Material material, int level, int uses) {
+        ItemStack item = new ItemStack(material, 1);
         ItemMeta itemmeta = item.getItemMeta();
 
         if (getConfig().getBoolean("Main.Remember Furnace Item Levels"))
