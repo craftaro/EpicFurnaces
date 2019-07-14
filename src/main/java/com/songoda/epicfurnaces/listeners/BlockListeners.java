@@ -2,6 +2,7 @@ package com.songoda.epicfurnaces.listeners;
 
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
+import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -12,8 +13,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.ArrayList;
 
 /**
  * Created by songoda on 2/26/2017.
@@ -59,13 +58,12 @@ public class BlockListeners implements Listener {
 
         Location location = event.getBlock().getLocation();
 
-        Furnace furnace;
-
-        if (event.getItemInHand().getItemMeta().hasDisplayName() && plugin.getFurnceLevel(item) != 1) {
-            furnace = new Furnace(location, plugin.getLevelManager().getLevel(plugin.getFurnceLevel(item)), null, plugin.getFurnaceUses(item), 0, new ArrayList<>(), event.getPlayer().getUniqueId());
-        } else {
-            furnace = new Furnace(location, plugin.getLevelManager().getLowestLevel(), null, 0, 0, new ArrayList<>(), event.getPlayer().getUniqueId());
-        }
+        Furnace furnace = event.getItemInHand().getItemMeta().hasDisplayName() && plugin.getFurnceLevel(item) != 1
+                ? new FurnaceBuilder(location)
+                .setLevel(plugin.getLevelManager().getLevel(plugin.getFurnceLevel(item)))
+                .setUses(plugin.getFurnaceUses(item))
+                .setPlacedBy(event.getPlayer().getUniqueId()).build()
+                : new FurnaceBuilder(location).setPlacedBy(event.getPlayer().getUniqueId()).build();
 
         plugin.getFurnaceManager().addFurnace(location, furnace);
 
@@ -80,12 +78,9 @@ public class BlockListeners implements Listener {
             return;
         }
         Block block = event.getBlock();
-        if (!block.getType().name().contains("FURNACE")) {
+        if (!block.getType().name().contains("FURNACE")
+                || plugin.getBlacklistHandler().isBlacklisted(event.getPlayer()))
             return;
-        }
-        if (plugin.getBlacklistHandler().isBlacklisted(event.getPlayer())) {
-            return;
-        }
 
         Furnace furnace = plugin.getFurnaceManager().getFurnace(block);
         int level = plugin.getFurnaceManager().getFurnace(block).getLevel().getLevel();
@@ -97,7 +92,7 @@ public class BlockListeners implements Listener {
             event.setCancelled(true);
 
             ItemStack item = plugin.createLeveledFurnace(block.getType().name().contains("BURNING") ? Material.FURNACE
-                            : block.getType(), level, furnace.getUses());
+                    : block.getType(), level, furnace.getUses());
 
             event.getBlock().setType(Material.AIR);
             event.getBlock().getLocation().getWorld().dropItemNaturally(event.getBlock().getLocation(), item);

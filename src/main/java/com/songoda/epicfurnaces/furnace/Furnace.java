@@ -27,29 +27,20 @@ import java.util.*;
 public class Furnace {
 
     private final EpicFurnaces plugin = EpicFurnaces.getInstance();
-    private Location location;
-    private Level level;
-    private String nickname;
-    private UUID placedBy;
-    private int uses, tolevel, radiusOverheatLast, radiusFuelshareLast;
+
+    private final Location location;
+    private Level level = plugin.getLevelManager().getLowestLevel();
+    private String nickname = null;
+    private UUID placedBy = null;
+    private int uses, tolevel, radiusOverheatLast, radiusFuelshareLast = 0;
     private List<Location> radiusOverheat = new ArrayList<>();
     private List<Location> radiusFuelshare = new ArrayList<>();
     private List<String> accessList = new ArrayList<>();
     private Map<String, Integer> cache = new HashMap<>();
 
-    public Furnace(Location location, Level level, String nickname, int uses, int tolevel, List<String> accessList, UUID placedBy) {
+    public Furnace(Location location) {
         this.location = location;
-        this.level = level;
-        this.uses = uses;
-        this.tolevel = tolevel;
-        this.nickname = nickname;
-        this.placedBy = placedBy;
-        this.accessList = accessList;
         this.syncName();
-    }
-
-    public Furnace(Block block, Level level, String nickname, int uses, int tolevel, List<String> accessList, UUID placedBy) {
-        this(block.getLocation(), level, nickname, uses, tolevel, accessList, placedBy);
     }
 
     public void overview(Player player) {
@@ -249,6 +240,11 @@ public class Furnace {
     public boolean addToAccessList(Player player) {
         String formatted = player.getUniqueId().toString() + ":" + player.getName();
         if (accessList.contains(formatted)) return false;
+        return addToAccessList(formatted);
+    }
+
+    public boolean addToAccessList(String formatted) {
+        if (accessList.contains(formatted)) return false;
         return accessList.add(formatted);
     }
 
@@ -260,24 +256,6 @@ public class Furnace {
 
     public void clearAccessList() {
         accessList.clear();
-    }
-
-
-    public Location getLocation() {
-        return location.clone();
-    }
-
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
-
-    public UUID getPlacedBy() {
-        return placedBy;
     }
 
     public List<Location> getRadius(boolean overHeat) {
@@ -322,12 +300,60 @@ public class Furnace {
     }
 
 
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public UUID getPlacedBy() {
+        return placedBy;
+    }
+
+    public void setPlacedBy(UUID placedBy) {
+        this.placedBy = placedBy;
+    }
+
     public int getUses() {
         return uses;
     }
 
+    public void setUses(int uses) {
+        this.uses = uses;
+    }
 
     public int getTolevel() {
         return tolevel;
+    }
+
+    public void setTolevel(int tolevel) {
+        this.tolevel = tolevel;
+    }
+
+    public int getRadiusOverheatLast() {
+        return radiusOverheatLast;
+    }
+
+    public void setRadiusOverheatLast(int radiusOverheatLast) {
+        this.radiusOverheatLast = radiusOverheatLast;
+    }
+
+    public int getRadiusFuelshareLast() {
+        return radiusFuelshareLast;
+    }
+
+    public void setRadiusFuelshareLast(int radiusFuelshareLast) {
+        this.radiusFuelshareLast = radiusFuelshareLast;
     }
 }

@@ -1,10 +1,8 @@
 package com.songoda.epicfurnaces.furnace;
 
-import com.songoda.epicfurnaces.EpicFurnaces;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +22,7 @@ public class FurnaceManager {
 
     public Furnace getFurnace(Location location) {
         if (!registeredFurnaces.containsKey(location)) {
-            addFurnace(location, new Furnace(location, EpicFurnaces.getInstance().getLevelManager().getLowestLevel(), null, 0, 0, new ArrayList<>(), null));
+            addFurnace(location, new FurnaceBuilder(location).build());
         }
         return registeredFurnaces.get(location);
     }

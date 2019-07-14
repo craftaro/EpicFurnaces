@@ -7,12 +7,16 @@ import com.songoda.epicfurnaces.economy.Economy;
 import com.songoda.epicfurnaces.economy.PlayerPointsEconomy;
 import com.songoda.epicfurnaces.economy.VaultEconomy;
 import com.songoda.epicfurnaces.furnace.Furnace;
+import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
 import com.songoda.epicfurnaces.furnace.FurnaceManager;
 import com.songoda.epicfurnaces.furnace.levels.LevelManager;
 import com.songoda.epicfurnaces.handlers.BlacklistHandler;
 import com.songoda.epicfurnaces.hologram.Hologram;
 import com.songoda.epicfurnaces.hologram.HologramHolographicDisplays;
-import com.songoda.epicfurnaces.listeners.*;
+import com.songoda.epicfurnaces.listeners.BlockListeners;
+import com.songoda.epicfurnaces.listeners.FurnaceListeners;
+import com.songoda.epicfurnaces.listeners.InteractListeners;
+import com.songoda.epicfurnaces.listeners.InventoryListeners;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.StorageRow;
 import com.songoda.epicfurnaces.storage.types.StorageMysql;
@@ -41,7 +45,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.List;
 import java.util.UUID;
 
 public class EpicFurnaces extends JavaPlugin {
@@ -173,16 +176,17 @@ public class EpicFurnaces extends JavaPlugin {
 
                     if (row.get("level").asInt() == 0) continue;
 
-                    int level = row.get("level").asInt();
-                    int uses = row.get("uses").asInt();
-                    int tolevel = row.get("level").asInt();
-                    String nickname = row.get("nickname").asString();
-
-                    List<String> accessList = row.get("accesslist").asStringList();
                     String placedByStr = row.get("placedBy").asString();
                     UUID placedBy = placedByStr == null ? null : UUID.fromString(placedByStr);
 
-                    Furnace furnace = new Furnace(location, levelManager.getLevel(level), nickname, uses, tolevel, accessList, placedBy);
+                    Furnace furnace = new FurnaceBuilder(location)
+                            .setLevel(levelManager.getLevel(row.get("level").asInt()))
+                            .setNickname(row.get("nickname").asString())
+                            .setUses(row.get("uses").asInt())
+                            .setToLevel(row.get("tolevel").asInt())
+                            .setAccessList(row.get("accesslist").asStringList())
+                            .setPlacedBy(placedBy).build();
+
                     furnaceManager.addFurnace(location, furnace);
                 }
 
