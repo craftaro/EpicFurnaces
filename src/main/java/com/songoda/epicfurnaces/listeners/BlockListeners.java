@@ -65,7 +65,7 @@ public class BlockListeners implements Listener {
                 .setPlacedBy(event.getPlayer().getUniqueId()).build()
                 : new FurnaceBuilder(location).setPlacedBy(event.getPlayer().getUniqueId()).build();
 
-        plugin.getFurnaceManager().addFurnace(location, furnace);
+        plugin.getFurnaceManager().addFurnace(furnace);
 
         if (plugin.getHologram() != null) {
             plugin.getHologram().add(furnace);
