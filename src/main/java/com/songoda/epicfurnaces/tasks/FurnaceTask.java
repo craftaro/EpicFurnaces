@@ -11,6 +11,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class FurnaceTask extends BukkitRunnable {
@@ -34,7 +35,7 @@ public class FurnaceTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
+        for (Furnace furnace : new ArrayList<>(plugin.getFurnaceManager().getFurnaces().values())) {
             Location furnaceLocation = furnace.getLocation();
 
             if (furnaceLocation == null) continue;
