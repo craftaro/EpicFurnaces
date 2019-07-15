@@ -40,7 +40,6 @@ public class Furnace {
 
     public Furnace(Location location) {
         this.location = location;
-        this.syncName();
     }
 
     public void overview(Player player) {
