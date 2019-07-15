@@ -187,9 +187,8 @@ public class EpicFurnaces extends JavaPlugin {
                             .setAccessList(row.get("accesslist").asStringList())
                             .setPlacedBy(placedBy).build();
 
-                    furnaceManager.addFurnace(location, furnace);
+                    furnaceManager.addFurnace(furnace);
                 }
-
             }
 
             // Adding in Boosts

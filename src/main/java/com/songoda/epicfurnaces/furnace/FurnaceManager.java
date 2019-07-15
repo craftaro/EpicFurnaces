@@ -12,8 +12,8 @@ public class FurnaceManager {
     private final Map<Location, Furnace> registeredFurnaces = new HashMap<>();
 
 
-    public Furnace addFurnace(Location location, Furnace furnace) {
-        return registeredFurnaces.put(roundLocation(location), furnace);
+    public Furnace addFurnace(Furnace furnace) {
+        return registeredFurnaces.put(roundLocation(furnace.getLocation()), furnace);
     }
 
     public Furnace removeFurnace(Location location) {
@@ -22,7 +22,7 @@ public class FurnaceManager {
 
     public Furnace getFurnace(Location location) {
         if (!registeredFurnaces.containsKey(location)) {
-            addFurnace(location, new FurnaceBuilder(location).build());
+            addFurnace(new FurnaceBuilder(location).build());
         }
         return registeredFurnaces.get(location);
     }
