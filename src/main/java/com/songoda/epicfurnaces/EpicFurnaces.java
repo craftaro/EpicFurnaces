@@ -92,10 +92,8 @@ public class EpicFurnaces extends JavaPlugin {
         langFile.createNewFile("Loading language file", "EpicFurnaces language file");
         loadDataFile();
 
-        String langMode = getConfig().getString("System.Language Mode");
-        Locale.init(this);
-        Locale.saveDefaultLocale("en_US");
-        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode", langMode));
+        new Locale(this, "en_US");
+        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
 
         // Running Songoda Updater
         Plugin plugin = new Plugin(this, 22);
@@ -118,7 +116,6 @@ public class EpicFurnaces extends JavaPlugin {
             this.economy = new PlayerPointsEconomy(this);
 
         this.checkStorage();
-
 
         // Load from file
         loadFromFile();
@@ -265,8 +262,7 @@ public class EpicFurnaces extends JavaPlugin {
     }
 
     public void reload() {
-        String langMode = getConfig().getString("System.Language Mode");
-        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode", langMode));
+        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
         this.locale.reloadMessages();
         this.settingsManager.reloadConfig();
         this.blacklistHandler.reload();
