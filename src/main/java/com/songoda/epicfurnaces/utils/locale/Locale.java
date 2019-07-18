@@ -42,7 +42,7 @@ public class Locale {
             return;
 
         this.name = name;
-
+        
         String fileName = name + FILE_EXTENSION;
         this.file = new File(localeFolder, fileName);
 
