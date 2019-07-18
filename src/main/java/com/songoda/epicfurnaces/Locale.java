@@ -41,6 +41,7 @@ public class Locale {
 
         plugin.getLogger().info("Loaded locale \"" + fileName + "\"");
     }
+
     public Locale(JavaPlugin plugin, String defaultLocale) {
 
         Locale.plugin = plugin;
@@ -49,22 +50,24 @@ public class Locale {
         if (!localeFolder.exists()) localeFolder.mkdirs();
 
         //Save the default locale file.
+        Locale.defaultLocale = defaultLocale;
         saveLocale(defaultLocale);
 
         for (File file : localeFolder.listFiles()) {
-            String name = file.getName();
-            if (!name.endsWith(FILE_EXTENSION)) continue;
+            String fileName = file.getName();
+            if (!fileName.endsWith(FILE_EXTENSION)) continue;
 
-            String fileName = name.substring(0, name.lastIndexOf('.'));
+            String name = fileName.substring(0, fileName.lastIndexOf('.'));
 
-            if (fileName.split("_").length != 2) continue;
+            if (name.split("_").length != 2) continue;
+            if (localeLoaded(name)) continue;
 
-            LOCALES.add(new Locale(fileName));
+            LOCALES.add(new Locale(name));
         }
     }
 
     public static boolean saveLocale(String fileName) {
-        return saveLocale(null, fileName);
+        return saveLocale(plugin.getResource(defaultLocale + FILE_EXTENSION), fileName);
     }
 
     public static boolean saveLocale(InputStream in, String fileName) {
@@ -74,12 +77,11 @@ public class Locale {
             fileName = (fileName.lastIndexOf(".") == -1 ? fileName : fileName.substring(0, fileName.lastIndexOf('.'))) + FILE_EXTENSION;
 
         File destinationFile = new File(localeFolder, fileName);
-        if (destinationFile.exists()) {
-            return compareFiles(plugin.getResource(fileName), destinationFile);
-        }
+        if (destinationFile.exists())
+            return compareFiles(in, destinationFile);
 
         try (OutputStream outputStream = new FileOutputStream(destinationFile)) {
-            copy(in == null ? plugin.getResource(fileName) : in, outputStream);
+            copy(in, outputStream);
 
             fileName = fileName.substring(0, fileName.lastIndexOf('.'));
 
@@ -93,13 +95,9 @@ public class Locale {
         }
     }
 
-
-    private static boolean compareFiles(InputStream defaultFile, File existingFile) {
-        // Look for default
-        if (defaultFile == null) {
-            defaultFile = plugin.getResource(defaultLocale != null ? defaultLocale : "en_US");
-            if (defaultFile == null) return false; // No default at all
-        }
+    private static boolean compareFiles(InputStream in, File existingFile) {
+        InputStream defaultFile =
+                in == null ? plugin.getResource((defaultLocale != null ? defaultLocale : "en_US") + FILE_EXTENSION) : in;
 
         boolean changed = false;
 
@@ -119,7 +117,15 @@ public class Locale {
                     if (!changed) {
                         writer.newLine();
                         writer.newLine();
-                        writer.write("# New messages for " + plugin.getName() + " v" + plugin.getDescription().getVersion());
+                        writer.write("# New messages for " + plugin.getName() + " v" + plugin.getDescription().getVersion() + ".");
+                        if (in == null) {
+                            writer.newLine();
+                            writer.write("# These translations were found untranslated, join");
+                            writer.newLine();
+                            writer.write("# our translation Discord https://discord.gg/f7fpZEf");
+                            writer.newLine();
+                            writer.write("# to request an official update!");
+                        }
                     }
 
                     writer.newLine();
@@ -128,6 +134,7 @@ public class Locale {
                     changed = true;
                 }
             }
+            if (in != null && !changed) compareFiles(null, existingFile);
         } catch (IOException e) {
             return false;
         }
@@ -135,7 +142,7 @@ public class Locale {
         return changed;
     }
 
-    public static boolean localeExists(String name) {
+    public static boolean localeLoaded(String name) {
         for (Locale locale : LOCALES)
             if (locale.getName().equals(name)) return true;
         return false;
