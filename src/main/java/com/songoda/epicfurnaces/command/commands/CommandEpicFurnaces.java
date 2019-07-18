@@ -14,7 +14,8 @@ public class CommandEpicFurnaces extends AbstractCommand {
     @Override
     protected ReturnType runCommand(EpicFurnaces plugin, CommandSender sender, String... args) {
         sender.sendMessage("");
-        sender.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&7Version " + plugin.getDescription().getVersion() + " Created with <3 by &5&l&oSongoda"));
+        plugin.getLocale().newMessage("&7Version " + plugin.getDescription().getVersion()
+                + " Created with <3 by &5&l&oSongoda").sendPrefixedMessage(sender);
 
         for (AbstractCommand command : plugin.getCommandManager().getCommands()) {
             if (command.getPermissionNode() == null || sender.hasPermission(command.getPermissionNode())) {

@@ -120,7 +120,8 @@ public class Furnace {
                     return;
                 }
                 if (!plugin.getEconomy().hasBalance(player, cost)) {
-                    player.sendMessage(plugin.getReferences().getPrefix() + EpicFurnaces.getInstance().getLocale().getMessage("event.upgrade.cannotafford"));
+
+                    plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
                     return;
                 }
                 plugin.getEconomy().withdrawBalance(player, cost);
@@ -132,7 +133,7 @@ public class Furnace {
                     }
                     upgradeFinal(level, player);
                 } else {
-                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.upgrade.cannotafford"));
+                    plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
                 }
             }
         }
@@ -142,9 +143,12 @@ public class Furnace {
         this.level = level;
         syncName();
         if (plugin.getLevelManager().getHighestLevel() != level) {
-            player.sendMessage(plugin.getLocale().getMessage("event.upgrade.success", level.getLevel()));
+            plugin.getLocale().getMessage("event.upgrade.success")
+                    .processPlaceholder("level", level.getLevel()).sendPrefixedMessage(player);
+
         } else {
-            player.sendMessage(plugin.getLocale().getMessage("event.upgrade.maxed", level.getLevel()));
+            plugin.getLocale().getMessage("event.upgrade.maxed")
+                    .processPlaceholder("level", level.getLevel()).sendPrefixedMessage(player);
         }
         Location loc = location.clone().add(.5, .5, .5);
 

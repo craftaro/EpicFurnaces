@@ -56,7 +56,9 @@ public class Methods {
     }
 
     public static String formatName(int level, int uses, boolean full) {
-        String name = EpicFurnaces.getInstance().getLocale().getMessage("general.nametag.nameformat", level);
+        String name = EpicFurnaces.getInstance().getLocale().getMessage("general.nametag.nameformat")
+                .processPlaceholder("level", level).getMessage();
+
 
         String info = "";
         if (full) {

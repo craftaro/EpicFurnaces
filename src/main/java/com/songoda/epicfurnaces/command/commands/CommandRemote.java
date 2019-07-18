@@ -19,7 +19,7 @@ public class CommandRemote extends AbstractCommand {
     protected ReturnType runCommand(EpicFurnaces plugin, CommandSender sender, String... args) {
 
         if (!plugin.getConfig().getBoolean("Main.Access Furnaces Remotely") || !sender.hasPermission("EpicFurnaces.Remote")) {
-            sender.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.general.nopermission"));
+            plugin.getLocale().getMessage("event.general.nopermission").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
         if (!plugin.getDataFile().getConfig().contains("data.charged")) {
@@ -36,7 +36,7 @@ public class CommandRemote extends AbstractCommand {
             if (furnace.getNickname() == null) continue;
 
             if (!furnace.getNickname().equalsIgnoreCase(name.toString())) {
-                sender.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.general.nopermission"));
+                plugin.getLocale().getMessage("event.general.nopermission").sendPrefixedMessage(sender);
                 continue;
             }
             for (UUID uuid : furnace.getAccessList()) {
@@ -50,7 +50,7 @@ public class CommandRemote extends AbstractCommand {
             }
 
         }
-        sender.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.remote.notfound"));
+        plugin.getLocale().getMessage("event.remote.notfound").sendPrefixedMessage(sender);
         return ReturnType.FAILURE;
     }
 

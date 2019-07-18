@@ -83,7 +83,7 @@ public abstract class Hologram {
         String progress = Methods.formatText(sb.toString());
 
         if (furnaceBlock.getInventory().getFuel() == null) {
-            progress = plugin.getLocale().getMessage("general.hologram.outoffuel");
+            progress = plugin.getLocale().getMessage("general.hologram.outoffuel").getMessage();
         }
 
         int inAmt = 0;
@@ -95,7 +95,10 @@ public abstract class Hologram {
             outAmt = furnaceBlock.getInventory().getResult().getAmount();
         }
 
-        String stats = plugin.getLocale().getMessage("general.hologram.stats", inAmt, outAmt > 64 ? 64 : outAmt);
+        String stats = plugin.getLocale().getMessage("general.hologram.stats")
+                .processPlaceholder("in", inAmt)
+                .processPlaceholder("out", outAmt > 64 ? 64 : outAmt).getMessage();
+
         lines.add(progress);
         lines.add(stats);
 

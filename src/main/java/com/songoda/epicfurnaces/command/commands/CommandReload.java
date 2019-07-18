@@ -14,7 +14,7 @@ public class CommandReload extends AbstractCommand {
     @Override
     protected ReturnType runCommand(EpicFurnaces plugin, CommandSender sender, String... args) {
         plugin.reload();
-        sender.sendMessage(Methods.formatText(plugin.getReferences().getPrefix() + "&7Configuration and Language files reloaded."));
+        plugin.getLocale().getMessage("&7Configuration and Language files reloaded.").sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;
     }
 

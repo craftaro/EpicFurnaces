@@ -26,19 +26,24 @@ public class Level {
         EpicFurnaces plugin = EpicFurnaces.getInstance();
 
         if (performance != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.performance", performance + "%"));
+            description.add(plugin.getLocale().getMessage("interface.furnace.performance")
+                    .processPlaceholder("amount", performance + "%").getMessage());
 
         if (reward != null)
-            description.add(plugin.getLocale().getMessage("interface.furnace.reward", reward.split("%:")[0] + "%"));
+            description.add(plugin.getLocale().getMessage("interface.furnace.reward")
+                    .processPlaceholder("amount", reward.split("%:")[0] + "%").getMessage());
 
         if (fuelDuration != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.fuelduration", fuelDuration + "%"));
+            description.add(plugin.getLocale().getMessage("interface.furnace.fuelduration")
+                    .processPlaceholder("amount", fuelDuration + "%").getMessage());
 
         if (fuelShare != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.fuelshare", fuelShare));
+            description.add(plugin.getLocale().getMessage("interface.furnace.fuelshare")
+                    .processPlaceholder("amount", fuelShare).getMessage());
 
         if (overheat != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.overheat", overheat));
+            description.add(plugin.getLocale().getMessage("interface.furnace.overheat")
+                    .processPlaceholder("amount", overheat).getMessage());
     }
 
 

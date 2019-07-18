@@ -52,25 +52,35 @@ public class GUIOverview extends AbstractGUI {
         ItemStack item = new ItemStack(Material.FURNACE, 1);
 
         ItemMeta itemmeta = item.getItemMeta();
-        itemmeta.setDisplayName(plugin.getLocale().getMessage("interface.furnace.currentlevel", level.getLevel()));
+        itemmeta.setDisplayName(plugin.getLocale().getMessage("interface.furnace.currentlevel")
+                .processPlaceholder("level", level.getLevel()).getMessage());
         ArrayList<String> lore = new ArrayList<>();
-        lore.add(plugin.getLocale().getMessage("interface.furnace.smeltedx", furnace.getUses()));
+        lore.add(plugin.getLocale().getMessage("interface.furnace.smeltedx")
+                .processPlaceholder("amount", furnace.getUses()).getMessage());
         lore.addAll(level.getDescription());
         lore.add("");
         if (nextLevel == null)
-            lore.add(plugin.getLocale().getMessage("interface.furnace.alreadymaxed"));
+            lore.add(plugin.getLocale().getMessage("interface.furnace.alreadymaxed").getMessage());
         else {
-            lore.add(plugin.getLocale().getMessage("interface.furnace.level", nextLevel.getLevel()));
+            lore.add(plugin.getLocale().getMessage("interface.furnace.level")
+                    .processPlaceholder("level", nextLevel.getLevel()).getMessage());
             lore.addAll(nextLevel.getDescription());
 
             if (plugin.getConfig().getBoolean("Main.Upgrade By Smelting Materials")) {
-                lore.add(plugin.getLocale().getMessage("interface.furnace.tolevel", needed, Methods.cleanString(plugin.getConfig().getString("Main.Furnace Upgrade Cost"))));
+                lore.add(plugin.getLocale().getMessage("interface.furnace.tolevel")
+                        .processPlaceholder("amount", needed)
+                        .processPlaceholder("type",
+                                Methods.cleanString(plugin.getConfig().getString("Main.Furnace Upgrade Cost")))
+                        .getMessage());
             }
         }
 
         BoostData boostData = plugin.getBoostManager().getBoost(furnace.getPlacedBy());
         if (boostData != null) {
-            String[] parts = plugin.getLocale().getMessage("interface.button.boostedstats", Integer.toString(boostData.getMultiplier()), Methods.makeReadable(boostData.getEndTime() - System.currentTimeMillis())).split("\\|");
+            String[] parts = plugin.getLocale().getMessage("interface.button.boostedstats")
+                    .processPlaceholder("amount", Integer.toString(boostData.getMultiplier()))
+                    .processPlaceholder("time", Methods.makeReadable(boostData.getEndTime()
+                            - System.currentTimeMillis())).getMessage().split("\\|");
             lore.add("");
             for (String line : parts)
                 lore.add(Methods.formatText(line));
@@ -88,10 +98,11 @@ public class GUIOverview extends AbstractGUI {
 
         ItemStack item2 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Performance Icon")), 1);
         ItemMeta itemmeta2 = item2.getItemMeta();
-        itemmeta2.setDisplayName(plugin.getLocale().getMessage("interface.furnace.performancetitle")); //greyed out until available
+        itemmeta2.setDisplayName(plugin.getLocale().getMessage("interface.furnace.performancetitle").getMessage()); //greyed out until available
         ArrayList<String> lore2 = new ArrayList<>();
 
-        String[] parts = plugin.getLocale().getMessage("interface.furnace.performanceinfo", level.getPerformance()).split("\\|");
+        String[] parts = plugin.getLocale().getMessage("interface.furnace.performanceinfo")
+                .processPlaceholder("amount", level.getPerformance()).getMessage().split("\\|");
         lore.add("");
         for (String line : parts) {
             lore2.add(Methods.formatText(line));
@@ -101,10 +112,12 @@ public class GUIOverview extends AbstractGUI {
 
         ItemStack item3 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Reward Icon")), 1);
         ItemMeta itemmeta3 = item3.getItemMeta();
-        itemmeta3.setDisplayName(plugin.getLocale().getMessage("interface.furnace.rewardtitle"));
+        itemmeta3.setDisplayName(plugin.getLocale().getMessage("interface.furnace.rewardtitle").getMessage());
         ArrayList<String> lore3 = new ArrayList<>();
 
-        parts = plugin.getLocale().getMessage("interface.furnace.rewardinfo", level.getReward().split(":")[0].replace("%", "")).split("\\|");
+        parts = plugin.getLocale().getMessage("interface.furnace.rewardinfo")
+                .processPlaceholder("amount", level.getReward().split(":")[0].replace("%", ""))
+                .getMessage().split("\\|");
         lore.add("");
         for (String line : parts) {
             lore3.add(Methods.formatText(line));
@@ -115,10 +128,11 @@ public class GUIOverview extends AbstractGUI {
 
         ItemStack item4 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.FuelDuration Icon")), 1);
         ItemMeta itemmeta4 = item4.getItemMeta();
-        itemmeta4.setDisplayName(plugin.getLocale().getMessage("interface.furnace.fueldurationtitle"));
+        itemmeta4.setDisplayName(plugin.getLocale().getMessage("interface.furnace.fueldurationtitle").getMessage());
         ArrayList<String> lore4 = new ArrayList<>();
 
-        parts = plugin.getLocale().getMessage("interface.furnace.fueldurationinfo", level.getFuelDuration()).split("\\|");
+        parts = plugin.getLocale().getMessage("interface.furnace.fueldurationinfo")
+                .processPlaceholder("amount", level.getFuelDuration()).getMessage().split("\\|");
         lore.add("");
         for (String line : parts) {
             lore4.add(Methods.formatText(line));
@@ -128,10 +142,13 @@ public class GUIOverview extends AbstractGUI {
 
         ItemStack item5 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Overheat Icon")), 1);
         ItemMeta itemmeta5 = item4.getItemMeta();
-        itemmeta5.setDisplayName(plugin.getLocale().getMessage("interface.furnace.overheattitle"));
+        itemmeta5.setDisplayName(plugin.getLocale().getMessage("interface.furnace.overheattitle").getMessage());
         ArrayList<String> lore5 = new ArrayList<>();
 
-        parts = plugin.getLocale().getMessage("interface.furnace.overheatinfo", level.getOverheat() * 3).split("\\|");
+        parts = plugin.getLocale().getMessage("interface.furnace.overheatinfo")
+                .processPlaceholder("amount", level.getOverheat() * 3)
+                .getMessage().split("\\|");
+
         lore.add("");
         for (String line : parts) {
             lore5.add(Methods.formatText(line));
@@ -141,10 +158,11 @@ public class GUIOverview extends AbstractGUI {
 
         ItemStack item6 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.FuelShare Icon")), 1);
         ItemMeta itemmeta6 = item4.getItemMeta();
-        itemmeta6.setDisplayName(plugin.getLocale().getMessage("interface.furnace.fuelsharetitle"));
+        itemmeta6.setDisplayName(plugin.getLocale().getMessage("interface.furnace.fuelsharetitle").getMessage());
         ArrayList<String> lore6 = new ArrayList<>();
 
-        parts = plugin.getLocale().getMessage("interface.furnace.fuelshareinfo", level.getOverheat() * 3).split("\\|");
+        parts = plugin.getLocale().getMessage("interface.furnace.fuelshareinfo")
+                .processPlaceholder("amount", level.getOverheat() * 3).getMessage().split("\\|");
         lore.add("");
         for (String line : parts) {
             lore6.add(Methods.formatText(line));
@@ -154,23 +172,26 @@ public class GUIOverview extends AbstractGUI {
 
         ItemStack itemXP = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.XP Icon")), 1);
         ItemMeta itemmetaXP = itemXP.getItemMeta();
-        itemmetaXP.setDisplayName(plugin.getLocale().getMessage("interface.furnace.upgradewithxp"));
+        itemmetaXP.setDisplayName(plugin.getLocale().getMessage("interface.furnace.upgradewithxp").getMessage());
         ArrayList<String> loreXP = new ArrayList<>();
         if (nextLevel != null)
-            loreXP.add(plugin.getLocale().getMessage("interface.furnace.upgradewithxplore", nextLevel.getCostExperience()));
+            loreXP.add(plugin.getLocale().getMessage("interface.furnace.upgradewithxplore")
+                    .processPlaceholder("cost", nextLevel.getCostExperience()).getMessage());
         else
-            loreXP.add(plugin.getLocale().getMessage("interface.furnace.alreadymaxed"));
+            loreXP.add(plugin.getLocale().getMessage("interface.furnace.alreadymaxed").getMessage());
         itemmetaXP.setLore(loreXP);
         itemXP.setItemMeta(itemmetaXP);
 
         ItemStack itemECO = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Economy Icon")), 1);
         ItemMeta itemmetaECO = itemECO.getItemMeta();
-        itemmetaECO.setDisplayName(plugin.getLocale().getMessage("interface.furnace.upgradewitheconomy"));
+        itemmetaECO.setDisplayName(plugin.getLocale().getMessage("interface.furnace.upgradewitheconomy").getMessage());
         ArrayList<String> loreECO = new ArrayList<>();
         if (nextLevel != null)
-            loreECO.add(plugin.getLocale().getMessage("interface.furnace.upgradewitheconomylore", Methods.formatEconomy(nextLevel.getCostEconomy())));
+            loreECO.add(plugin.getLocale().getMessage("interface.furnace.upgradewitheconomylore")
+                    .processPlaceholder("cost", Methods.formatEconomy(nextLevel.getCostEconomy()))
+                    .getMessage());
         else
-            loreECO.add(plugin.getLocale().getMessage("interface.furnace.alreadymaxed"));
+            loreECO.add(plugin.getLocale().getMessage("interface.furnace.alreadymaxed").getMessage());
         itemmetaECO.setLore(loreECO);
         itemECO.setItemMeta(itemmetaECO);
 
@@ -249,25 +270,27 @@ public class GUIOverview extends AbstractGUI {
 
         ItemStack hook = new ItemStack(Material.TRIPWIRE_HOOK, 1);
         ItemMeta hookmeta = hook.getItemMeta();
-        hookmeta.setDisplayName(plugin.getLocale().getMessage("interface.furnace.remotefurnace"));
+        hookmeta.setDisplayName(plugin.getLocale().getMessage("interface.furnace.remotefurnace").getMessage());
         ArrayList<String> lorehook = new ArrayList<>();
 
         String nickname = furnace.getNickname();
 
-        parts = plugin.getLocale().getMessage("interface.furnace.remotefurnacelore", nickname == null ? "Unset" : nickname).split("\\|");
+        parts = plugin.getLocale().getMessage("interface.furnace.remotefurnacelore")
+                .processPlaceholder("nickname", nickname == null ? "Unset" : nickname).getMessage().split("\\|");
 
         for (String line : parts) {
             lorehook.add(Methods.formatText(line));
         }
         if (nickname != null) {
-            parts = plugin.getLocale().getMessage("interface.furnace.utilize", nickname).split("\\|");
+            parts = plugin.getLocale().getMessage("interface.furnace.utilize")
+                    .processPlaceholder("nickname", nickname).getMessage().split("\\|");
             for (String line : parts) {
                 lorehook.add(Methods.formatText(line));
             }
         }
 
         lorehook.add("");
-        lorehook.add(plugin.getLocale().getMessage("interface.furnace.remotelist"));
+        lorehook.add(plugin.getLocale().getMessage("interface.furnace.remotelist").getMessage());
         for (String line : furnace.getRawAccessList()) {
             String[] halfs = line.split(":");
             String name = halfs[1];
@@ -293,13 +316,13 @@ public class GUIOverview extends AbstractGUI {
                             }
 
                             if (other.getNickname().equalsIgnoreCase(anvilEvent.getName())) {
-                                player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.remote.nicknameinuse"));
+                                plugin.getLocale().getMessage("event.remote.nicknameinuse").sendPrefixedMessage(player);
                                 return;
                             }
                         }
 
                         furnace.setNickname(anvilEvent.getName());
-                        player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.remote.nicknamesuccess"));
+                        plugin.getLocale().getMessage("event.remote.nicknamesuccess").sendPrefixedMessage(player);
                     });
 
                     gui.setOnClose((player2, inventory2) -> init(setTitle, inventory.getSize()));
@@ -311,7 +334,7 @@ public class GUIOverview extends AbstractGUI {
                     gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, itemO);
                     gui.open();
 
-                    player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("event.remote.enter"));
+                    plugin.getLocale().getMessage("event.remote.enter").sendPrefixedMessage(player);
 
 
                 } else if (type == ClickType.RIGHT) {

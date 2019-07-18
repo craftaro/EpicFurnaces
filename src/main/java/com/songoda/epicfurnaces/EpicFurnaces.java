@@ -27,6 +27,7 @@ import com.songoda.epicfurnaces.utils.ConfigWrapper;
 import com.songoda.epicfurnaces.utils.Methods;
 import com.songoda.epicfurnaces.utils.Metrics;
 import com.songoda.epicfurnaces.utils.ServerVersion;
+import com.songoda.epicfurnaces.utils.locale.Locale;
 import com.songoda.epicfurnaces.utils.settings.Setting;
 import com.songoda.epicfurnaces.utils.settings.SettingsManager;
 import com.songoda.epicfurnaces.utils.updateModules.LocaleModule;
@@ -50,7 +51,6 @@ import java.util.UUID;
 public class EpicFurnaces extends JavaPlugin {
     private static CommandSender console = Bukkit.getConsoleSender();
     private static EpicFurnaces INSTANCE;
-    private References references = null;
 
     private ServerVersion serverVersion = ServerVersion.fromPackageName(Bukkit.getServer().getClass().getPackage().getName());
 
@@ -121,7 +121,6 @@ public class EpicFurnaces extends JavaPlugin {
         loadFromFile();
 
         setupRecipies();
-        references = new References();
 
         // Start Tasks
         FurnaceTask.startTask(this);
@@ -266,7 +265,6 @@ public class EpicFurnaces extends JavaPlugin {
         this.locale.reloadMessages();
         this.settingsManager.reloadConfig();
         this.blacklistHandler.reload();
-        references = new References();
     }
 
     private void loadDataFile() {
@@ -355,10 +353,6 @@ public class EpicFurnaces extends JavaPlugin {
 
     public BlacklistHandler getBlacklistHandler() {
         return blacklistHandler;
-    }
-
-    public References getReferences() {
-        return references;
     }
 
     public FurnaceManager getFurnaceManager() {

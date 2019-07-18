@@ -22,11 +22,11 @@ public class CommandGive extends AbstractCommand {
         Level level = plugin.getLevelManager().getLowestLevel();
         Player player;
         if (args.length != 1 && Bukkit.getPlayer(args[1]) == null) {
-            sender.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&cThat player does not exist or is currently offline."));
+            plugin.getLocale().newMessage("&cThat player does not exist or is currently offline.").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         } else if (args.length == 1) {
             if (!(sender instanceof Player)) {
-                sender.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&cYou need to be a player to give a farm item to yourself."));
+                plugin.getLocale().newMessage("&cYou need to be a player to give a farm item to yourself.").sendPrefixedMessage(sender);
                 return ReturnType.FAILURE;
             }
             player = (Player) sender;
@@ -36,14 +36,17 @@ public class CommandGive extends AbstractCommand {
 
 
         if (args.length >= 3 && !plugin.getLevelManager().isLevel(Integer.parseInt(args[2]))) {
-            sender.sendMessage(plugin.getReferences().getPrefix() + Methods.formatText("&cNot a valid level... The current valid levels are: &4" + plugin.getLevelManager().getLowestLevel().getLevel() + "-" + plugin.getLevelManager().getHighestLevel().getLevel() + "&c."));
+            plugin.getLocale().newMessage("&cNot a valid level... The current valid levels are: &4"
+                    + plugin.getLevelManager().getLowestLevel().getLevel() + "-"
+                    + plugin.getLevelManager().getHighestLevel().getLevel() + "&c.").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         } else if (args.length != 1) {
 
             level = plugin.getLevelManager().getLevel(Integer.parseInt(args[2]));
         }
         player.getInventory().addItem(plugin.createLeveledFurnace(Material.FURNACE, level.getLevel(), 0));
-        player.sendMessage(plugin.getReferences().getPrefix() + plugin.getLocale().getMessage("command.give.success", level.getLevel()));
+        plugin.getLocale().getMessage("command.give.success")
+                .processPlaceholder("level", level.getLevel()).sendPrefixedMessage(sender);
 
         return ReturnType.SUCCESS;
     }

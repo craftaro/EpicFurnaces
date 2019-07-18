@@ -1,6 +1,5 @@
-package com.songoda.epicfurnaces;
+package com.songoda.epicfurnaces.utils.locale;
 
-import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
@@ -168,7 +167,6 @@ public class Locale {
         }
     }
 
-
     public boolean reloadMessages() {
         if (!this.file.exists()) {
             plugin.getLogger().warning("Could not find file for locale \"" + this.name + "\"");
@@ -188,7 +186,7 @@ public class Locale {
                     continue;
                 }
 
-                nodes.put(matcher.group(1), matcher.group(2));
+                nodes.put(matcher.group(1),matcher.group(2));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -197,44 +195,24 @@ public class Locale {
         return true;
     }
 
-
-    /**
-     * Get a message set for a specific node
-     *
-     * @param node the node to get
-     * @return the message for the specified node
-     */
-    public String getMessage(String node) {
-        return ChatColor.translateAlternateColorCodes('&', this.getMessageOrDefault(node, node));
+    private Message applyPrefix(Message message) {
+        return message.setPrefix(this.nodes.getOrDefault("general.nametag.prefix", "[Plugin]"));
     }
 
-    /**
-     * Get a message set for a specific node and replace its params with a supplied arguments.
-     *
-     * @param node the node to get
-     * @param args the replacement arguments
-     * @return the message for the specified node
-     */
-    public String getMessage(String node, Object... args) {
-        String message = getMessage(node);
-        for (Object arg : args) {
-            message = message.replaceFirst("\\%.*?\\%", arg.toString());
-        }
-        return message;
+    public Message newMessage(String message) {
+        return applyPrefix(new Message(message));
     }
 
-    /**
-     * Get a message set for a specific node
-     *
-     * @param node         the node to get
-     * @param defaultValue the default value given that a value for the node was not found
-     * @return the message for the specified node. Default if none found
-     */
-    public String getMessageOrDefault(String node, String defaultValue) {
-        return this.nodes.getOrDefault(node, defaultValue);
+    public Message getMessage(String node) {
+        return this.getMessageOrDefault(node, node);
+    }
+
+    public Message getMessageOrDefault(String node, String defaultValue) {
+        return applyPrefix(new Message(this.nodes.getOrDefault(node, defaultValue)));
     }
 
     public String getName() {
         return name;
     }
+
 }
