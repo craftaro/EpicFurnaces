@@ -302,10 +302,8 @@ public class Furnace {
             this.radiusFuelshareLast = radiusLast;
     }
 
-
-
     public Location getLocation() {
-        return location;
+        return location.clone();
     }
 
     public void setLevel(Level level) {
