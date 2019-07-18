@@ -11,14 +11,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Assists in the utilization of localization files.
+ * Created to be used by the Songoda Team.
+ *
+ * @author Brianna O'Keefe - Songoda
+ */
 public class Locale {
 
-    private static JavaPlugin plugin;
-    private static File localeFolder;
+    private static final List<Locale> LOCALES = new ArrayList<>();
     private static final Pattern NODE_PATTERN = Pattern.compile("(\\w+(?:\\.{1}\\w+)*)\\s*=\\s*\"(.*)\"");
     private static final String FILE_EXTENSION = ".lang";
-
-    private static final List<Locale> LOCALES = new ArrayList<>();
+    private static JavaPlugin plugin;
+    private static File localeFolder;
 
     private final Map<String, String> nodes = new HashMap<>();
 
@@ -27,7 +32,12 @@ public class Locale {
     private File file;
     private String name;
 
-    public Locale(String name) {
+    /**
+     * Instantiate the Locale class for future use
+     *
+     * @param name the name of the instantiated language
+     */
+    private Locale(String name) {
         if (plugin == null)
             return;
 
@@ -41,6 +51,14 @@ public class Locale {
         plugin.getLogger().info("Loaded locale \"" + fileName + "\"");
     }
 
+    /**
+     * Initialize the class to load all existing language files and update them.
+     * This must be called before any other methods in this class as otherwise
+     * the methods will fail to invoke
+     *
+     * @param plugin        the plugin instance
+     * @param defaultLocale the default language
+     */
     public Locale(JavaPlugin plugin, String defaultLocale) {
 
         Locale.plugin = plugin;
@@ -65,10 +83,24 @@ public class Locale {
         }
     }
 
+    /**
+     * Save a locale file from the InputStream, to the locale folder
+     *
+     * @param fileName the name of the file to save
+     * @return true if the operation was successful, false otherwise
+     */
     public static boolean saveLocale(String fileName) {
         return saveLocale(plugin.getResource(defaultLocale + FILE_EXTENSION), fileName);
     }
 
+
+    /**
+     * Save a locale file from the InputStream, to the locale folder
+     *
+     * @param in       file to save
+     * @param fileName the name of the file to save
+     * @return true if the operation was successful, false otherwise
+     */
     public static boolean saveLocale(InputStream in, String fileName) {
         if (!localeFolder.exists()) localeFolder.mkdirs();
 
@@ -94,6 +126,7 @@ public class Locale {
         }
     }
 
+    // Write new changes to existing files, if any at all
     private static boolean compareFiles(InputStream in, File existingFile) {
         InputStream defaultFile =
                 in == null ? plugin.getResource((defaultLocale != null ? defaultLocale : "en_US") + FILE_EXTENSION) : in;
@@ -116,7 +149,10 @@ public class Locale {
                     if (!changed) {
                         writer.newLine();
                         writer.newLine();
+                        // Leave a note alerting the user of the newly added messages.
                         writer.write("# New messages for " + plugin.getName() + " v" + plugin.getDescription().getVersion() + ".");
+
+                        // If changes were found outside of the default file leave a note explaining that.
                         if (in == null) {
                             writer.newLine();
                             writer.write("# These translations were found untranslated, join");
@@ -141,6 +177,13 @@ public class Locale {
         return changed;
     }
 
+
+    /**
+     * Check whether a locale exists and is registered or not
+     *
+     * @param name the whole language tag (i.e. "en_US")
+     * @return true if it exists
+     */
     public static boolean localeLoaded(String name) {
         for (Locale locale : LOCALES)
             if (locale.getName().equals(name)) return true;
@@ -148,25 +191,23 @@ public class Locale {
     }
 
 
+    /**
+     * Get a locale by its entire proper name (i.e. "en_US")
+     *
+     * @param name the full name of the locale
+     * @return locale of the specified name
+     */
     public static Locale getLocale(String name) {
         for (Locale locale : LOCALES)
             if (locale.getName().equalsIgnoreCase(name)) return locale;
         return null;
     }
 
-    private static void copy(InputStream input, OutputStream output) {
-        int n;
-        byte[] buffer = new byte[1024 * 4];
-
-        try {
-            while ((n = input.read(buffer)) != -1) {
-                output.write(buffer, 0, n);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
+    /**
+     * Clear the previous message cache and load new messages directly from file
+     *
+     * @return reload messages from file
+     */
     public boolean reloadMessages() {
         if (!this.file.exists()) {
             plugin.getLogger().warning("Could not find file for locale \"" + this.name + "\"");
@@ -186,7 +227,7 @@ public class Locale {
                     continue;
                 }
 
-                nodes.put(matcher.group(1),matcher.group(2));
+                nodes.put(matcher.group(1), matcher.group(2));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -195,24 +236,67 @@ public class Locale {
         return true;
     }
 
-    private Message applyPrefix(Message message) {
+    /**
+     * Supply the Message object with the plugins prefix.
+     *
+     * @param message message to be applied
+     * @return applied message
+     */
+    private Message supplyPrefix(Message message) {
         return message.setPrefix(this.nodes.getOrDefault("general.nametag.prefix", "[Plugin]"));
     }
 
+    /**
+     * Create a new unsaved Message
+     *
+     * @param message the message to create
+     * @return the created message
+     */
     public Message newMessage(String message) {
-        return applyPrefix(new Message(message));
+        return supplyPrefix(new Message(message));
     }
 
+    /**
+     * Get a message set for a specific node.
+     *
+     * @param node the node to get
+     * @return the message for the specified node
+     */
     public Message getMessage(String node) {
         return this.getMessageOrDefault(node, node);
     }
 
+    /**
+     * Get a message set for a specific node
+     *
+     * @param node         the node to get
+     * @param defaultValue the default value given that a value for the node was not found
+     * @return the message for the specified node. Default if none found
+     */
     public Message getMessageOrDefault(String node, String defaultValue) {
-        return applyPrefix(new Message(this.nodes.getOrDefault(node, defaultValue)));
+        return supplyPrefix(new Message(this.nodes.getOrDefault(node, defaultValue)));
     }
 
+    /**
+     * Return the locale name (i.e. "en_US")
+     *
+     * @return the locale name
+     */
     public String getName() {
         return name;
+    }
+
+    private static void copy(InputStream input, OutputStream output) {
+        int n;
+        byte[] buffer = new byte[1024 * 4];
+
+        try {
+            while ((n = input.read(buffer)) != -1) {
+                output.write(buffer, 0, n);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
