@@ -1,19 +1,15 @@
 package com.songoda.epicfurnaces.economy;
 
-import com.songoda.epicfurnaces.EpicFurnaces;
 import org.black_ixx.playerpoints.PlayerPoints;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 public class PlayerPointsEconomy implements Economy {
 
-    private final EpicFurnaces plugin;
-
     private final PlayerPoints playerPoints;
 
-    public PlayerPointsEconomy(EpicFurnaces plugin) {
-        this.plugin = plugin;
-
-        this.playerPoints = (PlayerPoints) plugin.getServer().getPluginManager().getPlugin("PlayerPoints");
+    public PlayerPointsEconomy() {
+        this.playerPoints = (PlayerPoints) Bukkit.getServer().getPluginManager().getPlugin("PlayerPoints");
     }
 
     private int convertAmount(double amount) {

@@ -5,6 +5,7 @@ import com.songoda.epicfurnaces.boost.BoostManager;
 import com.songoda.epicfurnaces.command.CommandManager;
 import com.songoda.epicfurnaces.economy.Economy;
 import com.songoda.epicfurnaces.economy.PlayerPointsEconomy;
+import com.songoda.epicfurnaces.economy.ReserveEconomy;
 import com.songoda.epicfurnaces.economy.VaultEconomy;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
@@ -107,13 +108,15 @@ public class EpicFurnaces extends JavaPlugin {
         this.boostManager = new BoostManager();
         this.blacklistHandler = new BlacklistHandler();
 
+        PluginManager pluginManager = Bukkit.getPluginManager();
+
         // Setup Economy
-        if (Setting.VAULT_ECONOMY.getBoolean()
-                && getServer().getPluginManager().getPlugin("Vault") != null)
-            this.economy = new VaultEconomy(this);
-        else if (Setting.PLAYER_POINTS_ECONOMY.getBoolean()
-                && getServer().getPluginManager().getPlugin("PlayerPoints") != null)
-            this.economy = new PlayerPointsEconomy(this);
+        if (Setting.VAULT_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Vault"))
+            this.economy = new VaultEconomy();
+        else if (Setting.RESERVE_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Reserve"))
+            this.economy = new ReserveEconomy();
+        else if (Setting.PLAYER_POINTS_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("PlayerPoints"))
+            this.economy = new PlayerPointsEconomy();
 
         this.checkStorage();
 
@@ -125,8 +128,6 @@ public class EpicFurnaces extends JavaPlugin {
         // Start Tasks
         FurnaceTask.startTask(this);
         HologramTask.startTask(this);
-
-        PluginManager pluginManager = Bukkit.getPluginManager();
 
         // Register Hologram Plugin
         if (Setting.HOLOGRAMS.getBoolean()
