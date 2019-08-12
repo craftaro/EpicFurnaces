@@ -51,7 +51,7 @@ public class BlockListeners implements Listener {
             return;
         }
 
-        if (event.getBlock().getType() != Material.FURNACE)
+        if (event.getBlock().getType().name().contains("FURNACE"))
             return;
 
         ItemStack item = event.getItemInHand();
