@@ -52,7 +52,7 @@ public class CommandManager implements CommandExecutor {
                 }
             }
         }
-        plugin.getLocale().newMessage("&7The command you entered does not exist or is spelt incorrectly.").sendPrefixedMessage(commandSender);
+        plugin.getLocale().getMessage("&7The command you entered does not exist or is spelt incorrectly.").sendPrefixedMessage(commandSender);
         return true;
     }
 
@@ -69,7 +69,7 @@ public class CommandManager implements CommandExecutor {
             }
             return;
         }
-        plugin.getLocale().newMessage("event.general.nopermission").sendPrefixedMessage(sender);
+        plugin.getLocale().getMessage("event.general.nopermission").sendPrefixedMessage(sender);
     }
 
     public List<AbstractCommand> getCommands() {
