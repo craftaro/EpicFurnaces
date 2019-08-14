@@ -47,11 +47,8 @@ public class BlockListeners implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
 
-        if (plugin.getBlacklistHandler().isBlacklisted(event.getPlayer())) {
-            return;
-        }
-
-        if (event.getBlock().getType().name().contains("FURNACE"))
+        if (plugin.getBlacklistHandler().isBlacklisted(event.getPlayer())
+        || !event.getBlock().getType().name().contains("FURNACE"))
             return;
 
         ItemStack item = event.getItemInHand();
