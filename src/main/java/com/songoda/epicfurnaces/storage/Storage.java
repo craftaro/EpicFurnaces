@@ -1,9 +1,9 @@
 package com.songoda.epicfurnaces.storage;
 
+import com.songoda.core.configuration.Config;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.Furnace;
-import com.songoda.epicfurnaces.utils.ConfigWrapper;
 import com.songoda.epicfurnaces.utils.Methods;
 
 import java.util.List;
@@ -11,14 +11,12 @@ import java.util.List;
 public abstract class Storage {
 
     protected final EpicFurnaces plugin;
-    protected final ConfigWrapper dataFile;
+    protected final Config dataFile;
 
     public Storage(EpicFurnaces plugin) {
         this.plugin = plugin;
-        this.dataFile = new ConfigWrapper(plugin, "", "data.yml");
-        this.dataFile.createNewFile(null, "EpicFurnaces Data File");
-        this.dataFile.getConfig().options().copyDefaults(true);
-        this.dataFile.saveConfig();
+        this.dataFile = new Config(plugin, "data.yml");
+        this.dataFile.load();
     }
 
     public abstract boolean containsGroup(String group);

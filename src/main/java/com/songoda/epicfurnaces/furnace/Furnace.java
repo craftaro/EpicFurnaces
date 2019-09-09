@@ -1,13 +1,14 @@
 package com.songoda.epicfurnaces.furnace;
 
+import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.hooks.EconomyManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.levels.Level;
 import com.songoda.epicfurnaces.gui.GUIOverview;
+import com.songoda.epicfurnaces.settings.Settings;
 import com.songoda.epicfurnaces.utils.CostType;
 import com.songoda.epicfurnaces.utils.Methods;
-import com.songoda.epicfurnaces.utils.ServerVersion;
-import com.songoda.epicfurnaces.utils.settings.Setting;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -46,7 +47,7 @@ public class Furnace {
         if (placedBy == null) placedBy = player.getUniqueId();
 
         if (!player.hasPermission("epicfurnaces.overview")) return;
-        new GUIOverview(plugin, this, player);
+        plugin.getGuiManager().showGUI(player, new GUIOverview(plugin, this, player));
     }
 
     public void plus(FurnaceSmeltEvent e) {
@@ -56,7 +57,7 @@ public class Furnace {
         this.uses++;
         this.tolevel++;
 
-        int multi = Setting.LEVEL_MULTIPLIER.getInt();
+        int multi = Settings.LEVEL_MULTIPLIER.getInt();
 
         if (level.getReward() == null) return;
 
@@ -76,7 +77,7 @@ public class Furnace {
 
         int needed = ((multi * level.getLevel()) - tolevel) - 1;
 
-        if (Setting.UPGRADE_BY_SMELTING.getBoolean()
+        if (Settings.UPGRADE_BY_SMELTING.getBoolean()
                 && needed <= 0
                 && plugin.getLevelManager().getLevel(level.getLevel() + 1) != null) {
             tolevel = 0;
@@ -91,8 +92,8 @@ public class Furnace {
         double rand = Math.random() * 100;
         if (rand >= num
                 || e.getResult().equals(Material.SPONGE)
-                || Setting.NO_REWARDS_FROM_RECIPES.getBoolean()
-                && plugin.getFurnaceRecipeFile().getConfig().contains("Recipes." + i.getSmelting().getType().toString())) {
+                || Settings.NO_REWARDS_FROM_RECIPES.getBoolean()
+                && plugin.getFurnaceRecipeFile().contains("Recipes." + i.getSmelting().getType().toString())) {
             return;
         }
 
@@ -115,16 +116,16 @@ public class Furnace {
             int cost = type == CostType.ECONOMY ? level.getCostEconomy() : level.getCostExperience();
 
             if (type == CostType.ECONOMY) {
-                if (plugin.getEconomy() == null) {
+                if (!EconomyManager.isEnabled()) {
                     player.sendMessage("Economy not enabled.");
                     return;
                 }
-                if (!plugin.getEconomy().hasBalance(player, cost)) {
+                if (!EconomyManager.hasBalance(player, cost)) {
 
                     plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
                     return;
                 }
-                plugin.getEconomy().withdrawBalance(player, cost);
+                EconomyManager.withdrawBalance(player, cost);
                 upgradeFinal(level, player);
             } else if (type == CostType.EXPERIENCE) {
                 if (player.getLevel() >= cost || player.getGameMode() == GameMode.CREATIVE) {
@@ -152,7 +153,7 @@ public class Furnace {
         }
         Location loc = location.clone().add(.5, .5, .5);
 
-        if (!plugin.isServerVersionAtLeast(ServerVersion.V1_12)) return;
+        if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_12)) return;
 
         player.getWorld().spawnParticle(org.bukkit.Particle.valueOf(plugin.getConfig().getString("Main.Upgrade Particle Type")), loc, 200, .5, .5, .5);
 
@@ -161,7 +162,7 @@ public class Furnace {
         } else {
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 25.0F);
 
-            if (!plugin.isServerVersionAtLeast(ServerVersion.V1_13)) return;
+            if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) return;
 
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 2F, 25.0F);
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.2F, 35.0F), 5L);
@@ -172,7 +173,7 @@ public class Furnace {
     private void syncName() {
         if (!(location.getBlock() instanceof Furnace)) return;
         org.bukkit.block.Furnace furnace = (org.bukkit.block.Furnace) location.getBlock().getState();
-        if (EpicFurnaces.getInstance().isServerVersionAtLeast(ServerVersion.V1_10))
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_10))
             furnace.setCustomName(Methods.formatName(level.getLevel(), uses, false));
         furnace.update(true);
     }

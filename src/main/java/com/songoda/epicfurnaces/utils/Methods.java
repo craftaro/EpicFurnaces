@@ -1,5 +1,6 @@
 package com.songoda.epicfurnaces.utils;
 
+import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -18,37 +19,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class Methods {
 
-
-    public static ItemStack getGlass() {
-        EpicFurnaces plugin = EpicFurnaces.getInstance();
-        return Methods.getGlass(plugin.getConfig().getBoolean("Interfaces.Replace Glass Type 1 With Rainbow Glass"), plugin.getConfig().getInt("Interfaces.Glass Type 1"));
-    }
-
-    public static ItemStack getBackgroundGlass(boolean type) {
-        EpicFurnaces plugin = EpicFurnaces.getInstance();
-        if (type)
-            return getGlass(false, plugin.getConfig().getInt("Interfaces.Glass Type 2"));
-        else
-            return getGlass(false, plugin.getConfig().getInt("Interfaces.Glass Type 3"));
-    }
-
-    private static ItemStack getGlass(Boolean rainbow, int type) {
-        int randomNum = 1 + (int) (Math.random() * 6);
-        ItemStack glass;
-        if (rainbow) {
-            glass = new ItemStack(EpicFurnaces.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
-                    Material.LEGACY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1, (short) randomNum);
-        } else {
-            glass = new ItemStack(EpicFurnaces.getInstance().isServerVersionAtLeast(ServerVersion.V1_13) ?
-                    Material.LEGACY_STAINED_GLASS_PANE : Material.valueOf("STAINED_GLASS_PANE"), 1, (short) type);
-        }
-        ItemMeta glassmeta = glass.getItemMeta();
-        glassmeta.setDisplayName("§l");
-        glass.setItemMeta(glassmeta);
-        return glass;
-    }
-
-
     public static String cleanString(String typ) {
         String type = typ.replaceAll("_", " ");
         type = ChatColor.stripColor(type.substring(0, 1).toUpperCase() + type.toLowerCase().substring(1));
@@ -58,7 +28,6 @@ public class Methods {
     public static String formatName(int level, int uses, boolean full) {
         String name = EpicFurnaces.getInstance().getLocale().getMessage("general.nametag.nameformat")
                 .processPlaceholder("level", level).getMessage();
-
 
         String info = "";
         if (full) {
@@ -216,7 +185,7 @@ public class Methods {
     public static String formatTitle(String text) {
         if (text == null || text.equals(""))
             return "";
-        if (!EpicFurnaces.getInstance().isServerVersionAtLeast(ServerVersion.V1_9)) {
+        if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9)) {
             if (text.length() > 31)
                 text = text.substring(0, 29) + "...";
         }

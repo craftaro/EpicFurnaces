@@ -5,7 +5,7 @@ general.nametag.next = "&9Next"
 general.nametag.back = "&9Back"
 general.nametag.nameformat = "&eLevel %level% &fFurnace"
 general.hologram.outoffuel = "&cNo Fuel"
-general.hologram.stats = "&a%in%&7/&c%out%";
+general.hologram.stats = "&a%in%&7/&c%out%"
 
 #Interface Messages
 

@@ -1,13 +1,15 @@
 package com.songoda.epicfurnaces.gui;
 
+import com.songoda.core.gui.Gui;
+import com.songoda.core.gui.GuiUtils;
+import com.songoda.core.input.ChatPrompt;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.levels.Level;
+import com.songoda.epicfurnaces.settings.Settings;
 import com.songoda.epicfurnaces.utils.CostType;
 import com.songoda.epicfurnaces.utils.Methods;
-import com.songoda.epicfurnaces.utils.gui.AbstractAnvilGUI;
-import com.songoda.epicfurnaces.utils.gui.AbstractGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,28 +21,38 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GUIOverview extends AbstractGUI {
+public class GUIOverview extends Gui {
 
     private final EpicFurnaces plugin;
     private final Furnace furnace;
+    private final Player player;
 
     private int task;
 
     public GUIOverview(EpicFurnaces plugin, Furnace furnace, Player player) {
-        super(player);
         this.plugin = plugin;
         this.furnace = furnace;
+        this.player = player;
 
-
-        init(Methods.formatName(furnace.getLevel().getLevel(), furnace.getUses(), false), 27);
+        setRows(3);
+        setTitle(Methods.formatName(furnace.getLevel().getLevel(), furnace.getUses(), false));
         runTask();
+        constructGUI();
+        this.setOnClose(action -> Bukkit.getScheduler().cancelTask(task));
     }
 
-    @Override
-    public void constructGUI() {
-        inventory.clear();
-        resetClickables();
-        registerClickables();
+    private void constructGUI() {
+        ItemStack glass1 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial());
+        ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial());
+        ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial());
+
+        setDefaultItem(glass1);
+
+        GuiUtils.mirrorFill(this, 0, 0, true, true, glass2);
+        GuiUtils.mirrorFill(this, 0, 1, true, true, glass2);
+        GuiUtils.mirrorFill(this, 0, 2, true, true, glass3);
+        GuiUtils.mirrorFill(this, 1, 0, false, true, glass2);
+        GuiUtils.mirrorFill(this, 1, 1, false, true, glass3);
 
         Level level = furnace.getLevel();
         Level nextLevel = plugin.getLevelManager().getHighestLevel().getLevel() > level.getLevel() ? plugin.getLevelManager().getLevel(level.getLevel() + 1) : null;
@@ -88,12 +100,6 @@ public class GUIOverview extends AbstractGUI {
 
         itemmeta.setLore(lore);
         item.setItemMeta(itemmeta);
-
-        int nu = 0;
-        while (nu != 27) {
-            inventory.setItem(nu, Methods.getGlass());
-            nu++;
-        }
 
 
         ItemStack item2 = new ItemStack(Material.valueOf(plugin.getConfig().getString("Interfaces.Performance Icon")), 1);
@@ -195,24 +201,7 @@ public class GUIOverview extends AbstractGUI {
         itemmetaECO.setLore(loreECO);
         itemECO.setItemMeta(itemmetaECO);
 
-        inventory.setItem(13, item);
-
-        inventory.setItem(0, Methods.getBackgroundGlass(true));
-        inventory.setItem(1, Methods.getBackgroundGlass(true));
-        inventory.setItem(2, Methods.getBackgroundGlass(false));
-        inventory.setItem(6, Methods.getBackgroundGlass(false));
-        inventory.setItem(7, Methods.getBackgroundGlass(true));
-        inventory.setItem(8, Methods.getBackgroundGlass(true));
-        inventory.setItem(9, Methods.getBackgroundGlass(true));
-        inventory.setItem(10, Methods.getBackgroundGlass(false));
-        inventory.setItem(16, Methods.getBackgroundGlass(false));
-        inventory.setItem(17, Methods.getBackgroundGlass(true));
-        inventory.setItem(18, Methods.getBackgroundGlass(true));
-        inventory.setItem(19, Methods.getBackgroundGlass(true));
-        inventory.setItem(20, Methods.getBackgroundGlass(false));
-        inventory.setItem(24, Methods.getBackgroundGlass(false));
-        inventory.setItem(25, Methods.getBackgroundGlass(true));
-        inventory.setItem(26, Methods.getBackgroundGlass(true));
+        setItem(13, item);
 
         int num = -1;
         Map<Integer, int[]> spots = new HashMap();
@@ -249,23 +238,23 @@ public class GUIOverview extends AbstractGUI {
         int current = 0;
 
         if (level.getPerformance() != 0) {
-            inventory.setItem(order[current], item2);
+            setItem(order[current], item2);
             current++;
         }
         if (level.getReward() != null) {
-            inventory.setItem(order[current], item3);
+            setItem(order[current], item3);
             current++;
         }
         if (level.getFuelDuration() != 0) {
-            inventory.setItem(order[current], item4);
+            setItem(order[current], item4);
             current++;
         }
         if (level.getFuelShare() != 0) {
-            inventory.setItem(order[current], item6);
+            setItem(order[current], item6);
             current++;
         }
         if (level.getOverheat() != 0) {
-            inventory.setItem(order[current], item5);
+            setItem(order[current], item5);
         }
 
         ItemStack hook = new ItemStack(Material.TRIPWIRE_HOOK, 1);
@@ -305,66 +294,56 @@ public class GUIOverview extends AbstractGUI {
 
         if (plugin.getConfig().getBoolean("Main.Access Furnaces Remotely")
                 && player.hasPermission("EpicFurnaces.Remote")) {
-            inventory.setItem(4, hook);
-            registerClickable(4, ((player1, inventory1, cursor, slot, type) -> {
-                if (type == ClickType.LEFT) {
+            setButton(4, hook, (event) -> {
+                if (event.clickType == ClickType.LEFT) {
 
-                    AbstractAnvilGUI gui = new AbstractAnvilGUI(player, anvilEvent -> {
+                    ChatPrompt chatPrompt = ChatPrompt.showPrompt(plugin, event.player, promptEvent -> {
                         for (Furnace other : plugin.getFurnaceManager().getFurnaces().values()) {
                             if (other.getNickname() == null) {
                                 continue;
                             }
 
-                            if (other.getNickname().equalsIgnoreCase(anvilEvent.getName())) {
+                            if (other.getNickname().equalsIgnoreCase(promptEvent.getMessage())) {
                                 plugin.getLocale().getMessage("event.remote.nicknameinuse").sendPrefixedMessage(player);
                                 return;
                             }
                         }
 
-                        furnace.setNickname(anvilEvent.getName());
+                        furnace.setNickname(promptEvent.getMessage());
                         plugin.getLocale().getMessage("event.remote.nicknamesuccess").sendPrefixedMessage(player);
                     });
 
-                    gui.setOnClose((player2, inventory2) -> init(setTitle, inventory.getSize()));
+                    chatPrompt.setOnClose(this::constructGUI);
 
-                    ItemStack itemO = new ItemStack(Material.PAPER);
-                    ItemMeta meta = itemO.getItemMeta();
-                    meta.setDisplayName(furnace.getNickname() == null ? "Enter a nickname" : furnace.getNickname());
-                    itemO.setItemMeta(meta);
-                    gui.setSlot(AbstractAnvilGUI.AnvilSlot.INPUT_LEFT, itemO);
-                    gui.open();
+                    player.sendMessage(furnace.getNickname() == null ? "Enter a nickname" : furnace.getNickname());
 
                     plugin.getLocale().getMessage("event.remote.enter").sendPrefixedMessage(player);
 
 
-                } else if (type == ClickType.RIGHT) {
+                } else if (event.clickType == ClickType.RIGHT) {
                     furnace.addToAccessList(player);
                     constructGUI();
                 }
-            }));
+            });
         }
 
-        inventory.setItem(13, item);
+        setItem(13, item);
 
         if (plugin.getConfig().getBoolean("Main.Upgrade With XP")
                 && player.hasPermission("EpicFurnaces.Upgrade.XP")
                 && level.getCostExperience() != -1) {
-            inventory.setItem(11, itemXP);
-
-            registerClickable(11, ((player, inventory, cursor, slot, type) -> {
+            setButton(11, itemXP, (event) -> {
                 furnace.upgrade(player, CostType.EXPERIENCE);
                 furnace.overview(player);
-            }));
+            });
         }
         if (plugin.getConfig().getBoolean("Main.Upgrade With Economy")
                 && player.hasPermission("EpicFurnaces.Upgrade.ECO")
                 && level.getCostEconomy() != -1) {
-            inventory.setItem(15, itemECO);
-
-            registerClickable(15, ((player, inventory, cursor, slot, type) -> {
+            setButton(15, itemECO, (event) -> {
                 furnace.upgrade(player, CostType.ECONOMY);
                 furnace.overview(player);
-            }));
+            });
         }
     }
 
@@ -372,13 +351,4 @@ public class GUIOverview extends AbstractGUI {
         task = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this::constructGUI, 5L, 5L);
     }
 
-    @Override
-    protected void registerClickables() {
-
-    }
-
-    @Override
-    protected void registerOnCloses() {
-        registerOnClose(((player1, inventory1) -> Bukkit.getScheduler().cancelTask(task)));
-    }
 }

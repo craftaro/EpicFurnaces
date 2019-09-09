@@ -1,8 +1,8 @@
 package com.songoda.epicfurnaces.tasks;
 
+import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
-import com.songoda.epicfurnaces.utils.ServerVersion;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -90,7 +90,7 @@ public class FurnaceTask extends BukkitRunnable {
                 float yy = (float) (0 + (Math.random() * 1));
                 float zz = (float) (0 + (Math.random() * .75));
 
-                if (EpicFurnaces.getInstance().isServerVersionAtLeast(ServerVersion.V1_9))
+                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9))
                     location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 25, xx, yy, zz, 0);
             }
             if (block.getType() == Material.SNOW) {
@@ -128,7 +128,7 @@ public class FurnaceTask extends BukkitRunnable {
                     float yy = (float) (0 + (Math.random() * 1));
                     float zz = (float) (0 + (Math.random() * .75));
 
-                    if (EpicFurnaces.getInstance().isServerVersionAtLeast(ServerVersion.V1_9))
+                    if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9))
                         location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 25, xx, yy, zz, 0);
                 }
             }

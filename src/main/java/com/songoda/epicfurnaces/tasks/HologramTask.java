@@ -1,16 +1,9 @@
 package com.songoda.epicfurnaces.tasks;
 
+import com.songoda.core.hooks.HologramManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
-import com.songoda.epicfurnaces.utils.ServerVersion;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 public class HologramTask extends BukkitRunnable {
 
@@ -33,10 +26,10 @@ public class HologramTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (plugin.getHologram() == null) return;
+        if (!HologramManager.getManager().isEnabled()) return;
 
         for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
-            plugin.getHologram().update(furnace);
+            plugin.updateHologram(furnace);
         }
     }
 }

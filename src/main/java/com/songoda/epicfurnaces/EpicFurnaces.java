@@ -1,75 +1,61 @@
 package com.songoda.epicfurnaces;
 
+import com.songoda.core.SongodaCore;
+import com.songoda.core.SongodaPlugin;
+import com.songoda.core.commands.CommandManager;
+import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.configuration.Config;
+import com.songoda.core.gui.GuiManager;
+import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.hooks.HologramManager;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.boost.BoostManager;
-import com.songoda.epicfurnaces.command.CommandManager;
-import com.songoda.epicfurnaces.economy.Economy;
-import com.songoda.epicfurnaces.economy.PlayerPointsEconomy;
-import com.songoda.epicfurnaces.economy.ReserveEconomy;
-import com.songoda.epicfurnaces.economy.VaultEconomy;
+import com.songoda.epicfurnaces.commands.*;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
 import com.songoda.epicfurnaces.furnace.FurnaceManager;
 import com.songoda.epicfurnaces.furnace.levels.LevelManager;
 import com.songoda.epicfurnaces.handlers.BlacklistHandler;
-import com.songoda.epicfurnaces.hologram.Hologram;
-import com.songoda.epicfurnaces.hologram.HologramHolographicDisplays;
 import com.songoda.epicfurnaces.listeners.BlockListeners;
 import com.songoda.epicfurnaces.listeners.FurnaceListeners;
 import com.songoda.epicfurnaces.listeners.InteractListeners;
 import com.songoda.epicfurnaces.listeners.InventoryListeners;
+import com.songoda.epicfurnaces.settings.Settings;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.StorageRow;
 import com.songoda.epicfurnaces.storage.types.StorageMysql;
 import com.songoda.epicfurnaces.storage.types.StorageYaml;
 import com.songoda.epicfurnaces.tasks.FurnaceTask;
 import com.songoda.epicfurnaces.tasks.HologramTask;
-import com.songoda.epicfurnaces.utils.ConfigWrapper;
 import com.songoda.epicfurnaces.utils.Methods;
-import com.songoda.epicfurnaces.utils.Metrics;
-import com.songoda.epicfurnaces.utils.ServerVersion;
-import com.songoda.epicfurnaces.utils.locale.Locale;
-import com.songoda.epicfurnaces.utils.settings.Setting;
-import com.songoda.epicfurnaces.utils.settings.SettingsManager;
-import com.songoda.epicfurnaces.utils.updateModules.LocaleModule;
-import com.songoda.update.Plugin;
-import com.songoda.update.SongodaUpdate;
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.FurnaceRecipe;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-public class EpicFurnaces extends JavaPlugin {
-    private static CommandSender console = Bukkit.getConsoleSender();
+public class EpicFurnaces extends SongodaPlugin {
+
     private static EpicFurnaces INSTANCE;
 
-    private ServerVersion serverVersion = ServerVersion.fromPackageName(Bukkit.getServer().getClass().getPackage().getName());
+    private Config dataConfig = new Config(this, "data.yml");
+    private Config furnaceRecipeFile = new Config(this, "Furnace Recipes.yml");
+    private Config levelsFile = new Config(this, "levels.yml");
 
-    private ConfigWrapper langFile = new ConfigWrapper(this, "", "lang.yml");
-    private ConfigWrapper dataFile = new ConfigWrapper(this, "", "data.yml");
-    private ConfigWrapper furnaceRecipeFile = new ConfigWrapper(this, "", "Furnace Recipes.yml");
-    private ConfigWrapper levelsFile = new ConfigWrapper(this, "", "levels.yml");
-
-
-    private SettingsManager settingsManager;
+    private final GuiManager guiManager = new GuiManager(this);
     private LevelManager levelManager;
     private FurnaceManager furnaceManager;
-    private CommandManager commandManager;
     private BoostManager boostManager;
-    private Hologram hologram;
-
-    private Locale locale;
-    private Economy economy;
+    private CommandManager commandManager;
 
     private BlacklistHandler blacklistHandler;
 
@@ -80,26 +66,44 @@ public class EpicFurnaces extends JavaPlugin {
     }
 
     @Override
-    public void onEnable() {
+    public void onPluginLoad() {
         INSTANCE = this;
-        console.sendMessage(Methods.formatText("&a============================="));
-        console.sendMessage(Methods.formatText("&7EpicFurnaces " + this.getDescription().getVersion() + " by &5Songoda <3&7!"));
-        console.sendMessage(Methods.formatText("&7Action: &aEnabling&7..."));
+    }
 
-        this.settingsManager = new SettingsManager(this);
-        this.settingsManager.setupConfig();
+    @Override
+    public void onPluginDisable() {
+        saveToFile();
+        this.storage.closeConnection();
+        HologramManager.removeAllHolograms();
+    }
 
-        dataFile.createNewFile("Loading data file", "EpicFurnaces data file");
-        langFile.createNewFile("Loading language file", "EpicFurnaces language file");
-        loadDataFile();
+    @Override
+    public void onPluginEnable() {
+        // Run Songoda Updater
+        SongodaCore.registerPlugin(this, 22, CompatibleMaterial.FURNACE);
 
-        new Locale(this, "en_US");
-        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
+        // Load Economy
+        EconomyManager.load();
 
-        // Running Songoda Updater
-        Plugin plugin = new Plugin(this, 22);
-        plugin.addModule(new LocaleModule());
-        SongodaUpdate.load(plugin);
+        // Setup Config
+        Settings.setupConfig();
+        this.setLocale(Settings.LANGUGE_MODE.getString(), false);
+
+        // Set economy preference
+        EconomyManager.getManager().setPreferredHook(Settings.ECONOMY_PLUGIN.getString());
+
+        // Register commands
+        this.commandManager = new CommandManager(this);
+        this.commandManager.addCommand(new CommandEpicFurnaces(this))
+                .addSubCommands(
+                        new CommandBoost(this),
+                        new CommandGive(this),
+                        new CommandReload(this),
+                        new CommandRemote(this),
+                        new CommandSettings(this)
+                );
+
+        dataConfig.load();
 
         loadLevelManager();
 
@@ -107,16 +111,6 @@ public class EpicFurnaces extends JavaPlugin {
         this.commandManager = new CommandManager(this);
         this.boostManager = new BoostManager();
         this.blacklistHandler = new BlacklistHandler();
-
-        PluginManager pluginManager = Bukkit.getPluginManager();
-
-        // Setup Economy
-        if (Setting.VAULT_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Vault"))
-            this.economy = new VaultEconomy();
-        else if (Setting.RESERVE_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("Reserve"))
-            this.economy = new ReserveEconomy();
-        else if (Setting.PLAYER_POINTS_ECONOMY.getBoolean() && pluginManager.isPluginEnabled("PlayerPoints"))
-            this.economy = new PlayerPointsEconomy();
 
         this.checkStorage();
 
@@ -130,36 +124,90 @@ public class EpicFurnaces extends JavaPlugin {
         HologramTask.startTask(this);
 
         // Register Hologram Plugin
-        if (Setting.HOLOGRAMS.getBoolean()
-                && pluginManager.isPluginEnabled("HolographicDisplays"))
-            hologram = new HologramHolographicDisplays(this);
+        HologramManager.load(this);
 
         // Register Listeners
+        guiManager.init();
+        PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new FurnaceListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this), this);
         pluginManager.registerEvents(new InventoryListeners(this), this);
 
         // Start auto save
-        int saveInterval = Setting.AUTOSAVE.getInt() * 60 * 20;
+        int saveInterval = Settings.AUTOSAVE.getInt() * 60 * 20;
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::saveToFile, saveInterval, saveInterval);
-
-        // Start Metrics
-        new Metrics(this);
-
-        console.sendMessage(Methods.formatText("&a============================="));
     }
 
-    public void onDisable() {
-        saveToFile();
-        this.storage.closeConnection();
-
-        console.sendMessage(Methods.formatText("&a============================="));
-        console.sendMessage(Methods.formatText("&7EpicFurnaces " + this.getDescription().getVersion() + " by &5Songoda <3&7!"));
-        console.sendMessage(Methods.formatText("&7Action: &cDisabling&7..."));
-        console.sendMessage(Methods.formatText("&a============================="));
+    @Override
+    public void onConfigReload() {
+        this.setLocale(getConfig().getString("System.Language Mode"), true);
+        this.locale.reloadMessages();
+        this.blacklistHandler.reload();
     }
 
+    @Override
+    public List<Config> getExtraConfig() {
+        return null;
+    }
+
+    public void clearHologram(Furnace furnace) {
+        HologramManager.removeHologram(furnace.getLocation());
+    }
+
+    public void updateHologram(Furnace furnace) {
+        // are holograms enabled?
+        if (!Settings.HOLOGRAMS.getBoolean() || !HologramManager.getManager().isEnabled()) return;
+
+        BlockState state = furnace.getLocation().getBlock().getState();
+
+        // verify that this is a furnace
+        if (!(state instanceof org.bukkit.block.Furnace)) return;
+
+        org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) state);
+
+        int performance = (furnaceBlock.getCookTime() - furnace.getPerformanceTotal()) <= 0 ? 0 : furnace.getPerformanceTotal();
+
+        float percent = (float) (furnaceBlock.getCookTime() - performance) / (200 - performance);
+
+        int progressBars = (int) (6 * percent) + (percent == 0 ? 0 : 1);
+        int leftOver = (6 - progressBars);
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < progressBars; i++) {
+            sb.append("&a=");
+        }
+        for (int i = 0; i < leftOver; i++) {
+            sb.append("&c=");
+        }
+
+        ArrayList<String> lines = new ArrayList<>();
+
+        String progress = Methods.formatText(sb.toString());
+
+        if (furnaceBlock.getInventory().getFuel() == null) {
+            progress = getLocale().getMessage("general.hologram.outoffuel").getMessage();
+        }
+
+        int inAmt = 0;
+        int outAmt = 0;
+        if (furnaceBlock.getInventory().getSmelting() != null) {
+            inAmt = furnaceBlock.getInventory().getSmelting().getAmount();
+        }
+        if (furnaceBlock.getInventory().getResult() != null) {
+            outAmt = furnaceBlock.getInventory().getResult().getAmount();
+        }
+
+        String stats = getLocale().getMessage("general.hologram.stats")
+                .processPlaceholder("in", inAmt)
+                .processPlaceholder("out", Math.min(outAmt, 64)).getMessage();
+
+        lines.add(progress);
+        lines.add(stats);
+
+        // create the hologram
+        HologramManager.updateHologram(furnace.getLocation(), lines);
+    }
 
     private void loadFromFile() {
         /*
@@ -203,8 +251,13 @@ public class EpicFurnaces extends JavaPlugin {
                 }
             }
 
-            if (hologram != null)
-                hologram.loadHolograms();
+            // Register Hologram Plugin
+            if (Settings.HOLOGRAMS.getBoolean()) {
+                for (Furnace furnace : getFurnaceManager().getFurnaces().values()) {
+                    if (furnace.getLocation() == null || furnace.getLocation().getWorld() == null)
+                        continue;
+                }
+            }
 
             // Save data initially so that if the person reloads again fast they don't lose all their data.
             this.saveToFile();
@@ -214,6 +267,7 @@ public class EpicFurnaces extends JavaPlugin {
     private void loadLevelManager() {
         if (!new File(this.getDataFolder(), "levels.yml").exists())
             this.saveResource("levels.yml", false);
+        levelsFile.load();
 
         // Load an plugin of LevelManager
         levelManager = new LevelManager();
@@ -221,10 +275,10 @@ public class EpicFurnaces extends JavaPlugin {
          * Register Levels into LevelManager from configuration.
          */
         levelManager.clear();
-        for (String levelName : levelsFile.getConfig().getKeys(false)) {
-            int level = Integer.valueOf(levelName.split("-")[1]);
+        for (String levelName : levelsFile.getKeys(false)) {
+            int level = Integer.parseInt(levelName.split("-")[1]);
 
-            ConfigurationSection levels = levelsFile.getConfig().getConfigurationSection(levelName);
+            ConfigurationSection levels = levelsFile.getConfigurationSection(levelName);
 
             int costExperiance = levels.getInt("Cost-xp");
             int costEconomy = levels.getInt("Cost-eco");
@@ -261,30 +315,19 @@ public class EpicFurnaces extends JavaPlugin {
         storage.doSave();
     }
 
-    public void reload() {
-        this.locale = Locale.getLocale(getConfig().getString("System.Language Mode"));
-        this.locale.reloadMessages();
-        this.settingsManager.reloadConfig();
-        this.blacklistHandler.reload();
-    }
-
-    private void loadDataFile() {
-        dataFile.getConfig().options().copyDefaults(true);
-        dataFile.saveConfig();
-    }
-
     private void setupRecipies() {
         File config = new File(getDataFolder(), "Furnace Recipes.yml");
         if (!config.exists()) {
             saveResource("Furnace Recipes.yml", false);
         }
+        furnaceRecipeFile.load();
 
         if (getConfig().getBoolean("Main.Use Custom Recipes")) {
-            ConfigurationSection cs = furnaceRecipeFile.getConfig().getConfigurationSection("Recipes");
+            ConfigurationSection cs = furnaceRecipeFile.getConfigurationSection("Recipes");
             for (String key : cs.getKeys(false)) {
                 Material item = Material.valueOf(key.toUpperCase());
-                Material result = Material.valueOf(furnaceRecipeFile.getConfig().getString("Recipes." + key.toUpperCase() + ".result"));
-                int amount = furnaceRecipeFile.getConfig().getInt("Recipes." + key.toUpperCase() + ".amount");
+                Material result = Material.valueOf(furnaceRecipeFile.getString("Recipes." + key.toUpperCase() + ".result"));
+                int amount = furnaceRecipeFile.getInt("Recipes." + key.toUpperCase() + ".amount");
 
                 getServer().addRecipe(new FurnaceRecipe(new ItemStack(result, amount), item));
             }
@@ -300,10 +343,6 @@ public class EpicFurnaces extends JavaPlugin {
 
         item.setItemMeta(itemmeta);
         return item;
-    }
-
-    public ConfigWrapper getDataFile() {
-        return dataFile;
     }
 
     public int getFurnceLevel(ItemStack item) {
@@ -324,23 +363,7 @@ public class EpicFurnaces extends JavaPlugin {
         }
     }
 
-    public ServerVersion getServerVersion() {
-        return serverVersion;
-    }
-
-    public boolean isServerVersion(ServerVersion version) {
-        return serverVersion == version;
-    }
-
-    public boolean isServerVersion(ServerVersion... versions) {
-        return ArrayUtils.contains(versions, serverVersion);
-    }
-
-    public boolean isServerVersionAtLeast(ServerVersion version) {
-        return serverVersion.ordinal() >= version.ordinal();
-    }
-
-    public ConfigWrapper getFurnaceRecipeFile() {
+    public Config getFurnaceRecipeFile() {
         return furnaceRecipeFile;
     }
 
@@ -364,19 +387,7 @@ public class EpicFurnaces extends JavaPlugin {
         return levelManager;
     }
 
-    public Economy getEconomy() {
-        return economy;
-    }
-
-    public SettingsManager getSettingsManager() {
-        return settingsManager;
-    }
-
-    public Hologram getHologram() {
-        return hologram;
-    }
-
-    public Locale getLocale() {
-        return locale;
+    public GuiManager getGuiManager() {
+        return guiManager;
     }
 }

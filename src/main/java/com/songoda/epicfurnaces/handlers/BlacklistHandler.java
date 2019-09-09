@@ -1,7 +1,7 @@
 package com.songoda.epicfurnaces.handlers;
 
+import com.songoda.core.configuration.Config;
 import com.songoda.epicfurnaces.EpicFurnaces;
-import com.songoda.epicfurnaces.utils.ConfigWrapper;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -12,15 +12,15 @@ import java.util.List;
  */
 public class BlacklistHandler {
 
-    private ConfigWrapper blackFile = new ConfigWrapper(EpicFurnaces.getInstance(), "", "blacklist.yml");
+    private Config blackConfig = new Config(EpicFurnaces.getInstance(), "blacklist.yml");
 
     public BlacklistHandler() {
-        blackFile.createNewFile("Loading language file", "EpicFurnaces blacklist file");
+        blackConfig.load();
         loadBlacklistFile();
     }
 
     public boolean isBlacklisted(Player player) {
-        List<String> list = blackFile.getConfig().getStringList("settings.blacklist");
+        List<String> list = blackConfig.getStringList("settings.blacklist");
         String cWorld = player.getWorld().getName();
         for (String world : list) {
             if (cWorld.equalsIgnoreCase(world)) {
@@ -36,14 +36,14 @@ public class BlacklistHandler {
         list.add("world3");
         list.add("world4");
         list.add("world5");
-        blackFile.getConfig().addDefault("settings.blacklist", list);
+        blackConfig.addDefault("settings.blacklist", list);
 
-        blackFile.getConfig().options().copyDefaults(true);
-        blackFile.saveConfig();
+        blackConfig.options().copyDefaults(true);
+        blackConfig.save();
     }
 
     public void reload() {
-        blackFile.createNewFile("Loading blacklist file", "EpicFurnaces blacklist file");
+        blackConfig.load();
         loadBlacklistFile();
     }
 }

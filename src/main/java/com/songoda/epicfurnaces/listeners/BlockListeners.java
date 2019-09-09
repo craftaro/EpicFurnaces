@@ -48,7 +48,7 @@ public class BlockListeners implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
 
         if (plugin.getBlacklistHandler().isBlacklisted(event.getPlayer())
-        || !event.getBlock().getType().name().contains("FURNACE"))
+                || !event.getBlock().getType().name().contains("FURNACE"))
             return;
 
         ItemStack item = event.getItemInHand();
@@ -64,9 +64,7 @@ public class BlockListeners implements Listener {
 
         plugin.getFurnaceManager().addFurnace(furnace);
 
-        if (plugin.getHologram() != null) {
-            plugin.getHologram().add(furnace);
-        }
+        plugin.updateHologram(furnace);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -82,8 +80,7 @@ public class BlockListeners implements Listener {
         Furnace furnace = plugin.getFurnaceManager().getFurnace(block);
         int level = plugin.getFurnaceManager().getFurnace(block).getLevel().getLevel();
 
-        if (plugin.getHologram() != null)
-            plugin.getHologram().remove(furnace);
+        plugin.clearHologram(furnace);
 
         if (level != 0) {
             event.setCancelled(true);
