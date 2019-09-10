@@ -122,7 +122,7 @@ public class FurnaceTask extends BukkitRunnable {
                     float yy = (float) (0 + (Math.random() * 1));
                     float zz = (float) (0 + (Math.random() * .75));
 
-                    CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.SMOKE_NORMAL, location, 25, xx, yy, zz);
+                    CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.SMOKE_NORMAL, location, 25, xx, yy, zz, 0);
                 }
             }
         }
