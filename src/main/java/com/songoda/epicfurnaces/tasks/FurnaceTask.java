@@ -5,6 +5,8 @@ import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.settings.Settings;
 import java.util.HashSet;
+
+import com.sun.org.apache.bcel.internal.generic.FADD;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -76,19 +78,19 @@ public class FurnaceTask extends BukkitRunnable {
 
             if (block.getType() == Material.AIR || block.getRelative(BlockFace.UP).getType() != Material.AIR) continue;
 
+            if (block.getType() == Material.SNOW)
+                block.setType(Material.AIR);
+            else if (block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE)
+                block.setType(Material.WATER);
+            else
+               continue;
 
             if (doParticles) {
-
                 float xx = (float) (0 + (Math.random() * .75));
                 float yy = (float) (0 + (Math.random() * 1));
                 float zz = (float) (0 + (Math.random() * .75));
-                
-                CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.SMOKE_NORMAL, location, 25, xx, yy, zz);
-            }
-            if (block.getType() == Material.SNOW) {
-                block.setType(Material.AIR);
-            } else if (block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE) {
-                block.setType(Material.WATER);
+
+                CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.SMOKE_NORMAL, location, 25, xx, yy, zz, 0);
             }
         }
     }
