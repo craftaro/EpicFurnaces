@@ -172,7 +172,6 @@ public class Furnace {
     }
 
     private void syncName() {
-        if (!(location.getBlock() instanceof Furnace)) return;
         org.bukkit.block.Furnace furnace = (org.bukkit.block.Furnace) location.getBlock().getState();
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_10))
             furnace.setCustomName(Methods.formatName(level.getLevel(), uses, false));
