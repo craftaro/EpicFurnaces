@@ -151,7 +151,7 @@ public class EpicFurnaces extends SongodaPlugin {
     }
 
     public void clearHologram(Furnace furnace) {
-        HologramManager.removeHologram(furnace.getLocation());
+        HologramManager.removeHologram(furnace.getLocation().add(0, .15, 0));
     }
 
     public void updateHologram(Furnace furnace) {
