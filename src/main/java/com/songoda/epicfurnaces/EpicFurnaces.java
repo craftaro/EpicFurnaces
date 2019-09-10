@@ -141,6 +141,7 @@ public class EpicFurnaces extends SongodaPlugin {
     @Override
     public void onConfigReload() {
         this.setLocale(getConfig().getString("System.Language Mode"), true);
+        this.locale.reloadMessages();
         this.blacklistHandler.reload();
         loadLevelManager();
     }
