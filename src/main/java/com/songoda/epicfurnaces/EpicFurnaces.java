@@ -207,7 +207,7 @@ public class EpicFurnaces extends SongodaPlugin {
         lines.add(stats);
 
         // create the hologram
-        HologramManager.updateHologram(furnace.getLocation(), lines);
+        HologramManager.updateHologram(furnace.getLocation().add(0, .15, 0), lines);
     }
 
     private void loadFromFile() {
