@@ -1,12 +1,9 @@
 package com.songoda.epicfurnaces.storage;
 
 import com.songoda.epicfurnaces.utils.Methods;
-import com.songoda.epicfurnaces.utils.Serializers;
 import org.bukkit.Location;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class StorageItem {
@@ -68,17 +65,6 @@ public class StorageItem {
         return object;
     }
 
-    public List<ItemStack> asItemStackList() {
-        List<ItemStack> list = new ArrayList<>();
-        if (object == null) return list;
-        String obj = (String) object;
-        if (obj.equals("[]")) return list;
-        List<String> sers = new ArrayList<>(Arrays.asList(obj.split(";;")));
-        for (String ser : sers) {
-            list.add(Serializers.deserialize(ser));
-        }
-        return list;
-    }
     public List<String> asStringList() {
         if (object instanceof ArrayList) return new ArrayList<>();
         List<String> list = new ArrayList<>();

@@ -12,8 +12,8 @@ import java.util.*;
 
 public class StorageYaml extends Storage {
 
-    private static final Map<String, Object> toSave = new HashMap<>();
-    private static Map<String, Object> lastSave = null;
+    private final Map<String, Object> toSave = new HashMap<>();
+    private Map<String, Object> lastSave = null;
 
     public StorageYaml(EpicFurnaces plugin) {
         super(plugin);

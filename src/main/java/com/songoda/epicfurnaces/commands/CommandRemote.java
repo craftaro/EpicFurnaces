@@ -3,6 +3,7 @@ package com.songoda.epicfurnaces.commands;
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
+import com.songoda.epicfurnaces.settings.Settings;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,7 +23,7 @@ public class CommandRemote extends AbstractCommand {
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
 
-        if (!plugin.getConfig().getBoolean("Main.Access Furnaces Remotely") || !sender.hasPermission("EpicFurnaces.Remote")) {
+        if (!Settings.REMOTE.getBoolean() || !sender.hasPermission("EpicFurnaces.Remote")) {
             plugin.getLocale().getMessage("event.general.nopermission").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }

@@ -40,6 +40,7 @@ import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,9 +48,9 @@ public class EpicFurnaces extends SongodaPlugin {
 
     private static EpicFurnaces INSTANCE;
 
-    private Config dataConfig = new Config(this, "data.yml");
-    private Config furnaceRecipeFile = new Config(this, "Furnace Recipes.yml");
-    private Config levelsFile = new Config(this, "levels.yml");
+    private final Config dataConfig = new Config(this, "data.yml");
+    private final Config furnaceRecipeFile = new Config(this, "Furnace Recipes.yml");
+    private final Config levelsFile = new Config(this, "levels.yml");
 
     private final GuiManager guiManager = new GuiManager(this);
     private LevelManager levelManager;
@@ -84,6 +85,8 @@ public class EpicFurnaces extends SongodaPlugin {
 
         // Load Economy
         EconomyManager.load();
+        // Register Hologram Plugin
+        HologramManager.load(this);
 
         // Setup Config
         Settings.setupConfig();
@@ -100,7 +103,7 @@ public class EpicFurnaces extends SongodaPlugin {
                         new CommandGive(this),
                         new CommandReload(this),
                         new CommandRemote(this),
-                        new CommandSettings(this)
+                        new CommandSettings(this, guiManager)
                 );
 
         dataConfig.load();
@@ -123,15 +126,12 @@ public class EpicFurnaces extends SongodaPlugin {
         FurnaceTask.startTask(this);
         HologramTask.startTask(this);
 
-        // Register Hologram Plugin
-        HologramManager.load(this);
-
         // Register Listeners
         guiManager.init();
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new BlockListeners(this), this);
         pluginManager.registerEvents(new FurnaceListeners(this), this);
-        pluginManager.registerEvents(new InteractListeners(this), this);
+        pluginManager.registerEvents(new InteractListeners(this, guiManager), this);
         pluginManager.registerEvents(new InventoryListeners(this), this);
 
         // Start auto save
@@ -142,13 +142,13 @@ public class EpicFurnaces extends SongodaPlugin {
     @Override
     public void onConfigReload() {
         this.setLocale(getConfig().getString("System.Language Mode"), true);
-        this.locale.reloadMessages();
         this.blacklistHandler.reload();
+        loadLevelManager();
     }
 
     @Override
     public List<Config> getExtraConfig() {
-        return null;
+        return Arrays.asList(levelsFile);
     }
 
     public void clearHologram(Furnace furnace) {
@@ -158,6 +158,8 @@ public class EpicFurnaces extends SongodaPlugin {
     public void updateHologram(Furnace furnace) {
         // are holograms enabled?
         if (!Settings.HOLOGRAMS.getBoolean() || !HologramManager.getManager().isEnabled()) return;
+        // don't try to load furnaces in chunks that aren't loaded
+        if (!furnace.isInLoadedChunk()) return;
 
         BlockState state = furnace.getLocation().getBlock().getState();
 
@@ -265,7 +267,7 @@ public class EpicFurnaces extends SongodaPlugin {
     }
 
     private void loadLevelManager() {
-        if (!new File(this.getDataFolder(), "levels.yml").exists())
+        if (!levelsFile.getFile().exists())
             this.saveResource("levels.yml", false);
         levelsFile.load();
 
@@ -322,7 +324,7 @@ public class EpicFurnaces extends SongodaPlugin {
         }
         furnaceRecipeFile.load();
 
-        if (getConfig().getBoolean("Main.Use Custom Recipes")) {
+        if (Settings.CUSTOM_RECIPES.getBoolean()) {
             ConfigurationSection cs = furnaceRecipeFile.getConfigurationSection("Recipes");
             for (String key : cs.getKeys(false)) {
                 Material item = Material.valueOf(key.toUpperCase());
@@ -336,12 +338,13 @@ public class EpicFurnaces extends SongodaPlugin {
 
     public ItemStack createLeveledFurnace(Material material, int level, int uses) {
         ItemStack item = new ItemStack(material, 1);
-        ItemMeta itemmeta = item.getItemMeta();
 
-        if (getConfig().getBoolean("Main.Remember Furnace Item Levels"))
+        if (Settings.FURNACE_ITEM.getBoolean()) {
+            ItemMeta itemmeta = item.getItemMeta();
             itemmeta.setDisplayName(Methods.formatText(Methods.formatName(level, uses, true)));
+            item.setItemMeta(itemmeta);
+        }
 
-        item.setItemMeta(itemmeta);
         return item;
     }
 
@@ -385,9 +388,5 @@ public class EpicFurnaces extends SongodaPlugin {
 
     public LevelManager getLevelManager() {
         return levelManager;
-    }
-
-    public GuiManager getGuiManager() {
-        return guiManager;
     }
 }

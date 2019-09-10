@@ -2,10 +2,11 @@ package com.songoda.epicfurnaces.utils;
 
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.epicfurnaces.EpicFurnaces;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;

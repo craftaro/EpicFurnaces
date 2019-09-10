@@ -1,6 +1,7 @@
 package com.songoda.epicfurnaces.furnace;
 
 import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
@@ -34,20 +35,20 @@ public class Furnace {
     private String nickname = null;
     private UUID placedBy = null;
     private int uses, tolevel, radiusOverheatLast, radiusFuelshareLast = 0;
-    private List<Location> radiusOverheat = new ArrayList<>();
-    private List<Location> radiusFuelshare = new ArrayList<>();
-    private List<String> accessList = new ArrayList<>();
-    private Map<String, Integer> cache = new HashMap<>();
+    private final List<Location> radiusOverheat = new ArrayList<>();
+    private final List<Location> radiusFuelshare = new ArrayList<>();
+    private final List<String> accessList = new ArrayList<>();
+    private final Map<String, Integer> cache = new HashMap<>();
 
     public Furnace(Location location) {
         this.location = location;
     }
 
-    public void overview(Player player) {
+    public void overview(GuiManager guiManager, Player player) {
         if (placedBy == null) placedBy = player.getUniqueId();
 
         if (!player.hasPermission("epicfurnaces.overview")) return;
-        plugin.getGuiManager().showGUI(player, new GUIOverview(plugin, this, player));
+        guiManager.showGUI(player, new GUIOverview(plugin, this, player));
     }
 
     public void plus(FurnaceSmeltEvent e) {
@@ -305,6 +306,10 @@ public class Furnace {
 
     public Location getLocation() {
         return location.clone();
+    }
+
+    public boolean isInLoadedChunk() {
+        return location != null && location.getWorld() != null && location.getWorld().isChunkLoaded(((int) location.getX()) >> 4, ((int) location.getZ()) >> 4);
     }
 
     public void setLevel(Level level) {

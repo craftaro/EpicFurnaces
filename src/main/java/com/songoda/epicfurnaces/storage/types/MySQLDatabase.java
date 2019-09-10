@@ -1,4 +1,4 @@
-package com.songoda.epicfurnaces.utils;
+package com.songoda.epicfurnaces.storage.types;
 
 import com.songoda.epicfurnaces.EpicFurnaces;
 

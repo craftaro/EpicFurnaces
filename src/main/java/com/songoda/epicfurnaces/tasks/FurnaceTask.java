@@ -1,17 +1,17 @@
 package com.songoda.epicfurnaces.tasks;
 
-import com.songoda.core.compatibility.ServerVersion;
+import com.songoda.core.compatibility.CompatibleParticleHandler;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
+import com.songoda.epicfurnaces.settings.Settings;
+import java.util.HashSet;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class FurnaceTask extends BukkitRunnable {
@@ -19,6 +19,8 @@ public class FurnaceTask extends BukkitRunnable {
     private static FurnaceTask instance;
 
     private final EpicFurnaces plugin;
+    final HashSet<Location> toRemove = new HashSet();
+    boolean doParticles;
 
     private FurnaceTask(EpicFurnaces plugin) {
         this.plugin = plugin;
@@ -27,7 +29,7 @@ public class FurnaceTask extends BukkitRunnable {
     public static FurnaceTask startTask(EpicFurnaces plugin) {
         if (instance == null) {
             instance = new FurnaceTask(plugin);
-            instance.runTaskTimer(plugin, 0, plugin.getConfig().getInt("Main.Furnace Tick Speed"));
+            instance.runTaskTimer(plugin, 0, Settings.TICK_SPEED.getInt());
         }
 
         return instance;
@@ -35,36 +37,27 @@ public class FurnaceTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        for (Furnace furnace : new ArrayList<>(plugin.getFurnaceManager().getFurnaces().values())) {
-            Location furnaceLocation = furnace.getLocation();
+        doParticles = Settings.OVERHEAT_PARTICLES.getBoolean();
+        plugin.getFurnaceManager().getFurnaces().values().stream()
+                .filter(Furnace::isInLoadedChunk)
+                .forEach(furnace -> {
+                    Location location = furnace.getLocation();
+                    BlockState state = location.getBlock().getState();
 
-            if (furnaceLocation == null) continue;
-
-            if (furnaceLocation.getWorld() == null) {
-                plugin.getFurnaceManager().removeFurnace(furnaceLocation);
-                continue;
-            }
-
-            int x = furnaceLocation.getBlockX() >> 4;
-            int z = furnaceLocation.getBlockZ() >> 4;
-
-            if (!furnaceLocation.getWorld().isChunkLoaded(x, z)) {
-                continue;
-            }
-
-            BlockState state = furnace.getLocation().getBlock().getState();
-
-            if (!(state instanceof org.bukkit.block.Furnace)) return;
-
-            if (((org.bukkit.block.Furnace) state).getBurnTime() == 0) continue;
-
-            if (furnace.getLevel().getOverheat() != 0) {
-                overheat(furnace);
-            }
-
-            if (furnace.getLevel().getFuelShare() != 0) {
-                fuelshare(furnace);
-            }
+                    if (!(state instanceof org.bukkit.block.Furnace)) {
+                        toRemove.add(location);
+                    } else if (((org.bukkit.block.Furnace) state).getBurnTime() != 0) {
+                        if (furnace.getLevel().getOverheat() != 0) {
+                            overheat(furnace);
+                        }
+                        if (furnace.getLevel().getFuelShare() != 0) {
+                            fuelshare(furnace);
+                        }
+                    }
+                });
+        if (!toRemove.isEmpty()) {
+            toRemove.stream().forEach(l -> plugin.getFurnaceManager().removeFurnace(l));
+            toRemove.clear();
         }
     }
 
@@ -84,14 +77,13 @@ public class FurnaceTask extends BukkitRunnable {
             if (block.getType() == Material.AIR || block.getRelative(BlockFace.UP).getType() != Material.AIR) continue;
 
 
-            if (plugin.getConfig().getBoolean("Main.Overheat Particles")) {
+            if (doParticles) {
 
                 float xx = (float) (0 + (Math.random() * .75));
                 float yy = (float) (0 + (Math.random() * 1));
                 float zz = (float) (0 + (Math.random() * .75));
-
-                if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9))
-                    location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 25, xx, yy, zz, 0);
+                
+                CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.SMOKE_NORMAL, location, 25, xx, yy, zz);
             }
             if (block.getType() == Material.SNOW) {
                 block.setType(Material.AIR);
@@ -122,14 +114,13 @@ public class FurnaceTask extends BukkitRunnable {
                 furnaceBlock.setBurnTime((short) 100);
                 furnaceBlock.update();
 
-                if (plugin.getConfig().getBoolean("Main.Overheat Particles")) {
+                if (doParticles) {
 
                     float xx = (float) (0 + (Math.random() * .75));
                     float yy = (float) (0 + (Math.random() * 1));
                     float zz = (float) (0 + (Math.random() * .75));
 
-                    if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_9))
-                        location.getWorld().spawnParticle(Particle.SMOKE_NORMAL, location, 25, xx, yy, zz, 0);
+                    CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.SMOKE_NORMAL, location, 25, xx, yy, zz);
                 }
             }
         }

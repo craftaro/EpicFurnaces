@@ -47,7 +47,7 @@ public class BlockListeners implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
 
-        if (plugin.getBlacklistHandler().isBlacklisted(event.getPlayer())
+        if (plugin.getBlacklistHandler().isBlacklisted(event.getPlayer().getWorld())
                 || !event.getBlock().getType().name().contains("FURNACE"))
             return;
 
@@ -74,7 +74,7 @@ public class BlockListeners implements Listener {
         }
         Block block = event.getBlock();
         if (!block.getType().name().contains("FURNACE")
-                || plugin.getBlacklistHandler().isBlacklisted(event.getPlayer()))
+                || plugin.getBlacklistHandler().isBlacklisted(event.getPlayer().getWorld()))
             return;
 
         Furnace furnace = plugin.getFurnaceManager().getFurnace(block);

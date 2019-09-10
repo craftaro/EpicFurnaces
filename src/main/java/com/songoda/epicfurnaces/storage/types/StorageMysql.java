@@ -4,7 +4,6 @@ import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.StorageItem;
 import com.songoda.epicfurnaces.storage.StorageRow;
-import com.songoda.epicfurnaces.utils.MySQLDatabase;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -17,9 +16,9 @@ import java.util.Map;
 
 public class StorageMysql extends Storage {
 
-    private static Map<String, StorageItem[]> toSave = new HashMap<>();
-    private static Map<String, StorageItem[]> lastSave = null;
-    private MySQLDatabase database;
+    private Map<String, StorageItem[]> toSave = new HashMap<>();
+    private Map<String, StorageItem[]> lastSave = null;
+    private final MySQLDatabase database;
 
     public StorageMysql(EpicFurnaces plugin) {
         super(plugin);
