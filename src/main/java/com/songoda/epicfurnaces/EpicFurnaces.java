@@ -23,7 +23,6 @@ import com.songoda.epicfurnaces.listeners.InventoryListeners;
 import com.songoda.epicfurnaces.settings.Settings;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.StorageRow;
-import com.songoda.epicfurnaces.storage.types.StorageMysql;
 import com.songoda.epicfurnaces.storage.types.StorageYaml;
 import com.songoda.epicfurnaces.tasks.FurnaceTask;
 import com.songoda.epicfurnaces.tasks.HologramTask;
@@ -301,11 +300,7 @@ public class EpicFurnaces extends SongodaPlugin {
     }
 
     private void checkStorage() {
-        if (getConfig().getBoolean("Database.Activate Mysql Support")) {
-            this.storage = new StorageMysql(this);
-        } else {
-            this.storage = new StorageYaml(this);
-        }
+        this.storage = new StorageYaml(this);
     }
 
     /*
