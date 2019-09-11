@@ -76,19 +76,18 @@ public class FurnaceTask extends BukkitRunnable {
 
             if (block.getType() == Material.AIR || block.getRelative(BlockFace.UP).getType() != Material.AIR) continue;
 
+            if (block.getType() == Material.SNOW)
+                block.setType(Material.AIR);
+            else if (block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE)
+                block.setType(Material.WATER);
+            else
+               continue;
 
             if (doParticles) {
-
                 float xx = (float) (0 + (Math.random() * .75));
                 float yy = (float) (0 + (Math.random() * 1));
                 float zz = (float) (0 + (Math.random() * .75));
-                
                 CompatibleParticleHandler.spawnParticles(CompatibleParticleHandler.ParticleType.SMOKE_NORMAL, location, 25, xx, yy, zz, 0);
-            }
-            if (block.getType() == Material.SNOW) {
-                block.setType(Material.AIR);
-            } else if (block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE) {
-                block.setType(Material.WATER);
             }
         }
     }
