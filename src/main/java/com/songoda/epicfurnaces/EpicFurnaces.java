@@ -47,7 +47,6 @@ public class EpicFurnaces extends SongodaPlugin {
 
     private static EpicFurnaces INSTANCE;
 
-    private final Config dataConfig = new Config(this, "data.yml");
     private final Config furnaceRecipeFile = new Config(this, "Furnace Recipes.yml");
     private final Config levelsFile = new Config(this, "levels.yml");
 
@@ -105,8 +104,6 @@ public class EpicFurnaces extends SongodaPlugin {
                         new CommandSettings(this, guiManager)
                 );
 
-        dataConfig.load();
-
         loadLevelManager();
 
         this.furnaceManager = new FurnaceManager();
@@ -114,9 +111,8 @@ public class EpicFurnaces extends SongodaPlugin {
         this.boostManager = new BoostManager();
         this.blacklistHandler = new BlacklistHandler();
 
-        this.checkStorage();
-
         // Load from file
+        this.storage = new StorageYaml(this);
         loadFromFile();
 
         setupRecipies();
@@ -300,16 +296,10 @@ public class EpicFurnaces extends SongodaPlugin {
         }
     }
 
-    private void checkStorage() {
-        this.storage = new StorageYaml(this);
-    }
-
     /*
      * Saves registered furnaces to file.
      */
     private void saveToFile() {
-        checkStorage();
-
         storage.doSave();
     }
 

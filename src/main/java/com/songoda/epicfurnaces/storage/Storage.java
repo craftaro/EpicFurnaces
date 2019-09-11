@@ -11,12 +11,9 @@ import java.util.List;
 public abstract class Storage {
 
     protected final EpicFurnaces plugin;
-    protected final Config dataFile;
 
     public Storage(EpicFurnaces plugin) {
         this.plugin = plugin;
-        this.dataFile = new Config(plugin, "data.yml");
-        this.dataFile.load();
     }
 
     public abstract boolean containsGroup(String group);
