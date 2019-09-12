@@ -107,7 +107,6 @@ public class EpicFurnaces extends SongodaPlugin {
         loadLevelManager();
 
         this.furnaceManager = new FurnaceManager();
-        this.commandManager = new CommandManager(this);
         this.boostManager = new BoostManager();
         this.blacklistHandler = new BlacklistHandler();
 
