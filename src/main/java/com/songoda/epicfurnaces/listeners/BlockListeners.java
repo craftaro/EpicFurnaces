@@ -48,7 +48,7 @@ public class BlockListeners implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
 
         if (plugin.getBlacklistHandler().isBlacklisted(event.getPlayer().getWorld())
-                || !event.getBlock().getType().name().contains("FURNACE"))
+                || !event.getBlock().getType().name().contains("FURNACE")  && !event.getBlock().getType().name().contains("SMOKER"))
             return;
 
         ItemStack item = event.getItemInHand();
@@ -73,7 +73,7 @@ public class BlockListeners implements Listener {
             return;
         }
         Block block = event.getBlock();
-        if (!block.getType().name().contains("FURNACE")
+        if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")
                 || plugin.getBlacklistHandler().isBlacklisted(event.getPlayer().getWorld()))
             return;
 
