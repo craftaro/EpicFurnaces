@@ -58,7 +58,8 @@ public class GUIOverview extends Gui {
         Level nextLevel = plugin.getLevelManager().getHighestLevel().getLevel() > level.getLevel() ? plugin.getLevelManager().getLevel(level.getLevel() + 1) : null;
 
         // main furnace information icon
-        setItem(1, 4, GuiUtils.createButtonItem(CompatibleMaterial.FURNACE,
+        setItem(1, 4, GuiUtils.createButtonItem(
+                CompatibleMaterial.getMaterial(furnace.getLocation().getBlock().getType()),
                 plugin.getLocale().getMessage("interface.furnace.currentlevel")
                 .processPlaceholder("level", level.getLevel()).getMessage(),
                 getFurnaceDescription(furnace, level, nextLevel)));
