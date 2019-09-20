@@ -13,14 +13,11 @@ import java.util.*;
 
 public class StorageYaml extends Storage {
 
-    protected final Config dataFile;
     private final Map<String, Object> toSave = new HashMap<>();
     private Map<String, Object> lastSave = null;
 
     public StorageYaml(EpicFurnaces plugin) {
         super(plugin);
-        this.dataFile = new Config(plugin, "data.yml");
-        this.dataFile.load();
     }
 
     @Override
@@ -66,7 +63,6 @@ public class StorageYaml extends Storage {
 
     @Override
     public void doSave() {
-        toSave.clear();
         this.updateData(plugin);
 
         if (lastSave == null)

@@ -4,6 +4,7 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.configuration.ConfigSetting;
 import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.hooks.HologramManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 
 import java.util.stream.Collectors;
@@ -30,6 +31,12 @@ public class Settings {
 
     public static final ConfigSetting FURNACE_ITEM = new ConfigSetting(config, "Main.Remember Furnace Item Levels", true,
             "Should furnace levels be remembered when broken?");
+
+    public static final ConfigSetting HOLOGRAM_PLUGIN = new ConfigSetting(config, "Main.Hologram",
+            HologramManager.getHolograms() == null ? "HolographicDisplays" : HologramManager.getHolograms().getName(),
+            "Which hologram plugin should be used?",
+            "You can choose from \"" + HologramManager.getManager().getRegisteredPlugins().stream().collect(Collectors.joining(", ")) + "\".");
+
 
     public static final ConfigSetting HOLOGRAMS = new ConfigSetting(config, "Main.Furnaces Have Holograms", true);
 
