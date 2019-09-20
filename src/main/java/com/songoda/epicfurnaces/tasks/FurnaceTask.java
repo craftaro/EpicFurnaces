@@ -105,7 +105,7 @@ public class FurnaceTask extends BukkitRunnable {
 
             Block block = location.getBlock();
 
-            if (!block.getType().name().contains("FURNACE")) continue;
+            if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) continue;
             Furnace furnace1 = plugin.getFurnaceManager().getFurnace(block);
             if (furnace == furnace1) continue;
             org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) block.getState());

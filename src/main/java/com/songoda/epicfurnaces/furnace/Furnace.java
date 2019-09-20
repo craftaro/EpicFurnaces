@@ -53,7 +53,7 @@ public class Furnace {
 
     public void plus(FurnaceSmeltEvent e) {
         Block block = location.getBlock();
-        if (!block.getType().name().contains("FURNACE")) return;
+        if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) return;
 
         this.uses++;
         this.tolevel++;
@@ -180,7 +180,7 @@ public class Furnace {
 
     public void updateCook() {
         Block block = location.getBlock();
-        if (!block.getType().name().contains("FURNACE")) return;
+        if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) return;
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
             int num = getPerformanceTotal();

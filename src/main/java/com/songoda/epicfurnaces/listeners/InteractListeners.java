@@ -33,7 +33,7 @@ public class InteractListeners implements Listener {
         }
         Player player = event.getPlayer();
         if (event.getAction() != Action.LEFT_CLICK_BLOCK
-                || (!block.getType().name().contains("FURNACE"))
+                || !block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")
                 || player.isSneaking()
                 || player.getInventory().getItemInHand().getType().name().contains("PICKAXE")
                 || !player.hasPermission("EpicFurnaces.overview")) {

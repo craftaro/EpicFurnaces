@@ -38,7 +38,7 @@ public class InventoryListeners implements Listener {
                 if (event.getAction() != InventoryAction.NOTHING) {
                     if (event.getCurrentItem().getType() != Material.AIR) {
                         ItemStack item = event.getCurrentItem();
-                        if (item.getType().name().contains("FURNACE")) {
+                        if (item.getType().name().contains("FURNACE") && !item.getType().name().contains("SMOKER")) {
                             event.setCancelled(true);
                         }
                     }
