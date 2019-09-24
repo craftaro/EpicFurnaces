@@ -114,9 +114,9 @@ public class Furnace {
         if (plugin.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1)) {
 
             Level level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
-            int cost = type == CostType.ECONOMY ? level.getCostEconomy() : level.getCostExperience();
 
             if (type == CostType.ECONOMY) {
+                int cost = level.getCostEconomy();
                 if (!EconomyManager.isEnabled()) {
                     player.sendMessage("Economy not enabled.");
                     return;
@@ -129,6 +129,7 @@ public class Furnace {
                 EconomyManager.withdrawBalance(player, cost);
                 upgradeFinal(level, player);
             } else if (type == CostType.EXPERIENCE) {
+                int cost = level.getCostExperience();
                 if (player.getLevel() >= cost || player.getGameMode() == GameMode.CREATIVE) {
                     if (player.getGameMode() != GameMode.CREATIVE) {
                         player.setLevel(player.getLevel() - cost);

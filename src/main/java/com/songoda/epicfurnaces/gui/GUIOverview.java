@@ -179,7 +179,7 @@ public class GUIOverview extends Gui {
                     plugin.getLocale().getMessage("interface.furnace.upgradewitheconomy").getMessage(),
                     nextLevel != null
                             ? plugin.getLocale().getMessage("interface.furnace.upgradewitheconomylore")
-                            .processPlaceholder("cost", nextLevel.getCostExperience()).getMessage()
+                            .processPlaceholder("cost", Methods.formatEconomy(nextLevel.getCostEconomy())).getMessage()
                             : plugin.getLocale().getMessage("interface.furnace.alreadymaxed").getMessage()),
                     (event) -> {
                 furnace.upgrade(player, CostType.ECONOMY);
