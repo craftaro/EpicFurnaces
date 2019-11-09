@@ -6,84 +6,80 @@ import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.utils.Methods;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CommandBoost extends AbstractCommand {
 
-    final EpicFurnaces plugin;
+    final EpicFurnaces instance;
 
-    public CommandBoost(EpicFurnaces plugin) {
+    public CommandBoost(EpicFurnaces instance) {
         super(false, "boost");
-        this.plugin = plugin;
+        this.instance = instance;
     }
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         if (args.length < 2) {
+            instance.getLocale().newMessage("&7Syntax error...").sendPrefixedMessage(sender);
             return ReturnType.SYNTAX_ERROR;
         }
-        if (Bukkit.getPlayer(args[0]) == null) {
-            plugin.getLocale().newMessage("&cThat player does not exist...").sendPrefixedMessage(sender);
-            return ReturnType.FAILURE;
-        } else if (!Methods.isInt(args[1])) {
-            plugin.getLocale().newMessage("&6" + args[1] + " &7is not a number...").sendPrefixedMessage(sender);
-            return ReturnType.FAILURE;
-        } else {
-            Calendar c = Calendar.getInstance();
-            Date currentDate = new Date();
-            c.setTime(currentDate);
-
-            String time = "&7.";
-
-            if (args.length > 2) {
-                if (args[2].contains("m:")) {
-                    String[] arr2 = (args[2]).split(":");
-                    c.add(Calendar.MINUTE, Integer.parseInt(arr2[0]));
-                    time = " &7for &6" + arr2[0] + " minutes&7.";
-                } else if (args[2].contains("h:")) {
-                    String[] arr2 = (args[2]).split(":");
-                    c.add(Calendar.HOUR, Integer.parseInt(arr2[0]));
-                    time = " &7for &6" + arr2[0] + " hours&7.";
-                } else if (args[2].contains("d:")) {
-                    String[] arr2 = (args[2]).split(":");
-                    c.add(Calendar.HOUR, Integer.parseInt(arr2[0]) * 24);
-                    time = " &7for &6" + arr2[0] + " days&7.";
-                } else if (args[2].contains("y:")) {
-                    String[] arr2 = (args[2]).split(":");
-                    c.add(Calendar.YEAR, Integer.parseInt(arr2[0]));
-                    time = " &7for &6" + arr2[0] + " years&7.";
-                } else {
-                    plugin.getLocale().newMessage("&7" + args[2] + " &7is invalid.").sendPrefixedMessage(sender);
-                    return ReturnType.SUCCESS;
-                }
-            } else {
-                c.add(Calendar.YEAR, 10);
-            }
-
-            BoostData boostData = new BoostData(Integer.parseInt(args[2]), c.getTime().getTime(), Bukkit.getPlayer(args[0]).getUniqueId());
-            plugin.getBoostManager().addBoostToPlayer(boostData);
-            plugin.getLocale().newMessage("&7Successfully boosted &6" + Bukkit.getPlayer(args[0]).getName()
-                    + "'s &7furnaces reward amounts by &6" + args[2] + "x" + time).sendPrefixedMessage(sender);
+        if (!Methods.isInt(args[1])) {
+            instance.getLocale().newMessage("&6" + args[1] + " &7is not a number...").sendPrefixedMessage(sender);
+            return ReturnType.SYNTAX_ERROR;
         }
-        return ReturnType.FAILURE;
+
+        long duration = 0L;
+
+        if (args.length > 2) {
+            for (int i = 0; i < args.length; i++) {
+                String line = args[i];
+                long time = Methods.parseTime(line);
+                duration += time;
+
+            }
+        }
+
+        Player player = Bukkit.getPlayer(args[0]);
+        if (player == null) {
+            instance.getLocale().newMessage("&cThat player does not exist or is not online...").sendPrefixedMessage(sender);
+            return ReturnType.FAILURE;
+        }
+
+        BoostData boostData = new BoostData(Integer.parseInt(args[1]), duration == 0L ? Long.MAX_VALUE : System.currentTimeMillis() + duration, player.getUniqueId());
+        instance.getBoostManager().addBoostToPlayer(boostData);
+        instance.getLocale().newMessage("&7Successfully boosted &6" + Bukkit.getPlayer(args[0]).getName()
+                + "'s &7furnace reward amounts &6" + args[1] + "x" + (duration == 0L ? "" : (" for " + Methods.makeReadable(duration))) + "&7.").sendPrefixedMessage(sender);
+        return ReturnType.SUCCESS;
     }
 
     @Override
-    protected List<String> onTab(CommandSender commandSender, String... strings) {
+    protected List<String> onTab(CommandSender sender, String... args) {
+        if (args.length == 1) {
+            List<String> players = new ArrayList<>();
+            for (Player player : Bukkit.getOnlinePlayers()) {
+                players.add(player.getName());
+            }
+            return players;
+        } else if (args.length == 2) {
+            return Arrays.asList("1", "2", "3", "4", "5");
+        } else if (args.length == 3) {
+            return Arrays.asList("1m", "1h", "1d");
+        }
         return null;
     }
 
     @Override
     public String getPermissionNode() {
-        return "epicfurnaces.admin";
+        return "epicfurnaces.boost";
     }
 
     @Override
     public String getSyntax() {
-        return "/ef boost <player> <multiplier> [m:minute, h:hour, d:day, y:year]";
+        return "/ef boost <player> <amount> [duration]";
     }
 
     @Override

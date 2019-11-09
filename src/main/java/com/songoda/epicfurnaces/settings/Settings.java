@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class Settings {
 
-    static final Config config = EpicFurnaces.getInstance().getConfig().getCoreConfig();
+    static final Config config = EpicFurnaces.getInstance().getCoreConfig();
 
     public static final ConfigSetting UPGRADE_BY_SMELTING = new ConfigSetting(config, "Main.Upgrade By Smelting Materials", true);
 

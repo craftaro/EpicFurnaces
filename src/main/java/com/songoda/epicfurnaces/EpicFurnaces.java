@@ -167,7 +167,7 @@ public class EpicFurnaces extends SongodaPlugin {
 
         org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) state);
 
-        int performance = (furnaceBlock.getCookTime() - furnace.getPerformanceTotal()) <= 0 ? 0 : furnace.getPerformanceTotal();
+        int performance = (furnaceBlock.getCookTime() - furnace.getPerformanceTotal(furnaceBlock.getType())) <= 0 ? 0 : furnace.getPerformanceTotal(furnaceBlock.getType());
 
         float percent = (float) (furnaceBlock.getCookTime() - performance) / (200 - performance);
 
