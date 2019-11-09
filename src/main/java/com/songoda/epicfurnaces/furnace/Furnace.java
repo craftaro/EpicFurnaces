@@ -186,13 +186,14 @@ public class Furnace {
         if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) return;
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-            int num = getPerformanceTotal();
+            int num = getPerformanceTotal(block.getType());
 
-            if (num > 200)
-                num = 200;
+            int max = (block.getType().name().contains("BLAST") || block.getType().name().contains("SMOKER") ? 100 : 200);
+            if (num >= max)
+                num = max - 1;
 
             if (num != 0) {
-                BlockState bs = (block.getState()); // max is 200
+                BlockState bs = (block.getState());
                 ((org.bukkit.block.Furnace) bs).setCookTime(Short.parseShort(Integer.toString(num)));
                 bs.update();
             }
@@ -220,13 +221,14 @@ public class Furnace {
     }
 
 
-    public int getPerformanceTotal() {
-        String equation = "(" + level.getPerformance() + " / 100) * 200";
+    public int getPerformanceTotal(Material material) {
+        String cap =  (material.name().contains("BLAST") || material.name().contains("SMOKER") ? "100" : "200");
+        String equation = "(" + level.getPerformance() + " / 100) * " + cap;
         try {
             if (!cache.containsKey(equation)) {
                 ScriptEngineManager mgr = new ScriptEngineManager();
                 ScriptEngine engine = mgr.getEngineByName("JavaScript");
-                int num = (int) Math.round(Double.parseDouble(engine.eval("(" + level.getPerformance() + " / 100) * 200").toString()));
+                int num = (int) Math.round(Double.parseDouble(engine.eval("(" + level.getPerformance() + " / 100) * " + cap).toString()));
                 cache.put(equation, num);
                 return num;
             } else {
