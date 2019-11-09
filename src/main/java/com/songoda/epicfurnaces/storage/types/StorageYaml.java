@@ -1,6 +1,5 @@
 package com.songoda.epicfurnaces.storage.types;
 
-import com.songoda.core.configuration.Config;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.StorageItem;
@@ -109,7 +108,8 @@ public class StorageYaml extends Storage {
         File data = new File(plugin.getDataFolder(), "data.yml");
         File dataClone = new File(plugin.getDataFolder(), "data-backup-" + System.currentTimeMillis() + ".yml");
         try {
-            copyFile(data, dataClone);
+            if (data.exists())
+                copyFile(data, dataClone);
         } catch (IOException e) {
             e.printStackTrace();
         }
