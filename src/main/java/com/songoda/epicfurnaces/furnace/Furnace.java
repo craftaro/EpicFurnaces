@@ -56,7 +56,9 @@ public class Furnace {
         if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) return;
 
         this.uses++;
-        this.tolevel++;
+
+        if (Settings.UPGRADE_COST.getMaterial().matches(e.getResult()))
+            this.tolevel++;
 
         int multi = Settings.LEVEL_MULTIPLIER.getInt();
 
