@@ -105,23 +105,6 @@ public class StorageYaml extends Storage {
 
     @Override
     public void makeBackup() {
-        File data = new File(plugin.getDataFolder(), "data.yml");
-        File dataClone = new File(plugin.getDataFolder(), "data-backup-" + System.currentTimeMillis() + ".yml");
-        try {
-            if (data.exists())
-                copyFile(data, dataClone);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Deque<File> backups = new ArrayDeque<>();
-        for (File file : Objects.requireNonNull(plugin.getDataFolder().listFiles())) {
-            if (file.getName().toLowerCase().contains("data-backup")) {
-                backups.add(file);
-            }
-        }
-        if (backups.size() > 3) {
-            backups.getFirst().delete();
-        }
     }
 
     @Override
@@ -129,20 +112,4 @@ public class StorageYaml extends Storage {
         dataFile.save();
     }
 
-    private static void copyFile(File source, File dest) throws IOException {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(source);
-            os = new FileOutputStream(dest);
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = is.read(buffer)) > 0) {
-                os.write(buffer, 0, length);
-            }
-        } finally {
-            is.close();
-            os.close();
-        }
-    }
 }
