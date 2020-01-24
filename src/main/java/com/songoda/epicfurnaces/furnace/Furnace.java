@@ -51,13 +51,13 @@ public class Furnace {
         guiManager.showGUI(player, new GUIOverview(plugin, this, player));
     }
 
-    public void plus(FurnaceSmeltEvent e) {
+    public void plus(FurnaceSmeltEvent event) {
         Block block = location.getBlock();
         if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) return;
 
         this.uses++;
 
-        if (Settings.UPGRADE_COST.getMaterial().matches(e.getResult()))
+        if (Settings.UPGRADE_COST.getMaterial().matches(event.getResult()))
             this.tolevel++;
 
         int multi = Settings.LEVEL_MULTIPLIER.getInt();
@@ -65,15 +65,18 @@ public class Furnace {
         if (level.getReward() == null) return;
 
         String reward = level.getReward();
-        String[] amt = {"1", "1"};
+        int min = 1;
+        int max = 1;
         if (reward.contains(":")) {
             String[] rewardSplit = reward.split(":");
             reward = rewardSplit[0].substring(0, rewardSplit[0].length() - 1);
-            if (rewardSplit[1].contains("-"))
-                amt = rewardSplit[1].split("-");
-            else {
-                amt[0] = rewardSplit[1];
-                amt[1] = rewardSplit[0];
+            if (rewardSplit[1].contains("-")) {
+                String[] split = rewardSplit[1].split("-");
+                min = Integer.parseInt(split[0]);
+                max = Integer.parseInt(split[1]);
+            } else {
+                min = Integer.parseInt(rewardSplit[1]);
+                max = min;
             }
         }
 
@@ -92,28 +95,24 @@ public class Furnace {
         FurnaceInventory i = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
 
 
-        if (e.getSource().getType().name().contains("SPONGE"))
+        if (event.getSource().getType().name().contains("SPONGE"))
             return;
 
         int num = Integer.parseInt(reward);
         double rand = Math.random() * 100;
         if (rand >= num
-                || e.getResult().equals(Material.SPONGE)
+                || event.getResult().equals(Material.SPONGE)
                 || Settings.NO_REWARDS_FROM_RECIPES.getBoolean()
                 && plugin.getFurnaceRecipeFile().contains("Recipes." + i.getSmelting().getType().toString())) {
             return;
         }
 
-        int r = Integer.parseInt(amt[0]);
-        if (Integer.parseInt(amt[0]) !=
-                Integer.parseInt(amt[1].replace("%", "")))
-            r = (int) (Math.random() * ((Integer.parseInt(amt[1].replace("%", "")) - Integer.parseInt(amt[0])))) + Integer.parseInt(amt[0]);
+        int randomAmount = min == max ? min :  (int) (Math.random() * ((max - min) + 1)) + min;
 
         BoostData boostData = plugin.getBoostManager().getBoost(placedBy);
-        r = r * (boostData == null ? 1 : boostData.getMultiplier());
+        randomAmount = randomAmount * (boostData == null ? 1 : boostData.getMultiplier());
 
-
-        e.getResult().setAmount(e.getResult().getAmount() + r);
+        event.getResult().setAmount(event.getResult().getAmount() + randomAmount);
     }
 
     public void upgrade(Player player, CostType type) {
@@ -226,7 +225,7 @@ public class Furnace {
 
 
     public int getPerformanceTotal(Material material) {
-        String cap =  (material.name().contains("BLAST") || material.name().contains("SMOKER") ? "100" : "200");
+        String cap = (material.name().contains("BLAST") || material.name().contains("SMOKER") ? "100" : "200");
         String equation = "(" + level.getPerformance() + " / 100) * " + cap;
         try {
             if (!cache.containsKey(equation)) {
