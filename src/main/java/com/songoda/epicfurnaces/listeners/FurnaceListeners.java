@@ -29,7 +29,7 @@ public class FurnaceListeners implements Listener {
         }
         Furnace furnace = plugin.getFurnaceManager().getFurnace(block.getLocation());
 
-        if (furnace != null && !event.getSource().getType().name().contains("SPONGE"))
+        if (furnace != null)
             furnace.plus(event);
     }
 
