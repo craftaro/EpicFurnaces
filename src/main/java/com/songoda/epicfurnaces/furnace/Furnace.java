@@ -91,6 +91,10 @@ public class Furnace {
 
         FurnaceInventory i = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
 
+
+        if (e.getSource().getType().name().contains("SPONGE"))
+            return;
+
         int num = Integer.parseInt(reward);
         double rand = Math.random() * 100;
         if (rand >= num
