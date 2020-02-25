@@ -63,7 +63,8 @@ public class Methods {
         double x = location.getBlockX();
         double y = location.getBlockY();
         double z = location.getBlockZ();
-        String str = w + ":" + x + ":" + y + ":" + z;
+        DecimalFormat df = new DecimalFormat("####.####");
+        String str = w + ":" + df.format(x) + ":" + df.format(y) + ":" + df.format(z);
         str = str.replace(".0", "").replace("/", "");
         return str;
     }
