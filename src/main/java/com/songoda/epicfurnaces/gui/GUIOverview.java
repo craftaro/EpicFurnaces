@@ -12,6 +12,7 @@ import com.songoda.epicfurnaces.settings.Settings;
 import com.songoda.epicfurnaces.utils.CostType;
 import com.songoda.epicfurnaces.utils.Methods;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -19,6 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class GUIOverview extends Gui {
 
@@ -238,14 +240,9 @@ public class GUIOverview extends Gui {
 
         lorehook.add("");
         lorehook.add(plugin.getLocale().getMessage("interface.furnace.remotelist").getMessage());
-        for (String line : furnace.getRawAccessList()) {
-            String[] halfs = line.split(":");
-            String name = halfs[1];
-            Player remotePlayer = Bukkit.getPlayer(halfs[0]);
-            if (remotePlayer != null) {
-                name = remotePlayer.getDisplayName();
-            }
-            lorehook.add(Methods.formatText("&6" + name));
+        for (UUID uuid : furnace.getAccessList()) {
+            OfflinePlayer remotePlayer = Bukkit.getOfflinePlayer(uuid);
+            lorehook.add(Methods.formatText("&6" + remotePlayer.getName()));
         }
         return lorehook;
     }

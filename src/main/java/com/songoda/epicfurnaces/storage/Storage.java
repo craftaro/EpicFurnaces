@@ -7,6 +7,8 @@ import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.utils.Methods;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public abstract class Storage {
 
@@ -42,7 +44,7 @@ public abstract class Storage {
                     new StorageItem("uses", furnace.getUses()),
                     new StorageItem("tolevel", furnace.getTolevel()),
                     new StorageItem("nickname", furnace.getNickname()),
-                    new StorageItem("accesslist", furnace.getOriginalAccessList()),
+                    new StorageItem("accesslist", furnace.getAccessList().stream().map(UUID::toString).collect(Collectors.toList())),
                     new StorageItem("placedby", furnace.getPlacedBy() == null ? null : furnace.getPlacedBy().toString()));
         }
 

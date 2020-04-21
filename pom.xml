@@ -2,7 +2,7 @@
     <groupId>com.songoda</groupId>
     <artifactId>EpicFurnaces</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>4.5.6</version>
+    <version>4.5.7</version>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>EpicFurnaces-${project.version}</finalName>
@@ -14,6 +14,28 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <file>${project.build.directory}/classes/plugin.yml</file>
+                    <replacements>
+                        <replacement>
+                            <token>maven-version-number</token>
+                            <value>${project.version}</value>
+                        </replacement>
+                    </replacements>
                 </configuration>
             </plugin>
             <plugin>
@@ -61,6 +83,10 @@
         <repository>
             <id>private</id>
             <url>http://repo.songoda.com/artifactory/private/</url>
+        </repository>
+        <repository>
+            <id>public</id>
+            <url>https://repo.songoda.com/artifactory/public/</url>
         </repository>
     </repositories>
     <dependencies>

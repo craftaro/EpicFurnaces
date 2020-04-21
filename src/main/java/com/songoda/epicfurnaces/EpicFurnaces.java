@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class EpicFurnaces extends SongodaPlugin {
 
@@ -225,12 +226,22 @@ public class EpicFurnaces extends SongodaPlugin {
                     String placedByStr = row.get("placedBy").asString();
                     UUID placedBy = placedByStr == null ? null : UUID.fromString(placedByStr);
 
+                    List<String> list = row.get("accesslist").asStringList();
+                    if (!list.isEmpty()) {
+                        for (String uuid : new ArrayList<>(list))
+                            if (uuid.contains(":")) {
+                                list = new ArrayList<>();
+                                break;
+                            }
+                    }
+                    List<UUID> usableList = list.stream().map(UUID::fromString).collect(Collectors.toList());
+
                     Furnace furnace = new FurnaceBuilder(location)
                             .setLevel(levelManager.getLevel(row.get("level").asInt()))
                             .setNickname(row.get("nickname").asString())
                             .setUses(row.get("uses").asInt())
                             .setToLevel(row.get("tolevel").asInt())
-                            .setAccessList(row.get("accesslist").asStringList())
+                            .setAccessList(usableList)
                             .setPlacedBy(placedBy).build();
 
                     furnaceManager.addFurnace(furnace);

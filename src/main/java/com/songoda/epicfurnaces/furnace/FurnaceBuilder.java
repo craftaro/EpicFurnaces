@@ -36,9 +36,9 @@ public class FurnaceBuilder {
         return this;
     }
 
-    public FurnaceBuilder setAccessList(List<String> accessList) {
-        for (String line : accessList)
-            this.furnace.addToAccessList(line);
+    public FurnaceBuilder setAccessList(List<UUID> accessList) {
+        for (UUID uuid : accessList)
+            this.furnace.addToAccessList(uuid);
         return this;
     }
 

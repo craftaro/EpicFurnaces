@@ -37,7 +37,7 @@ public class Furnace {
     private int uses, tolevel, radiusOverheatLast, radiusFuelshareLast = 0;
     private final List<Location> radiusOverheat = new ArrayList<>();
     private final List<Location> radiusFuelshare = new ArrayList<>();
-    private final List<String> accessList = new ArrayList<>();
+    private final List<UUID> accessList = new ArrayList<>();
     private final Map<String, Integer> cache = new HashMap<>();
 
     public Furnace(Location location) {
@@ -210,19 +210,8 @@ public class Furnace {
 
 
     public List<UUID> getAccessList() {
-        List<UUID> list = new ArrayList<>();
-        for (String line : accessList) {
-            String[] halfs = line.split(":");
-            list.add(UUID.fromString(halfs[0]));
-        }
-
-        return list;
+        return Collections.unmodifiableList(accessList);
     }
-
-    public List<String> getRawAccessList() {
-        return new ArrayList<>(accessList);
-    }
-
 
     public int getPerformanceTotal(Material material) {
         String cap = (material.name().contains("BLAST") || material.name().contains("SMOKER") ? "100" : "200");
@@ -243,23 +232,13 @@ public class Furnace {
         return 0;
     }
 
-
-    public List<String> getOriginalAccessList() {
-        return Collections.unmodifiableList(accessList);
+    public boolean addToAccessList(OfflinePlayer player) {
+        return addToAccessList(player.getUniqueId());
     }
 
-
-    public boolean addToAccessList(Player player) {
-        String formatted = player.getUniqueId().toString() + ":" + player.getName();
-        if (accessList.contains(formatted)) return false;
-        return addToAccessList(formatted);
+    public boolean addToAccessList(UUID uuid) {
+        return accessList.add(uuid);
     }
-
-    public boolean addToAccessList(String formatted) {
-        if (accessList.contains(formatted)) return false;
-        return accessList.add(formatted);
-    }
-
 
     public boolean removeFromAccessList(String string) {
         return accessList.remove(string);
