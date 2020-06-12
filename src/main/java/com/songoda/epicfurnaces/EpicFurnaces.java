@@ -16,10 +16,7 @@ import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
 import com.songoda.epicfurnaces.furnace.FurnaceManager;
 import com.songoda.epicfurnaces.furnace.levels.LevelManager;
 import com.songoda.epicfurnaces.handlers.BlacklistHandler;
-import com.songoda.epicfurnaces.listeners.BlockListeners;
-import com.songoda.epicfurnaces.listeners.FurnaceListeners;
-import com.songoda.epicfurnaces.listeners.InteractListeners;
-import com.songoda.epicfurnaces.listeners.InventoryListeners;
+import com.songoda.epicfurnaces.listeners.*;
 import com.songoda.epicfurnaces.settings.Settings;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.StorageRow;
@@ -132,6 +129,7 @@ public class EpicFurnaces extends SongodaPlugin {
         pluginManager.registerEvents(new FurnaceListeners(this), this);
         pluginManager.registerEvents(new InteractListeners(this, guiManager), this);
         pluginManager.registerEvents(new InventoryListeners(this), this);
+        pluginManager.registerEvents(new EntityListeners(this), this);
 
         // Start auto save
         int saveInterval = Settings.AUTOSAVE.getInt() * 60 * 20;
