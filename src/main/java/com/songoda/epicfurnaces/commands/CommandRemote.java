@@ -73,7 +73,7 @@ public class CommandRemote extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/ef remote [nickname]";
+        return "remote [nickname]";
     }
 
     @Override
