@@ -96,7 +96,7 @@ public class EpicFurnaces extends SongodaPlugin {
 
         // Register commands
         this.commandManager = new CommandManager(this);
-        this.commandManager.addCommand(new CommandEpicFurnaces(this))
+        this.commandManager.addMainCommand("ef")
                 .addSubCommands(
                         new CommandBoost(this),
                         new CommandGive(this),

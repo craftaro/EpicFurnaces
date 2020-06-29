@@ -6,8 +6,8 @@ main: com.songoda.epicfurnaces.EpicFurnaces
 author: songoda
 api-version: 1.13
 commands:
-  EpicFurnaces:
+  ef:
     description: I have no idea.
     default: true
-    aliases: [ef]
+    aliases: [EpicFurnaces]
     usage: /<command> [reload]

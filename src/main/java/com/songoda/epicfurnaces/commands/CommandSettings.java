@@ -38,7 +38,7 @@ public class CommandSettings extends AbstractCommand {
 
     @Override
     public String getSyntax() {
-        return "/ef settings";
+        return "settings";
     }
 
     @Override
