@@ -244,7 +244,10 @@ public class Furnace {
         return accessList.remove(string);
     }
 
-
+    public boolean isOnAccessList(OfflinePlayer player) {
+        return accessList.contains(player.getUniqueId());
+    } 
+            
     public void clearAccessList() {
         accessList.clear();
     }
