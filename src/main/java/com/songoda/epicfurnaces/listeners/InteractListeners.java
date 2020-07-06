@@ -2,6 +2,8 @@ package com.songoda.epicfurnaces.listeners;
 
 import com.songoda.core.gui.GuiManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.skyblock.SkyBlock;
+import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,7 +41,18 @@ public class InteractListeners implements Listener {
                 || !player.hasPermission("EpicFurnaces.overview")) {
             return;
         }
-
+    
+        if (Bukkit.getPluginManager().isPluginEnabled("FabledSkyBlock")) {
+            SkyBlock skyBlock = SkyBlock.getInstance();
+        
+            if (skyBlock.getWorldManager().isIslandWorld(event.getPlayer().getWorld()))
+                if (!skyBlock.getPermissionManager().hasPermission(event.getPlayer(),
+                        skyBlock.getIslandManager().getIslandAtLocation(event.getClickedBlock().getLocation()),
+                        "EpicFurnaces"))
+                    return;
+        }
+    
+    
         event.setCancelled(true);
 
         plugin.getFurnaceManager().getFurnace(block.getLocation()).overview(guiManager, player);
