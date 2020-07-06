@@ -218,7 +218,7 @@ public class Furnace {
         String equation = "(" + level.getPerformance() + " / 100) * " + cap;
         try {
             if (!cache.containsKey(equation)) {
-                ScriptEngineManager mgr = new ScriptEngineManager();
+                ScriptEngineManager mgr = new ScriptEngineManager(null);
                 ScriptEngine engine = mgr.getEngineByName("JavaScript");
                 int num = (int) Math.round(Double.parseDouble(engine.eval("(" + level.getPerformance() + " / 100) * " + cap).toString()));
                 cache.put(equation, num);
