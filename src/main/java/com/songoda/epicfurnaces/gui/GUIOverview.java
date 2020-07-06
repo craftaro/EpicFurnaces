@@ -153,7 +153,8 @@ public class GUIOverview extends Gui {
                                 }).setOnClose(this::constructGUI);
 
                     }).setAction(4, ClickType.RIGHT, (event) -> {
-                        furnace.addToAccessList(player);
+                        if (!furnace.isOnAccessList(player))
+                            furnace.addToAccessList(player);
                         constructGUI();
                     });
         }

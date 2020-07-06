@@ -2,7 +2,7 @@
     <groupId>com.songoda</groupId>
     <artifactId>EpicFurnaces</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>4.5.9</version>
+    <version>4.5.10</version>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>EpicFurnaces-${project.version}</finalName>
@@ -100,6 +100,11 @@
             <artifactId>SongodaCore</artifactId>
             <version>LATEST</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.songoda</groupId>
+            <artifactId>skyblock</artifactId>
+            <version>2.2.13</version>
         </dependency>
     </dependencies>
 </project>
