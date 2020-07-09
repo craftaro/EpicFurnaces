@@ -12,6 +12,7 @@ import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.boost.BoostManager;
 import com.songoda.epicfurnaces.commands.*;
 import com.songoda.epicfurnaces.compatibility.EpicFurnacesPermission;
+import com.songoda.epicfurnaces.compatibility.FabledSkyBlockLoader;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
 import com.songoda.epicfurnaces.furnace.FurnaceManager;
@@ -99,13 +100,7 @@ public class EpicFurnaces extends SongodaPlugin {
     
         // Hook into FabledSkyBlock
         if (Bukkit.getPluginManager().isPluginEnabled("FabledSkyBlock")) {
-            SkyBlock.getInstance().getPermissionManager().registerPermission(new EpicFurnacesPermission());
-            try {
-                SkyBlock.getInstance().getPermissionManager().registerPermission(
-                        (BasicPermission) Class.forName("com.songoda.epicfurnaces.compatibility.EpicFurnacesPermission").getDeclaredConstructor().newInstance());
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            new FabledSkyBlockLoader();
         }
     
     
