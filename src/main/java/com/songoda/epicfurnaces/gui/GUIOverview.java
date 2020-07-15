@@ -17,10 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class GUIOverview extends Gui {
 
@@ -63,7 +60,7 @@ public class GUIOverview extends Gui {
         setItem(1, 4, GuiUtils.createButtonItem(
                 CompatibleMaterial.getMaterial(furnace.getLocation().getBlock().getType()),
                 plugin.getLocale().getMessage("interface.furnace.currentlevel")
-                .processPlaceholder("level", level.getLevel()).getMessage(),
+                        .processPlaceholder("level", level.getLevel()).getMessage(),
                 getFurnaceDescription(furnace, level, nextLevel)));
 
         // check how many info icons we have to show
@@ -91,47 +88,47 @@ public class GUIOverview extends Gui {
                     Settings.PERFORMANCE_ICON.getMaterial(CompatibleMaterial.REDSTONE),
                     plugin.getLocale().getMessage("interface.furnace.performancetitle").getMessage(),
                     plugin.getLocale().getMessage("interface.furnace.performanceinfo")
-                    .processPlaceholder("amount", level.getPerformance()).getMessage().split("\\|")));
+                            .processPlaceholder("amount", level.getPerformance()).getMessage().split("\\|")));
         }
         if (level.getReward() != null) {
             setItem(infoIconOrder[num][current++], GuiUtils.createButtonItem(
                     Settings.REWARD_ICON.getMaterial(CompatibleMaterial.GOLDEN_APPLE),
                     plugin.getLocale().getMessage("interface.furnace.rewardtitle").getMessage(),
                     plugin.getLocale().getMessage("interface.furnace.rewardinfo")
-                    .processPlaceholder("amount", level.getReward().split(":")[0].replace("%", ""))
-                    .getMessage().split("\\|")));
+                            .processPlaceholder("amount", level.getReward().split(":")[0].replace("%", ""))
+                            .getMessage().split("\\|")));
         }
         if (level.getFuelDuration() != 0) {
             setItem(infoIconOrder[num][current++], GuiUtils.createButtonItem(
                     Settings.FUEL_DURATION_ICON.getMaterial(CompatibleMaterial.COAL),
                     plugin.getLocale().getMessage("interface.furnace.fueldurationtitle").getMessage(),
                     plugin.getLocale().getMessage("interface.furnace.fueldurationinfo")
-                    .processPlaceholder("amount", level.getFuelDuration())
-                    .getMessage().split("\\|")));
+                            .processPlaceholder("amount", level.getFuelDuration())
+                            .getMessage().split("\\|")));
         }
         if (level.getFuelShare() != 0) {
             setItem(infoIconOrder[num][current++], GuiUtils.createButtonItem(
                     Settings.FUEL_SHARE_ICON.getMaterial(CompatibleMaterial.COAL_BLOCK),
                     plugin.getLocale().getMessage("interface.furnace.fuelsharetitle").getMessage(),
                     plugin.getLocale().getMessage("interface.furnace.fuelshareinfo")
-                    .processPlaceholder("amount", level.getOverheat() * 3)
-                    .getMessage().split("\\|")));
+                            .processPlaceholder("amount", level.getOverheat() * 3)
+                            .getMessage().split("\\|")));
         }
         if (level.getOverheat() != 0) {
             setItem(infoIconOrder[num][current++], GuiUtils.createButtonItem(
                     Settings.OVERHEAT_ICON.getMaterial(CompatibleMaterial.FIRE_CHARGE),
                     plugin.getLocale().getMessage("interface.furnace.overheattitle").getMessage(),
                     plugin.getLocale().getMessage("interface.furnace.overheatinfo")
-                    .processPlaceholder("amount", level.getOverheat() * 3)
-                    .getMessage().split("\\|")));
+                            .processPlaceholder("amount", level.getOverheat() * 3)
+                            .getMessage().split("\\|")));
         }
-        
+
         // remote control
         if (Settings.REMOTE.getBoolean() && player.hasPermission("EpicFurnaces.Remote")) {
             setButton(4, GuiUtils.createButtonItem(
-                        CompatibleMaterial.TRIPWIRE_HOOK,
-                        plugin.getLocale().getMessage("interface.furnace.remotefurnace").getMessage(),
-                        getFurnaceRemoteLore(furnace)),
+                    CompatibleMaterial.TRIPWIRE_HOOK,
+                    plugin.getLocale().getMessage("interface.furnace.remotefurnace").getMessage(),
+                    getFurnaceRemoteLore(furnace)),
                     ClickType.LEFT, (event) -> {
 
                         player.sendMessage(furnace.getNickname() == null ? "Enter a nickname" : furnace.getNickname());
@@ -153,10 +150,10 @@ public class GUIOverview extends Gui {
                                 }).setOnClose(this::constructGUI);
 
                     }).setAction(4, ClickType.RIGHT, (event) -> {
-                        if (!furnace.isOnAccessList(player))
-                            furnace.addToAccessList(player);
-                        constructGUI();
-                    });
+                if (!furnace.isOnAccessList(player))
+                    furnace.addToAccessList(player);
+                constructGUI();
+            });
         }
 
         if (Settings.UPGRADE_WITH_XP.getBoolean()
@@ -185,9 +182,9 @@ public class GUIOverview extends Gui {
                             .processPlaceholder("cost", Methods.formatEconomy(nextLevel.getCostEconomy())).getMessage()
                             : plugin.getLocale().getMessage("interface.furnace.alreadymaxed").getMessage()),
                     (event) -> {
-                furnace.upgrade(player, CostType.ECONOMY);
-                furnace.overview(guiManager, player);
-            });
+                        furnace.upgrade(player, CostType.ECONOMY);
+                        furnace.overview(guiManager, player);
+                    });
         }
     }
 
@@ -212,10 +209,12 @@ public class GUIOverview extends Gui {
             lore.addAll(nextLevel.getDescription());
 
             if (Settings.UPGRADE_BY_SMELTING.getBoolean()) {
-                lore.add(plugin.getLocale().getMessage("interface.furnace.tolevel")
-                        .processPlaceholder("amount", (Settings.LEVEL_MULTIPLIER.getInt() * level.getLevel()) - furnace.getTolevel())
-                        .processPlaceholder("type", Methods.cleanString(Settings.UPGRADE_COST.getString()))
-                        .getMessage());
+                lore.add(plugin.getLocale().getMessage("interface.furnace.itemsneeded").getMessage());
+                for (Map.Entry<CompatibleMaterial, Integer> entry : level.getMaterials().entrySet())
+                    lore.add(plugin.getLocale().getMessage("interface.furnace.neededitem")
+                            .processPlaceholder("amount", entry.getValue() - furnace.getToLevel(entry.getKey()))
+                            .processPlaceholder("type", Methods.cleanString(entry.getKey().name()))
+                            .getMessage());
             }
         }
 

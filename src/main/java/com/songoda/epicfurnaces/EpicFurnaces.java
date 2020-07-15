@@ -40,10 +40,7 @@ import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EpicFurnaces extends SongodaPlugin {
@@ -102,8 +99,7 @@ public class EpicFurnaces extends SongodaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("FabledSkyBlock")) {
             new FabledSkyBlockLoader();
         }
-    
-    
+
         // Register commands
         this.commandManager = new CommandManager(this);
         this.commandManager.addMainCommand("ef")
@@ -244,11 +240,18 @@ public class EpicFurnaces extends SongodaPlugin {
                     }
                     List<UUID> usableList = list.stream().map(UUID::fromString).collect(Collectors.toList());
 
+                    Map<CompatibleMaterial, Integer> toLevel = new HashMap<>();
+                    List<String> toLevelCompiled = row.get("tolevelnew").asStringList();
+                    for (String line : toLevelCompiled) {
+                        String[] split = line.split(":");
+                        toLevel.put(CompatibleMaterial.getMaterial(split[0]), Integer.parseInt(split[1]));
+                    }
+
                     Furnace furnace = new FurnaceBuilder(location)
                             .setLevel(levelManager.getLevel(row.get("level").asInt()))
                             .setNickname(row.get("nickname").asString())
                             .setUses(row.get("uses").asInt())
-                            .setToLevel(row.get("tolevel").asInt())
+                            .setToLevel(toLevel)
                             .setAccessList(usableList)
                             .setPlacedBy(placedBy).build();
 
@@ -314,7 +317,15 @@ public class EpicFurnaces extends SongodaPlugin {
             int overheat = levels.getInt("Overheat");
             int fuelShare = levels.getInt("Fuel-share");
 
-            levelManager.addLevel(level, costExperiance, costEconomy, performance, reward, fuelDuration, overheat, fuelShare);
+            Map<CompatibleMaterial, Integer> materials = new LinkedHashMap<>();
+            if (levels.contains("Cost-item")) {
+                for (String materialStr : levels.getStringList("Cost-item")) {
+                    String[] materialSplit = materialStr.split(":");
+                    materials.put(CompatibleMaterial.getMaterial(materialSplit[0]), Integer.parseInt(materialSplit[1]));
+                }
+            }
+
+            levelManager.addLevel(level, costExperiance, costEconomy, performance, reward, fuelDuration, overheat, fuelShare, materials);
         }
     }
 

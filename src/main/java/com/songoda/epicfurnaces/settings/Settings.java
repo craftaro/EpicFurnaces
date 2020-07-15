@@ -27,8 +27,6 @@ public class Settings {
             "restarts. With that said it is advised to keep this enabled.",
             "If however you enjoy living on the edge, feel free to turn it off.");
 
-    public static final ConfigSetting LEVEL_MULTIPLIER = new ConfigSetting(config, "Main.Level Cost Multiplier", 50);
-
     public static final ConfigSetting FURNACE_ITEM = new ConfigSetting(config, "Main.Remember Furnace Item Levels", true,
             "Should furnace levels be remembered when broken?");
 
@@ -42,7 +40,6 @@ public class Settings {
 
     public static final ConfigSetting REDSTONE_DEACTIVATES = new ConfigSetting(config, "Main.Redstone Deactivates Furnaces", true);
 
-    public static final ConfigSetting UPGRADE_COST = new ConfigSetting(config, "Main.Furnace Upgrade Cost", "IRON_INGOT");
     public static final ConfigSetting CUSTOM_RECIPES = new ConfigSetting(config, "Main.Use Custom Recipes", true);
     public static final ConfigSetting NO_REWARDS_FROM_RECIPES = new ConfigSetting(config, "Main.No Rewards From Custom Recipes", true);
 
