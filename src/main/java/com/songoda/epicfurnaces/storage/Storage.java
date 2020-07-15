@@ -1,12 +1,15 @@
 package com.songoda.epicfurnaces.storage;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.Config;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.utils.Methods;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,10 +42,14 @@ public abstract class Storage {
                     || furnace.getLevel() == null) continue;
             String locationStr = Methods.serializeLocation(furnace.getLocation());
 
+            List<String> toLevel = new ArrayList<>();
+            for (Map.Entry<CompatibleMaterial, Integer> entry : furnace.getToLevel().entrySet())
+                toLevel.add(entry.getKey().name() + ":" + entry.getValue());
+
             prepareSaveItem("charged", new StorageItem("location", locationStr),
                     new StorageItem("level", furnace.getLevel().getLevel()),
                     new StorageItem("uses", furnace.getUses()),
-                    new StorageItem("tolevel", furnace.getTolevel()),
+                    new StorageItem("tolevelnew", toLevel),
                     new StorageItem("nickname", furnace.getNickname()),
                     new StorageItem("accesslist", furnace.getAccessList().stream().map(UUID::toString).collect(Collectors.toList())),
                     new StorageItem("placedby", furnace.getPlacedBy() == null ? null : furnace.getPlacedBy().toString()));

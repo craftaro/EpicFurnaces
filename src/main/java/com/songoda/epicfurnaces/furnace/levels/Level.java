@@ -1,19 +1,21 @@
 package com.songoda.epicfurnaces.furnace.levels;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.epicfurnaces.EpicFurnaces;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Level {
 
     private int level, costExperience, costEconomy, performance, fuelDuration, overheat, fuelShare;
 
+    private Map<CompatibleMaterial, Integer> materials = new LinkedHashMap<>();
+
     private String reward;
 
     private List<String> description = new ArrayList<>();
 
-    Level(int level, int costExperience, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare) {
+    Level(int level, int costExperience, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare, Map<CompatibleMaterial, Integer> materials) {
         this.level = level;
         this.costExperience = costExperience;
         this.costEconomy = costEconomy;
@@ -22,6 +24,7 @@ public class Level {
         this.fuelDuration = fuelDuration;
         this.overheat = overheat;
         this.fuelShare = fuelShare;
+        this.materials = materials;
 
         EpicFurnaces plugin = EpicFurnaces.getInstance();
 
@@ -89,5 +92,9 @@ public class Level {
 
     public int getCostEconomy() {
         return costEconomy;
+    }
+
+    public Map<CompatibleMaterial, Integer> getMaterials() {
+        return Collections.unmodifiableMap(materials);
     }
 }

@@ -1,23 +1,35 @@
 Level-1:
   Performance: 10%
   Reward: 10%:1
+  Cost-item:
+    - "IRON_INGOT:50"
+    - "DIAMOND:5"
   Cost-xp: 20
   Cost-eco: 5000
 Level-2:
   Performance: 25%
   Reward: 20%:1-2
+  Cost-item:
+    - "IRON_INGOT:100"
+    - "DIAMOND:10"
   Cost-xp: 25
   Cost-eco: 7500
 Level-3:
   Performance: 40%
   Reward: 35%:2-3
   Fuel-duration: 10%
+  Cost-item:
+    - "IRON_INGOT:150"
+    - "DIAMOND:15"
   Cost-xp: 30
   Cost-eco: 10000
 Level-4:
   Performance: 55%
   Reward: 50%:2-4
   Fuel-duration: 25%
+  Cost-item:
+    - "IRON_INGOT:200"
+    - "DIAMOND:20"
   Cost-xp: 35
   Cost-eco: 12000
 Level-5:
@@ -25,6 +37,9 @@ Level-5:
   Reward: 70%:3-4
   Fuel-duration: 45%
   Overheat: 1
+  Cost-item:
+    - "IRON_INGOT:250"
+    - "DIAMOND:25"
   Cost-xp: 40
   Cost-eco: 15000
 Level-6:
@@ -33,5 +48,8 @@ Level-6:
   Fuel-duration: 45%
   Overheat: 2
   Fuel-share: 1
+  Cost-item:
+    - "IRON_INGOT:300"
+    - "DIAMOND:30"
   Cost-xp: 40
   Cost-eco: 15000

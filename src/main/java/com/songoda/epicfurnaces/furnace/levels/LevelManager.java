@@ -1,5 +1,7 @@
 package com.songoda.epicfurnaces.furnace.levels;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -10,8 +12,8 @@ public class LevelManager {
     private final NavigableMap<Integer, Level> registeredLevels = new TreeMap<>();
 
 
-    public void addLevel(int level, int costExperiance, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare) {
-        registeredLevels.put(level, new Level(level, costExperiance, costEconomy, performance, reward, fuelDuration, overheat, fuelShare));
+    public void addLevel(int level, int costExperiance, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare, Map<CompatibleMaterial, Integer> materials) {
+        registeredLevels.put(level, new Level(level, costExperiance, costEconomy, performance, reward, fuelDuration, overheat, fuelShare, materials));
     }
 
 

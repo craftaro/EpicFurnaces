@@ -1,9 +1,11 @@
 package com.songoda.epicfurnaces.furnace;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.epicfurnaces.furnace.levels.Level;
 import org.bukkit.Location;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class FurnaceBuilder {
@@ -31,8 +33,9 @@ public class FurnaceBuilder {
         return this;
     }
 
-    public FurnaceBuilder setToLevel(int toLevel) {
-        this.furnace.setTolevel(toLevel);
+    public FurnaceBuilder setToLevel(Map<CompatibleMaterial, Integer> toLevel) {
+        for (Map.Entry<CompatibleMaterial, Integer> entry : toLevel.entrySet())
+            this.furnace.addToLevel(entry.getKey(), entry.getValue());
         return this;
     }
 

@@ -1,5 +1,6 @@
 package com.songoda.epicfurnaces.furnace;
 
+import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
@@ -34,7 +35,10 @@ public class Furnace {
     private Level level = plugin.getLevelManager().getLowestLevel();
     private String nickname = null;
     private UUID placedBy = null;
-    private int uses, tolevel, radiusOverheatLast, radiusFuelshareLast = 0;
+    private int uses, radiusOverheatLast, radiusFuelshareLast = 0;
+
+    private final Map<CompatibleMaterial, Integer> toLevel = new HashMap<>();
+
     private final List<Location> radiusOverheat = new ArrayList<>();
     private final List<Location> radiusFuelshare = new ArrayList<>();
     private final List<UUID> accessList = new ArrayList<>();
@@ -57,10 +61,15 @@ public class Furnace {
 
         this.uses++;
 
-        if (Settings.UPGRADE_COST.getMaterial().matches(event.getResult()))
-            this.tolevel++;
+        CompatibleMaterial material = CompatibleMaterial.getMaterial(event.getResult());
+        int needed = -1;
 
-        int multi = Settings.LEVEL_MULTIPLIER.getInt();
+
+        if (level.getMaterials().containsKey(material)) {
+            addToLevel(material, 1);
+            needed = level.getMaterials().get(material) - getToLevel(material);
+        }
+
 
         if (level.getReward() == null) return;
 
@@ -80,13 +89,10 @@ public class Furnace {
             }
         }
 
-
-        int needed = ((multi * level.getLevel()) - tolevel) - 1;
-
         if (Settings.UPGRADE_BY_SMELTING.getBoolean()
                 && needed <= 0
                 && plugin.getLevelManager().getLevel(level.getLevel() + 1) != null) {
-            tolevel = 0;
+            this.toLevel.remove(material);
             level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
         }
 
@@ -329,12 +335,22 @@ public class Furnace {
         this.uses = uses;
     }
 
-    public int getTolevel() {
-        return tolevel;
+    public int getToLevel(CompatibleMaterial material) {
+        if (!this.toLevel.containsKey(material))
+            return 0;
+        return this.toLevel.get(material);
     }
 
-    public void setTolevel(int tolevel) {
-        this.tolevel = tolevel;
+    public Map<CompatibleMaterial, Integer> getToLevel() {
+        return Collections.unmodifiableMap(toLevel);
+    }
+
+    public void addToLevel(CompatibleMaterial material, int amount) {
+        if (this.toLevel.containsKey(material)) {
+            this.toLevel.put(material, this.toLevel.get(material) + amount);
+            return;
+        }
+        this.toLevel.put(material, amount);
     }
 
     public int getRadiusOverheatLast() {
