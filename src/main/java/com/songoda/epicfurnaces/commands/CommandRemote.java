@@ -25,6 +25,7 @@ public class CommandRemote extends AbstractCommand {
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
+        Player player = ((Player) sender);
         if (!Settings.REMOTE.getBoolean() || !sender.hasPermission("EpicFurnaces.Remote")) {
             plugin.getLocale().getMessage("event.general.nopermission").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
@@ -40,21 +41,17 @@ public class CommandRemote extends AbstractCommand {
             return ReturnType.FAILURE;
         }
 
+        if (!furnace.isInLoadedChunk()) {
+            plugin.getLocale().getMessage("event.remote.notloaded").sendPrefixedMessage(sender);
+            return ReturnType.FAILURE;
+        }
+
         for (UUID uuid : furnace.getAccessList()) {
             if (!uuid.equals(((Player) sender).getUniqueId())) continue;
-            Block b = furnace.getLocation().getBlock();
-            b.getChunk().load();
+                Block b = furnace.getLocation().getBlock();
             org.bukkit.block.Furnace furnaceBlock = (org.bukkit.block.Furnace) b.getState();
             Inventory inventory = furnaceBlock.getInventory();
-            ((Player) sender).openInventory(inventory);
-            new BukkitRunnable() {
-                public void run() {
-                    if (inventory.getViewers().size() == 0) {
-                        b.getChunk().unload();
-                        this.cancel();
-                    }
-                }
-            }.runTaskTimer(plugin, 5L, 5L);
+            player.openInventory(inventory);
             return ReturnType.SUCCESS;
         }
         plugin.getLocale().getMessage("event.general.nopermission").sendPrefixedMessage(sender);
