@@ -33,7 +33,7 @@ public class CommandSettings extends AbstractCommand {
 
     @Override
     public String getPermissionNode() {
-        return "epicfurnaces.admin";
+        return "epicfurnaces.admin.settings";
     }
 
     @Override

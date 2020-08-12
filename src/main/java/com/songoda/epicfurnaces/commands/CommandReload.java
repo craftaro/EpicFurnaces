@@ -29,12 +29,12 @@ public class CommandReload extends AbstractCommand {
 
     @Override
     public String getPermissionNode() {
-        return "epicfurnaces.admin";
+        return "epicfurnaces.admin.reload";
     }
 
     @Override
     public String getSyntax() {
-        return "çreload";
+        return "reload";
     }
 
     @Override

@@ -65,7 +65,7 @@ public class CommandRemote extends AbstractCommand {
 
     @Override
     public String getPermissionNode() {
-        return null;
+        return "epicfurnaces.remote";
     }
 
     @Override
