@@ -74,7 +74,7 @@ public class CommandBoost extends AbstractCommand {
 
     @Override
     public String getPermissionNode() {
-        return "epicfurnaces.boost";
+        return "epicfurnaces.admin.boost";
     }
 
     @Override

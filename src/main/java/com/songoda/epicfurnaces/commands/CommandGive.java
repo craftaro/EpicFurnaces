@@ -61,7 +61,7 @@ public class CommandGive extends AbstractCommand {
 
     @Override
     public String getPermissionNode() {
-        return "epicfurnaces.admin";
+        return "epicfurnaces.admin.give";
     }
 
     @Override
