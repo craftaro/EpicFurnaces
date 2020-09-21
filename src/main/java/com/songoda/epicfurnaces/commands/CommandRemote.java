@@ -14,10 +14,10 @@ import java.util.UUID;
 
 public class CommandRemote extends AbstractCommand {
 
-    final EpicFurnaces plugin;
+    private final EpicFurnaces plugin;
 
     public CommandRemote(EpicFurnaces plugin) {
-        super(true, "remote");
+        super(CommandType.CONSOLE_OK, "remote");
         this.plugin = plugin;
     }
 

@@ -14,10 +14,10 @@ import java.util.List;
 
 public class CommandBoost extends AbstractCommand {
 
-    final EpicFurnaces instance;
+    private final EpicFurnaces instance;
 
     public CommandBoost(EpicFurnaces instance) {
-        super(false, "boost");
+        super(CommandType.CONSOLE_OK, "boost");
         this.instance = instance;
     }
 
