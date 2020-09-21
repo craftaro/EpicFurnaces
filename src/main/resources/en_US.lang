@@ -64,6 +64,6 @@ event:
   remote:
     enter: '&7Enter a unique nickname for the furnace.'
     notfound: '&cRemote furnace not found.'
-    notloaded: '&cThat furnace isn't in a loaded chunk...'
+    notloaded: '&cThat furnace isn''t in a loaded chunk...'
     nicknamesuccess: '&aNickname set successfully.'
     nicknameinuse: '&cThat nickname is already in use.'

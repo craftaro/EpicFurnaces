@@ -11,7 +11,12 @@ import com.songoda.epicfurnaces.gui.GUIOverview;
 import com.songoda.epicfurnaces.settings.Settings;
 import com.songoda.epicfurnaces.utils.CostType;
 import com.songoda.epicfurnaces.utils.Methods;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
@@ -22,7 +27,12 @@ import org.bukkit.inventory.InventoryHolder;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by songoda on 3/7/2017.
@@ -64,7 +74,6 @@ public class Furnace {
         CompatibleMaterial material = CompatibleMaterial.getMaterial(event.getResult());
         int needed = -1;
 
-
         if (level.getMaterials().containsKey(material)) {
             addToLevel(material, 1);
             needed = level.getMaterials().get(material) - getToLevel(material);
@@ -90,16 +99,15 @@ public class Furnace {
         }
 
         if (Settings.UPGRADE_BY_SMELTING.getBoolean()
-                && needed <= 0
+                && needed == 0
                 && plugin.getLevelManager().getLevel(level.getLevel() + 1) != null) {
             this.toLevel.remove(material);
-            level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
+            levelUp();
         }
 
         this.updateCook();
 
-        FurnaceInventory i = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
-
+        FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
 
         if (event.getSource().getType().name().contains("SPONGE"))
             return;
@@ -109,11 +117,11 @@ public class Furnace {
         if (rand >= num
                 || event.getResult().equals(Material.SPONGE)
                 || Settings.NO_REWARDS_FROM_RECIPES.getBoolean()
-                && plugin.getFurnaceRecipeFile().contains("Recipes." + i.getSmelting().getType().toString())) {
+                && plugin.getFurnaceRecipeFile().contains("Recipes." + inventory.getSmelting().getType().toString())) {
             return;
         }
 
-        int randomAmount = min == max ? min :  (int) (Math.random() * ((max - min) + 1)) + min;
+        int randomAmount = min == max ? min : (int) (Math.random() * ((max - min) + 1)) + min;
 
         BoostData boostData = plugin.getBoostManager().getBoost(placedBy);
         randomAmount = randomAmount * (boostData == null ? 1 : boostData.getMultiplier());
@@ -122,39 +130,36 @@ public class Furnace {
     }
 
     public void upgrade(Player player, CostType type) {
-        if (plugin.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1)) {
+        if (!plugin.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1))
+            return;
+        if (type == CostType.ECONOMY) {
+            int cost = level.getCostEconomy();
+            if (!EconomyManager.isEnabled()) {
+                player.sendMessage("Economy not enabled.");
+                return;
+            }
+            if (!EconomyManager.hasBalance(player, cost)) {
 
-            Level level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
-
-            if (type == CostType.ECONOMY) {
-                int cost = level.getCostEconomy();
-                if (!EconomyManager.isEnabled()) {
-                    player.sendMessage("Economy not enabled.");
-                    return;
+                plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
+                return;
+            }
+            EconomyManager.withdrawBalance(player, cost);
+            upgradeFinal(player);
+        } else if (type == CostType.EXPERIENCE) {
+            int cost = level.getCostExperience();
+            if (player.getLevel() >= cost || player.getGameMode() == GameMode.CREATIVE) {
+                if (player.getGameMode() != GameMode.CREATIVE) {
+                    player.setLevel(player.getLevel() - cost);
                 }
-                if (!EconomyManager.hasBalance(player, cost)) {
-
-                    plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
-                    return;
-                }
-                EconomyManager.withdrawBalance(player, cost);
-                upgradeFinal(level, player);
-            } else if (type == CostType.EXPERIENCE) {
-                int cost = level.getCostExperience();
-                if (player.getLevel() >= cost || player.getGameMode() == GameMode.CREATIVE) {
-                    if (player.getGameMode() != GameMode.CREATIVE) {
-                        player.setLevel(player.getLevel() - cost);
-                    }
-                    upgradeFinal(level, player);
-                } else {
-                    plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
-                }
+                upgradeFinal(player);
+            } else {
+                plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
             }
         }
     }
 
-    private void upgradeFinal(Level level, Player player) {
-        this.level = level;
+    private void upgradeFinal(Player player) {
+        levelUp();
         syncName();
         if (plugin.getLevelManager().getHighestLevel() != level) {
             plugin.getLocale().getMessage("event.upgrade.success")
@@ -181,6 +186,10 @@ public class Furnace {
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.2F, 35.0F), 5L);
             Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.8F, 35.0F), 10L);
         }
+    }
+
+    public void levelUp() {
+        level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
     }
 
     private void syncName() {
@@ -252,8 +261,8 @@ public class Furnace {
 
     public boolean isOnAccessList(OfflinePlayer player) {
         return accessList.contains(player.getUniqueId());
-    } 
-            
+    }
+
     public void clearAccessList() {
         accessList.clear();
     }

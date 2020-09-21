@@ -11,11 +11,11 @@ import java.util.List;
 
 public class CommandSettings extends AbstractCommand {
 
-    final EpicFurnaces plugin;
-    final GuiManager guiManager;
+    private final EpicFurnaces plugin;
+    private final GuiManager guiManager;
 
     public CommandSettings(EpicFurnaces plugin, GuiManager guiManager) {
-        super(true, "settings");
+        super(CommandType.CONSOLE_OK, "settings");
         this.plugin = plugin;
         this.guiManager = guiManager;
     }

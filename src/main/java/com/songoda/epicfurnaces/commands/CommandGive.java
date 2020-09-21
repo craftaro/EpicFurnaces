@@ -12,10 +12,10 @@ import java.util.List;
 
 public class CommandGive extends AbstractCommand {
 
-    final EpicFurnaces plugin;
+    private final EpicFurnaces plugin;
 
     public CommandGive(EpicFurnaces plugin) {
-        super(false, "give");
+        super(CommandType.CONSOLE_OK, "give");
         this.plugin = plugin;
     }
 

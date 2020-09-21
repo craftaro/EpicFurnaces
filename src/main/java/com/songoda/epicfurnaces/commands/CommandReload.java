@@ -11,7 +11,7 @@ public class CommandReload extends AbstractCommand {
     private final EpicFurnaces plugin;
 
     public CommandReload(EpicFurnaces plugin) {
-        super(false, "reload");
+        super(CommandType.CONSOLE_OK, "reload");
         this.plugin = plugin;
     }
 
