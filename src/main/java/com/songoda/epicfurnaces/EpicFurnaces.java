@@ -10,15 +10,22 @@ import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.boost.BoostManager;
-import com.songoda.epicfurnaces.commands.*;
-import com.songoda.epicfurnaces.compatibility.EpicFurnacesPermission;
+import com.songoda.epicfurnaces.commands.CommandBoost;
+import com.songoda.epicfurnaces.commands.CommandGive;
+import com.songoda.epicfurnaces.commands.CommandReload;
+import com.songoda.epicfurnaces.commands.CommandRemote;
+import com.songoda.epicfurnaces.commands.CommandSettings;
 import com.songoda.epicfurnaces.compatibility.FabledSkyBlockLoader;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
 import com.songoda.epicfurnaces.furnace.FurnaceManager;
 import com.songoda.epicfurnaces.furnace.levels.LevelManager;
 import com.songoda.epicfurnaces.handlers.BlacklistHandler;
-import com.songoda.epicfurnaces.listeners.*;
+import com.songoda.epicfurnaces.listeners.BlockListeners;
+import com.songoda.epicfurnaces.listeners.EntityListeners;
+import com.songoda.epicfurnaces.listeners.FurnaceListeners;
+import com.songoda.epicfurnaces.listeners.InteractListeners;
+import com.songoda.epicfurnaces.listeners.InventoryListeners;
 import com.songoda.epicfurnaces.settings.Settings;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.StorageRow;
@@ -26,8 +33,6 @@ import com.songoda.epicfurnaces.storage.types.StorageYaml;
 import com.songoda.epicfurnaces.tasks.FurnaceTask;
 import com.songoda.epicfurnaces.tasks.HologramTask;
 import com.songoda.epicfurnaces.utils.Methods;
-import com.songoda.skyblock.SkyBlock;
-import com.songoda.skyblock.permission.BasicPermission;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,8 +44,13 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class EpicFurnaces extends SongodaPlugin {
@@ -94,7 +104,7 @@ public class EpicFurnaces extends SongodaPlugin {
         // Set Economy & Hologram preference
         EconomyManager.getManager().setPreferredHook(Settings.ECONOMY_PLUGIN.getString());
         HologramManager.getManager().setPreferredHook(Settings.HOLOGRAM_PLUGIN.getString());
-    
+
         // Hook into FabledSkyBlock
         if (Bukkit.getPluginManager().isPluginEnabled("FabledSkyBlock")) {
             new FabledSkyBlockLoader();
@@ -120,7 +130,6 @@ public class EpicFurnaces extends SongodaPlugin {
         // Load from file
         dataFile.load();
         this.storage = new StorageYaml(this);
-        loadFromFile();
 
         setupRecipies();
 
@@ -140,6 +149,77 @@ public class EpicFurnaces extends SongodaPlugin {
         // Start auto save
         int saveInterval = Settings.AUTOSAVE.getInt() * 60 * 20;
         Bukkit.getScheduler().runTaskTimerAsynchronously(this, this::saveToFile, saveInterval, saveInterval);
+    }
+
+    @Override
+    public void onDataLoad() {
+        /*
+         * Register furnaces into FurnaceManger from configuration
+         */
+        if (storage.containsGroup("charged")) {
+            for (StorageRow row : storage.getRowsByGroup("charged")) {
+                Location location = Methods.unserializeLocation(row.getKey());
+                if (location == null) continue;
+
+                if (row.get("level").asInt() == 0) continue;
+
+                String placedByStr = row.get("placedBy").asString();
+                UUID placedBy = placedByStr == null ? null : UUID.fromString(placedByStr);
+
+                List<String> list = row.get("accesslist").asStringList();
+                if (!list.isEmpty()) {
+                    for (String uuid : new ArrayList<>(list))
+                        if (uuid.contains(":")) {
+                            list = new ArrayList<>();
+                            break;
+                        }
+                }
+                List<UUID> usableList = list.stream().map(UUID::fromString).collect(Collectors.toList());
+
+                Map<CompatibleMaterial, Integer> toLevel = new HashMap<>();
+                List<String> toLevelCompiled = row.get("tolevelnew").asStringList();
+                for (String line : toLevelCompiled) {
+                    String[] split = line.split(":");
+                    toLevel.put(CompatibleMaterial.getMaterial(split[0]), Integer.parseInt(split[1]));
+                }
+
+                Furnace furnace = new FurnaceBuilder(location)
+                        .setLevel(levelManager.getLevel(row.get("level").asInt()))
+                        .setNickname(row.get("nickname").asString())
+                        .setUses(row.get("uses").asInt())
+                        .setToLevel(toLevel)
+                        .setAccessList(usableList)
+                        .setPlacedBy(placedBy).build();
+
+                furnaceManager.addFurnace(furnace);
+            }
+        }
+
+        // Adding in Boosts
+        if (storage.containsGroup("boosts")) {
+            for (StorageRow row : storage.getRowsByGroup("boosts")) {
+                if (row.getItems().get("uuid").asObject() != null)
+                    continue;
+
+                BoostData boostData = new BoostData(
+                        row.get("amount").asInt(),
+                        Long.parseLong(row.getKey()),
+                        UUID.fromString(row.get("uuid").asString()));
+
+                this.boostManager.addBoostToPlayer(boostData);
+            }
+        }
+
+        // Register Hologram Plugin
+        if (Settings.HOLOGRAMS.getBoolean()) {
+            for (Furnace furnace : getFurnaceManager().getFurnaces().values()) {
+                if (furnace.getLocation() == null || furnace.getLocation().getWorld() == null)
+                    continue;
+            }
+        }
+
+        // Save data initially so that if the person reloads again fast they don't lose all their data.
+        this.saveToFile();
     }
 
     @Override
@@ -213,78 +293,6 @@ public class EpicFurnaces extends SongodaPlugin {
 
         // create the hologram
         HologramManager.updateHologram(furnace.getLocation().add(0, .15, 0), lines);
-    }
-
-    private void loadFromFile() {
-        /*
-         * Register furnaces into FurnaceManger from configuration
-         */
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            if (storage.containsGroup("charged")) {
-                for (StorageRow row : storage.getRowsByGroup("charged")) {
-                    Location location = Methods.unserializeLocation(row.getKey());
-                    if (location == null) continue;
-
-                    if (row.get("level").asInt() == 0) continue;
-
-                    String placedByStr = row.get("placedBy").asString();
-                    UUID placedBy = placedByStr == null ? null : UUID.fromString(placedByStr);
-
-                    List<String> list = row.get("accesslist").asStringList();
-                    if (!list.isEmpty()) {
-                        for (String uuid : new ArrayList<>(list))
-                            if (uuid.contains(":")) {
-                                list = new ArrayList<>();
-                                break;
-                            }
-                    }
-                    List<UUID> usableList = list.stream().map(UUID::fromString).collect(Collectors.toList());
-
-                    Map<CompatibleMaterial, Integer> toLevel = new HashMap<>();
-                    List<String> toLevelCompiled = row.get("tolevelnew").asStringList();
-                    for (String line : toLevelCompiled) {
-                        String[] split = line.split(":");
-                        toLevel.put(CompatibleMaterial.getMaterial(split[0]), Integer.parseInt(split[1]));
-                    }
-
-                    Furnace furnace = new FurnaceBuilder(location)
-                            .setLevel(levelManager.getLevel(row.get("level").asInt()))
-                            .setNickname(row.get("nickname").asString())
-                            .setUses(row.get("uses").asInt())
-                            .setToLevel(toLevel)
-                            .setAccessList(usableList)
-                            .setPlacedBy(placedBy).build();
-
-                    furnaceManager.addFurnace(furnace);
-                }
-            }
-
-            // Adding in Boosts
-            if (storage.containsGroup("boosts")) {
-                for (StorageRow row : storage.getRowsByGroup("boosts")) {
-                    if (row.getItems().get("uuid").asObject() != null)
-                        continue;
-
-                    BoostData boostData = new BoostData(
-                            row.get("amount").asInt(),
-                            Long.parseLong(row.getKey()),
-                            UUID.fromString(row.get("uuid").asString()));
-
-                    this.boostManager.addBoostToPlayer(boostData);
-                }
-            }
-
-            // Register Hologram Plugin
-            if (Settings.HOLOGRAMS.getBoolean()) {
-                for (Furnace furnace : getFurnaceManager().getFurnaces().values()) {
-                    if (furnace.getLocation() == null || furnace.getLocation().getWorld() == null)
-                        continue;
-                }
-            }
-
-            // Save data initially so that if the person reloads again fast they don't lose all their data.
-            this.saveToFile();
-        }, 10);
     }
 
     private void loadLevelManager() {
