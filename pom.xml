@@ -59,7 +59,7 @@
                             </artifactSet>
                             <filters>
                                 <filter>
-                                    <repository>*:*</repository>
+                                    <artifact>*:*</artifact>
                                     <excludes>
                                         <exclude>META-INF/*.SF</exclude>
                                         <exclude>META-INF/*.DSA</exclude>
