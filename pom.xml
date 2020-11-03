@@ -2,7 +2,7 @@
     <groupId>com.songoda</groupId>
     <artifactId>EpicFurnaces</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>4.5.13</version>
+    <version>4.5.13b</version>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>EpicFurnaces-${project.version}</finalName>
@@ -82,11 +82,11 @@
     <repositories>
         <repository>
             <id>private</id>
-            <url>http://repo.songoda.com/artifactory/private/</url>
+            <url>http://repo.songoda.com/repository/private/</url>
         </repository>
         <repository>
             <id>public</id>
-            <url>https://repo.songoda.com/artifactory/public/</url>
+            <url>https://repo.songoda.com/repository/public/</url>
         </repository>
     </repositories>
     <dependencies>
