@@ -128,7 +128,7 @@ public class Furnace {
 
         event.getResult().setAmount(event.getResult().getAmount() + randomAmount);
     }
-    
+
     public void upgrade(Player player, CostType type) {
         if (!plugin.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1)) return;
 
@@ -195,7 +195,7 @@ public class Furnace {
     private void syncName() {
         org.bukkit.block.Furnace furnace = (org.bukkit.block.Furnace) location.getBlock().getState();
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_10))
-            furnace.setCustomName(Methods.formatName(level.getLevel(), uses, false));
+            furnace.setCustomName(Methods.formatName(level.getLevel()));
         furnace.update(true);
     }
 
@@ -272,7 +272,6 @@ public class Furnace {
             return radiusOverheat.isEmpty() ? null : Collections.unmodifiableList(radiusOverheat);
         else
             return radiusFuelshare.isEmpty() ? null : Collections.unmodifiableList(radiusFuelshare);
-
     }
 
 
@@ -281,7 +280,6 @@ public class Furnace {
             radiusOverheat.add(location);
         else
             radiusFuelshare.add(location);
-
     }
 
 

@@ -8,6 +8,9 @@ import com.songoda.core.configuration.Config;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
+import com.songoda.core.nms.NmsManager;
+import com.songoda.core.nms.nbt.NBTCore;
+import com.songoda.core.nms.nbt.NBTItem;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.boost.BoostManager;
 import com.songoda.epicfurnaces.commands.CommandBoost;
@@ -368,14 +371,26 @@ public class EpicFurnaces extends SongodaPlugin {
 
         if (Settings.FURNACE_ITEM.getBoolean()) {
             ItemMeta itemmeta = item.getItemMeta();
-            itemmeta.setDisplayName(Methods.formatText(Methods.formatName(level, uses, true)));
+            itemmeta.setDisplayName(Methods.formatText(Methods.formatName(level)));
             item.setItemMeta(itemmeta);
         }
 
-        return item;
+        NBTCore nbt = NmsManager.getNbt();
+        NBTItem nbtItem = nbt.of(item);
+        nbtItem.set("level", level);
+        nbtItem.set("uses", uses);
+
+        return nbtItem.finish();
     }
 
-    public int getFurnceLevel(ItemStack item) {
+    public int getFurnaceLevel(ItemStack item) {
+        NBTCore nbt = NmsManager.getNbt();
+        NBTItem nbtItem = nbt.of(item);
+
+        if (nbtItem.has("level"))
+            return nbtItem.getNBTObject("level").asInt();
+
+        // Legacy trash.
         if (item.getItemMeta().getDisplayName().contains(":")) {
             String arr[] = (item.getItemMeta().getDisplayName().replace("§", "")).split(":");
             return Integer.parseInt(arr[0]);
@@ -385,6 +400,13 @@ public class EpicFurnaces extends SongodaPlugin {
     }
 
     public int getFurnaceUses(ItemStack item) {
+        NBTCore nbt = NmsManager.getNbt();
+        NBTItem nbtItem = nbt.of(item);
+
+        if (nbtItem.has("uses"))
+            return nbtItem.getNBTObject("uses").asInt();
+
+        // Legacy trash.
         if (item.getItemMeta().getDisplayName().contains(":")) {
             String arr[] = (item.getItemMeta().getDisplayName().replace("§", "")).split(":");
             return Integer.parseInt(arr[1]);

@@ -26,28 +26,12 @@ public class Methods {
         return type;
     }
 
-    public static String formatName(int level, int uses, boolean full) {
+    public static String formatName(int level) {
         String name = EpicFurnaces.getInstance().getLocale().getMessage("general.nametag.nameformat")
                 .processPlaceholder("level", level).getMessage();
 
-        String info = "";
-        if (full) {
-            info += convertToInvisibleString(level + ":" + uses + ":");
-        }
 
-        return info + formatText(name);
-    }
-
-    /**
-     * Serializes the location of the block specified.
-     *
-     * @param b The block whose location is to be saved.
-     * @return The serialized data.
-     */
-    public static String serializeLocation(Block b) {
-        if (b == null)
-            return "";
-        return serializeLocation(b.getLocation());
+        return formatText(name);
     }
 
     /**
