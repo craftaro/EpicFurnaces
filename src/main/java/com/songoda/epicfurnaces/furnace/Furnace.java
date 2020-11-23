@@ -130,23 +130,23 @@ public class Furnace {
     }
 
     public void upgrade(Player player, CostType type) {
-        if (!plugin.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1))
-            return;
+        if (!plugin.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1)) return;
+
+        Level level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
+        int cost = type == CostType.ECONOMY ? level.getCostEconomy() : level.getCostExperience();
+
         if (type == CostType.ECONOMY) {
-            int cost = level.getCostEconomy();
             if (!EconomyManager.isEnabled()) {
                 player.sendMessage("Economy not enabled.");
                 return;
             }
             if (!EconomyManager.hasBalance(player, cost)) {
-
-                plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
+                plugin.getInstance().getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
                 return;
             }
             EconomyManager.withdrawBalance(player, cost);
             upgradeFinal(player);
         } else if (type == CostType.EXPERIENCE) {
-            int cost = level.getCostExperience();
             if (player.getLevel() >= cost || player.getGameMode() == GameMode.CREATIVE) {
                 if (player.getGameMode() != GameMode.CREATIVE) {
                     player.setLevel(player.getLevel() - cost);
@@ -195,7 +195,7 @@ public class Furnace {
     private void syncName() {
         org.bukkit.block.Furnace furnace = (org.bukkit.block.Furnace) location.getBlock().getState();
         if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_10))
-            furnace.setCustomName(Methods.formatName(level.getLevel(), uses, false));
+            furnace.setCustomName(Methods.formatName(level.getLevel()));
         furnace.update(true);
     }
 
@@ -272,7 +272,6 @@ public class Furnace {
             return radiusOverheat.isEmpty() ? null : Collections.unmodifiableList(radiusOverheat);
         else
             return radiusFuelshare.isEmpty() ? null : Collections.unmodifiableList(radiusFuelshare);
-
     }
 
 
@@ -281,7 +280,6 @@ public class Furnace {
             radiusOverheat.add(location);
         else
             radiusFuelshare.add(location);
-
     }
 
 

@@ -38,7 +38,7 @@ public class GUIOverview extends Gui {
         this.player = player;
 
         setRows(3);
-        setTitle(Methods.formatName(furnace.getLevel().getLevel(), furnace.getUses(), false));
+        setTitle(Methods.formatName(furnace.getLevel().getLevel()));
         runTask();
         constructGUI();
         this.setOnClose(action -> Bukkit.getScheduler().cancelTask(task));

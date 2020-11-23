@@ -2,7 +2,7 @@
     <groupId>com.songoda</groupId>
     <artifactId>EpicFurnaces</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>4.5.13b</version>
+    <version>4.5.14</version>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>EpicFurnaces-${project.version}</finalName>

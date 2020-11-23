@@ -55,9 +55,9 @@ public class BlockListeners implements Listener {
 
         Location location = event.getBlock().getLocation();
 
-        Furnace furnace = event.getItemInHand().getItemMeta().hasDisplayName() && plugin.getFurnceLevel(item) != 1
+        Furnace furnace = event.getItemInHand().getItemMeta().hasDisplayName() && plugin.getFurnaceLevel(item) != 1
                 ? new FurnaceBuilder(location)
-                .setLevel(plugin.getLevelManager().getLevel(plugin.getFurnceLevel(item)))
+                .setLevel(plugin.getLevelManager().getLevel(plugin.getFurnaceLevel(item)))
                 .setUses(plugin.getFurnaceUses(item))
                 .setPlacedBy(event.getPlayer().getUniqueId()).build()
                 : new FurnaceBuilder(location).setPlacedBy(event.getPlayer().getUniqueId()).build();
