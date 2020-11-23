@@ -128,25 +128,25 @@ public class Furnace {
 
         event.getResult().setAmount(event.getResult().getAmount() + randomAmount);
     }
-
+    
     public void upgrade(Player player, CostType type) {
-        if (!plugin.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1))
-            return;
+        if (!plugin.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1)) return;
+
+        Level level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
+        int cost = type == CostType.ECONOMY ? level.getCostEconomy() : level.getCostExperience();
+
         if (type == CostType.ECONOMY) {
-            int cost = level.getCostEconomy();
             if (!EconomyManager.isEnabled()) {
                 player.sendMessage("Economy not enabled.");
                 return;
             }
             if (!EconomyManager.hasBalance(player, cost)) {
-
-                plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
+                plugin.getInstance().getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
                 return;
             }
             EconomyManager.withdrawBalance(player, cost);
             upgradeFinal(player);
         } else if (type == CostType.EXPERIENCE) {
-            int cost = level.getCostExperience();
             if (player.getLevel() >= cost || player.getGameMode() == GameMode.CREATIVE) {
                 if (player.getGameMode() != GameMode.CREATIVE) {
                     player.setLevel(player.getLevel() - cost);
