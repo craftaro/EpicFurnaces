@@ -28,6 +28,7 @@ public class EntityListeners implements Listener {
             Furnace furnace = furnaceManager.getFurnace(block);
             if (furnace == null) continue;
             furnaceManager.removeFurnace(block.getLocation());
+            plugin.getDataManager().deleteFurnace(furnace);
             plugin.clearHologram(furnace);
         }
     }

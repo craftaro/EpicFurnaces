@@ -1,9 +1,8 @@
 package com.songoda.epicfurnaces.boost;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import com.songoda.epicfurnaces.EpicFurnaces;
+
+import java.util.*;
 
 public class BoostManager {
 
@@ -11,6 +10,10 @@ public class BoostManager {
 
     public void addBoostToPlayer(BoostData data) {
         this.registeredBoosts.add(data);
+    }
+
+    public void addBoosts(List<BoostData> boosts) {
+        registeredBoosts.addAll(boosts);
     }
 
     public void removeBoostFromPlayer(BoostData data) {
@@ -27,10 +30,12 @@ public class BoostManager {
             if (boostData.getPlayer().toString().equals(player.toString())) {
                 if (System.currentTimeMillis() >= boostData.getEndTime()) {
                     removeBoostFromPlayer(boostData);
+                    EpicFurnaces.getInstance().getDataManager().deleteBoost(boostData);
                 }
                 return boostData;
             }
         }
         return null;
     }
+
 }

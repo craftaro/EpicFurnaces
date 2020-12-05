@@ -50,6 +50,11 @@ public class FurnaceBuilder {
         return this;
     }
 
+    public FurnaceBuilder setId(int id) {
+        this.furnace.setId(id);
+        return this;
+    }
+
     public Furnace build() {
         return this.furnace;
     }

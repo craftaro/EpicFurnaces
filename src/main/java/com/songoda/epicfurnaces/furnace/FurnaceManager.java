@@ -3,6 +3,7 @@ package com.songoda.epicfurnaces.furnace;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,12 @@ public class FurnaceManager {
 
     public Furnace addFurnace(Furnace furnace) {
         return registeredFurnaces.put(roundLocation(furnace.getLocation()), furnace);
+    }
+
+    public void addFurnaces(Collection<Furnace> furnaces) {
+        for (Furnace furnace : furnaces) {
+            addFurnace(furnace);
+        }
     }
 
     public Furnace removeFurnace(Location location) {
