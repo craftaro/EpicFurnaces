@@ -68,7 +68,6 @@ public class  EpicFurnaces extends SongodaPlugin {
 
     private final Config furnaceRecipeFile = new Config(this, "Furnace Recipes.yml");
     private final Config levelsFile = new Config(this, "levels.yml");
-    private final Config dataFile = new Config(this, "data.yml");
 
     private final GuiManager guiManager = new GuiManager(this);
     private LevelManager levelManager;
