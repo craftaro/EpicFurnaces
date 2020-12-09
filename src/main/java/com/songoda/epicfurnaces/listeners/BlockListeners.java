@@ -63,6 +63,7 @@ public class BlockListeners implements Listener {
                 : new FurnaceBuilder(location).setPlacedBy(event.getPlayer().getUniqueId()).build();
 
         plugin.getFurnaceManager().addFurnace(furnace);
+        plugin.getDataManager().createFurnace(furnace);
 
         plugin.updateHologram(furnace);
     }
@@ -92,5 +93,6 @@ public class BlockListeners implements Listener {
             event.getBlock().getLocation().getWorld().dropItemNaturally(event.getBlock().getLocation(), item);
         }
         plugin.getFurnaceManager().removeFurnace(block.getLocation());
+        plugin.getDataManager().deleteFurnace(furnace);
     }
 }

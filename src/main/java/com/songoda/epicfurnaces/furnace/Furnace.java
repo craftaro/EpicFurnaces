@@ -41,6 +41,9 @@ public class Furnace {
 
     private final EpicFurnaces plugin = EpicFurnaces.getInstance();
 
+    // Identifier for database use.
+    private int id;
+
     private final Location location;
     private Level level = plugin.getLevelManager().getLowestLevel();
     private String nickname = null;
@@ -70,12 +73,14 @@ public class Furnace {
         if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) return;
 
         this.uses++;
+        plugin.getDataManager().updateFurnace(this);
 
         CompatibleMaterial material = CompatibleMaterial.getMaterial(event.getResult());
         int needed = -1;
 
         if (level.getMaterials().containsKey(material)) {
-            addToLevel(material, 1);
+            int amount = addToLevel(material, 1);
+            plugin.getDataManager().updateLevelupItems(this, material, amount);
             needed = level.getMaterials().get(material) - getToLevel(material);
         }
 
@@ -161,6 +166,7 @@ public class Furnace {
     private void upgradeFinal(Player player) {
         levelUp();
         syncName();
+        plugin.getDataManager().updateFurnace(this);
         if (plugin.getLevelManager().getHighestLevel() != level) {
             plugin.getLocale().getMessage("event.upgrade.success")
                     .processPlaceholder("level", level.getLevel()).sendPrefixedMessage(player);
@@ -352,12 +358,15 @@ public class Furnace {
         return Collections.unmodifiableMap(toLevel);
     }
 
-    public void addToLevel(CompatibleMaterial material, int amount) {
+    public int addToLevel(CompatibleMaterial material, int amount) {
         if (this.toLevel.containsKey(material)) {
-            this.toLevel.put(material, this.toLevel.get(material) + amount);
-            return;
+            int newAmount = this.toLevel.get(material) + amount;
+            this.toLevel.put(material, newAmount);
+            return newAmount;
         }
+
         this.toLevel.put(material, amount);
+        return amount;
     }
 
     public int getRadiusOverheatLast() {
@@ -374,5 +383,13 @@ public class Furnace {
 
     public void setRadiusFuelshareLast(int radiusFuelshareLast) {
         this.radiusFuelshareLast = radiusFuelshareLast;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
