@@ -2,7 +2,7 @@
     <groupId>com.songoda</groupId>
     <artifactId>EpicFurnaces</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>4.6</version>
+    <version>4.6b</version>
     <build>
         <defaultGoal>clean install</defaultGoal>
         <finalName>EpicFurnaces-${project.version}</finalName>
@@ -80,10 +80,6 @@
         </plugins>
     </build>
     <repositories>
-        <repository>
-            <id>private</id>
-            <url>http://repo.songoda.com/repository/private/</url>
-        </repository>
         <repository>
             <id>public</id>
             <url>https://repo.songoda.com/repository/public/</url>
