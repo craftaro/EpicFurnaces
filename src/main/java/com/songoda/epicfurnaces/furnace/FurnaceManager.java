@@ -1,5 +1,8 @@
 package com.songoda.epicfurnaces.furnace;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+import com.songoda.epicfurnaces.utils.GameArea;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
@@ -11,9 +14,10 @@ import java.util.Map;
 public class FurnaceManager {
 
     private final Map<Location, Furnace> registeredFurnaces = new HashMap<>();
-
+    private final Multimap<GameArea, Furnace> tickingFurnaces = MultimapBuilder.hashKeys().hashSetValues().build();
 
     public Furnace addFurnace(Furnace furnace) {
+        tickingFurnaces.put(GameArea.of(furnace.getLocation()), furnace);
         return registeredFurnaces.put(roundLocation(furnace.getLocation()), furnace);
     }
 
@@ -24,7 +28,11 @@ public class FurnaceManager {
     }
 
     public Furnace removeFurnace(Location location) {
-        return registeredFurnaces.remove(location);
+        Furnace furnace = registeredFurnaces.remove(location);
+        if (furnace != null) {
+            tickingFurnaces.remove(GameArea.of(furnace.getLocation()), furnace);
+        }
+        return furnace;
     }
 
     public Furnace getFurnace(Location location) {
@@ -32,6 +40,10 @@ public class FurnaceManager {
             addFurnace(new FurnaceBuilder(location).build());
         }
         return registeredFurnaces.get(location);
+    }
+
+    public Collection<Furnace> getFurnaces(GameArea gameArea) {
+        return tickingFurnaces.get(gameArea);
     }
 
     public Furnace getFurnace(Block block) {
