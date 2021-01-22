@@ -11,6 +11,7 @@ import com.songoda.core.database.SQLiteConnector;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
+import com.songoda.core.hooks.ProtectionManager;
 import com.songoda.core.nms.NmsManager;
 import com.songoda.core.nms.nbt.NBTCore;
 import com.songoda.core.nms.nbt.NBTItem;
@@ -104,6 +105,9 @@ public class  EpicFurnaces extends SongodaPlugin {
         EconomyManager.load();
         // Register Hologram Plugin
         HologramManager.load(this);
+
+        // Load Protection hooks
+        ProtectionManager.load(this);
 
         // Setup Config
         Settings.setupConfig();

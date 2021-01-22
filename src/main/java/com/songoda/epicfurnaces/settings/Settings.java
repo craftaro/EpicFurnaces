@@ -35,6 +35,9 @@ public class Settings {
             "might leave a few spots. Minimum value is 16. To disable, just set",
             "this to a very high value, such as your worldborder size.");
 
+    public static final ConfigSetting USE_PROTECTION_PLUGINS = new ConfigSetting(config, "Main.Use Protection Plugins", true,
+            "Should we use protection plugins?");
+
     public static final ConfigSetting FURNACE_ITEM = new ConfigSetting(config, "Main.Remember Furnace Item Levels", true,
             "Should furnace levels be remembered when broken?");
 
