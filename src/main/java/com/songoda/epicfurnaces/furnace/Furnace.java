@@ -138,7 +138,7 @@ public class Furnace {
         BoostData boostData = plugin.getBoostManager().getBoost(placedBy);
         randomAmount = randomAmount * (boostData == null ? 1 : boostData.getMultiplier());
 
-        event.getResult().setAmount(event.getResult().getAmount() + randomAmount);
+        event.getResult().setAmount(Math.min(event.getResult().getAmount() + randomAmount, event.getResult().getMaxStackSize()));
     }
 
     public void upgrade(Player player, CostType type) {
