@@ -136,8 +136,6 @@ public class GUIOverview extends CustomizableGui {
                     plugin.getLocale().getMessage("interface.furnace.remotefurnace").getMessage(),
                     getFurnaceRemoteLore(furnace)),
                     ClickType.LEFT, (event) -> {
-
-                        player.sendMessage(furnace.getNickname() == null ? "Enter a nickname" : furnace.getNickname());
                         ChatPrompt.showPrompt(plugin, event.player, plugin.getLocale().getMessage("event.remote.enter").getMessage(),
                                 promptEvent -> {
                                     for (Furnace other : plugin.getFurnaceManager().getFurnaces().values()) {
@@ -154,14 +152,10 @@ public class GUIOverview extends CustomizableGui {
                                     plugin.getDataManager().updateFurnace(furnace);
                                     furnace.setNickname(promptEvent.getMessage());
                                     plugin.getLocale().getMessage("event.remote.nicknamesuccess").sendPrefixedMessage(player);
-                                }).setOnClose(this::constructGUI);
+                                }).setOnClose(() -> guiManager.showGUI(player, new GUIOverview(plugin, furnace, player)));
 
                     }).setAction(4, ClickType.RIGHT, (event) -> {
-                if (!furnace.isOnAccessList(player)) {
-                    furnace.addToAccessList(player);
-                    plugin.getDataManager().createAccessPlayer(furnace, player.getUniqueId());
-                }
-                constructGUI();
+                guiManager.showGUI(player, new GUIRemoteAccess(plugin, furnace, player));
             });
         }
 
