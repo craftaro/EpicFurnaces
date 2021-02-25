@@ -2,6 +2,7 @@ package com.songoda.epicfurnaces.furnace;
 
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import com.songoda.epicfurnaces.settings.Settings;
 import com.songoda.epicfurnaces.utils.GameArea;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -36,7 +37,7 @@ public class FurnaceManager {
     }
 
     public Furnace getFurnace(Location location) {
-        if (!registeredFurnaces.containsKey(location)) {
+        if (!Settings.ALLOW_NORMAL_FURNACES.getBoolean() && !registeredFurnaces.containsKey(location)) {
             addFurnace(new FurnaceBuilder(location).build());
         }
         return registeredFurnaces.get(location);

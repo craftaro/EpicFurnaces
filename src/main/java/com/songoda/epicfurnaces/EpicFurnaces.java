@@ -391,6 +391,13 @@ public class  EpicFurnaces extends SongodaPlugin {
         }
     }
 
+    public boolean isLeveledFurnace(ItemStack itemStack) {
+        NBTCore nbt = NmsManager.getNbt();
+        NBTItem nbtItem = nbt.of(itemStack);
+
+        return nbtItem.has("level") && nbtItem.has("uses");
+    }
+
     public ItemStack createLeveledFurnace(Material material, int level, int uses) {
         ItemStack item = new ItemStack(material, 1);
 
