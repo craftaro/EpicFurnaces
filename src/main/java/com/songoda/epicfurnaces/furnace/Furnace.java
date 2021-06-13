@@ -4,6 +4,7 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.hooks.ProtectionManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.levels.Level;
@@ -65,6 +66,12 @@ public class Furnace {
         if (placedBy == null) placedBy = player.getUniqueId();
 
         if (!player.hasPermission("epicfurnaces.overview")) return;
+
+        if (Settings.USE_PROTECTION_PLUGINS.getBoolean() && !ProtectionManager.canInteract(player, location)) {
+            player.sendMessage(plugin.getLocale().getMessage("event.general.protected").getPrefixedMessage());
+            return;
+        }
+
         guiManager.showGUI(player, new GUIOverview(plugin, this, player));
     }
 

@@ -5,6 +5,7 @@ import com.songoda.core.configuration.Config;
 import com.songoda.core.configuration.ConfigSetting;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
+import com.songoda.core.hooks.ProtectionManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 
 import java.util.stream.Collectors;
@@ -26,6 +27,16 @@ public class Settings {
             "This is purely a safety function to prevent against unplanned crashes or",
             "restarts. With that said it is advised to keep this enabled.",
             "If however you enjoy living on the edge, feel free to turn it off.");
+
+    public static final ConfigSetting FURNACE_AREA = new ConfigSetting(config, "Main.Furnace Area", 1024,
+            "This controls how big a furnace ticking area is.",
+            "Higher size means decreased performance, but less chances of overheat",
+            "missing a spot. Lower size means better performance, but overheat",
+            "might leave a few spots. Minimum value is 16. To disable, just set",
+            "this to a very high value, such as your worldborder size.");
+
+    public static final ConfigSetting USE_PROTECTION_PLUGINS = new ConfigSetting(config, "Main.Use Protection Plugins", true,
+            "Should we use protection plugins?");
 
     public static final ConfigSetting FURNACE_ITEM = new ConfigSetting(config, "Main.Remember Furnace Item Levels", true,
             "Should furnace levels be remembered when broken?");
