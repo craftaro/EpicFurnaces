@@ -36,8 +36,11 @@ public class FurnaceListeners implements Listener {
     @EventHandler
     public void onFuel(FurnaceBurnEvent event) {
         Furnace furnace = plugin.getFurnaceManager().getFurnace(event.getBlock().getLocation());
+        if (furnace == null) {
+            return;
+        }
 
-        Level level = furnace != null ? furnace.getLevel() : plugin.getLevelManager().getLowestLevel();
+        Level level = furnace.getLevel();
 
         if (level.getFuelDuration() != 0) return;
 

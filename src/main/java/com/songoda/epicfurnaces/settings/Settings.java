@@ -54,6 +54,10 @@ public class Settings {
     public static final ConfigSetting CUSTOM_RECIPES = new ConfigSetting(config, "Main.Use Custom Recipes", true);
     public static final ConfigSetting NO_REWARDS_FROM_RECIPES = new ConfigSetting(config, "Main.No Rewards From Custom Recipes", true);
 
+    public static final ConfigSetting ALLOW_NORMAL_FURNACES = new ConfigSetting(config, "Main.Allow Normal Furnaces", false,
+            "Should normal furnaces not be converted into",
+            "Epic Furnaces?");
+
     public static final ConfigSetting PARTICLE_TYPE = new ConfigSetting(config, "Main.Upgrade Particle Type", "SPELL_WITCH",
             "The type of particle shown when a furnace is upgraded.");
 

@@ -3,6 +3,7 @@ package com.songoda.epicfurnaces.listeners;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
+import com.songoda.epicfurnaces.settings.Settings;
 import com.songoda.epicfurnaces.utils.GameArea;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,6 +58,10 @@ public class BlockListeners implements Listener {
 
         ItemStack item = event.getItemInHand();
 
+        if (!plugin.isLeveledFurnace(item) && Settings.ALLOW_NORMAL_FURNACES.getBoolean()) {
+            return;
+        }
+
         Location location = event.getBlock().getLocation();
 
         Furnace furnace = event.getItemInHand().getItemMeta().hasDisplayName() && plugin.getFurnaceLevel(item) != 1
@@ -83,6 +88,11 @@ public class BlockListeners implements Listener {
             return;
 
         Furnace furnace = plugin.getFurnaceManager().getFurnace(block);
+
+        if (furnace == null) {
+            return;
+        }
+
         int level = plugin.getFurnaceManager().getFurnace(block).getLevel().getLevel();
 
         plugin.clearHologram(furnace);

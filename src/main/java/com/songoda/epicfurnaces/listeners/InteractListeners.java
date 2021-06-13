@@ -2,6 +2,7 @@ package com.songoda.epicfurnaces.listeners;
 
 import com.songoda.core.gui.GuiManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.skyblock.SkyBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -52,9 +53,14 @@ public class InteractListeners implements Listener {
                     return;
         }
     
-    
+
+        Furnace furnace = plugin.getFurnaceManager().getFurnace(block.getLocation());
+        if (furnace == null) {
+            return;
+        }
+
         event.setCancelled(true);
 
-        plugin.getFurnaceManager().getFurnace(block.getLocation()).overview(guiManager, player);
+        furnace.overview(guiManager, player);
     }
 }
