@@ -36,7 +36,6 @@ public class InventoryListeners implements Listener {
             furnace.updateCook();
     }
 
-    @SuppressWarnings("unchecked")
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         if (event.getSlot() != 64537) {

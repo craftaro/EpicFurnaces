@@ -19,7 +19,7 @@ public class FurnaceTask extends BukkitRunnable {
     private static FurnaceTask instance;
 
     private final EpicFurnaces plugin;
-    final HashSet<Location> toRemove = new HashSet();
+    final HashSet<Location> toRemove = new HashSet<>();
     boolean doParticles;
 
     private FurnaceTask(EpicFurnaces plugin) {
@@ -56,7 +56,7 @@ public class FurnaceTask extends BukkitRunnable {
                     }
                 });
         if (!toRemove.isEmpty()) {
-            toRemove.stream().forEach(l -> plugin.getFurnaceManager().removeFurnace(l));
+            toRemove.forEach(l -> plugin.getFurnaceManager().removeFurnace(l));
             toRemove.clear();
         }
     }
@@ -81,7 +81,7 @@ public class FurnaceTask extends BukkitRunnable {
             else if (block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE)
                 block.setType(Material.WATER);
             else
-               continue;
+                continue;
 
             if (doParticles) {
                 float xx = (float) (0 + (Math.random() * .75));

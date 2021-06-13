@@ -5,10 +5,7 @@ import com.songoda.core.configuration.Config;
 import com.songoda.core.configuration.ConfigSetting;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
-import com.songoda.core.hooks.ProtectionManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
-
-import java.util.stream.Collectors;
 
 public class Settings {
 
@@ -44,8 +41,7 @@ public class Settings {
     public static final ConfigSetting HOLOGRAM_PLUGIN = new ConfigSetting(config, "Main.Hologram",
             HologramManager.getHolograms() == null ? "HolographicDisplays" : HologramManager.getHolograms().getName(),
             "Which hologram plugin should be used?",
-            "You can choose from \"" + HologramManager.getManager().getRegisteredPlugins().stream().collect(Collectors.joining(", ")) + "\".");
-
+            "You can choose from \"" + String.join(", ", HologramManager.getManager().getRegisteredPlugins()) + "\".");
 
     public static final ConfigSetting HOLOGRAMS = new ConfigSetting(config, "Main.Furnaces Have Holograms", true);
 
@@ -68,7 +64,7 @@ public class Settings {
 
     public static final ConfigSetting ECONOMY_PLUGIN = new ConfigSetting(config, "Main.Economy", EconomyManager.getEconomy() == null ? "Vault" : EconomyManager.getEconomy().getName(),
             "Which economy plugin should be used?",
-            "Supported plugins you have installed: \"" + EconomyManager.getManager().getRegisteredPlugins().stream().collect(Collectors.joining("\", \"")) + "\".");
+            "Supported plugins you have installed: \"" + String.join("\", \"", EconomyManager.getManager().getRegisteredPlugins()) + "\".");
 
     public static final ConfigSetting REWARD_ICON = new ConfigSetting(config, "Interfaces.Reward Icon", "GOLDEN_APPLE");
     public static final ConfigSetting PERFORMANCE_ICON = new ConfigSetting(config, "Interfaces.Performance Icon", "REDSTONE");

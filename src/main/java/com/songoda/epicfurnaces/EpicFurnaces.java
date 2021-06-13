@@ -56,6 +56,8 @@ import org.bukkit.plugin.PluginManager;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -63,7 +65,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class  EpicFurnaces extends SongodaPlugin {
+public class EpicFurnaces extends SongodaPlugin {
 
     private static EpicFurnaces INSTANCE;
 
@@ -247,14 +249,6 @@ public class  EpicFurnaces extends SongodaPlugin {
 
     @Override
     public void onDataLoad() {
-        // Register Hologram Plugin
-
-        if (Settings.HOLOGRAMS.getBoolean()) {
-            for (Furnace furnace : getFurnaceManager().getFurnaces().values()) {
-                if (furnace.getLocation() == null || furnace.getLocation().getWorld() == null)
-                    continue;
-            }
-        }
     }
 
     @Override
@@ -267,67 +261,70 @@ public class  EpicFurnaces extends SongodaPlugin {
 
     @Override
     public List<Config> getExtraConfig() {
-        return Arrays.asList(levelsFile);
+        return Collections.singletonList(levelsFile);
     }
 
     public void clearHologram(Furnace furnace) {
         HologramManager.removeHologram(furnace.getLocation().add(0, .15, 0));
     }
 
-    public void updateHologram(Furnace furnace) {
+    public void updateHolograms(Collection<Furnace> furnaces) {
         // are holograms enabled?
         if (!Settings.HOLOGRAMS.getBoolean() || !HologramManager.getManager().isEnabled()) return;
-        // don't try to load furnaces in chunks that aren't loaded
-        if (!furnace.isInLoadedChunk()) return;
 
-        BlockState state = furnace.getLocation().getBlock().getState();
+        Map<Location, List<String>> holograms = new HashMap<>(furnaces.size());
 
-        // verify that this is a furnace
-        if (!(state instanceof org.bukkit.block.Furnace)) return;
+        for (Furnace furnace : furnaces) {
+            // don't try to load furnaces in chunks that aren't loaded
+            if (!furnace.isInLoadedChunk()) continue;
 
-        org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) state);
+            BlockState state = furnace.getLocation().getBlock().getState();
 
-        int performance = (furnaceBlock.getCookTime() - furnace.getPerformanceTotal(furnaceBlock.getType())) <= 0 ? 0 : furnace.getPerformanceTotal(furnaceBlock.getType());
+            // verify that this is a furnace
+            if (!(state instanceof org.bukkit.block.Furnace)) continue;
 
-        float percent = (float) (furnaceBlock.getCookTime() - performance) / (200 - performance);
+            org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) state);
 
-        int progressBars = (int) (6 * percent) + (percent == 0 ? 0 : 1);
-        int leftOver = (6 - progressBars);
+            int performance = (furnaceBlock.getCookTime() - furnace.getPerformanceTotal(furnaceBlock.getType())) <= 0 ? 0 : furnace.getPerformanceTotal(furnaceBlock.getType());
+            float percent = (float) (furnaceBlock.getCookTime() - performance) / (200 - performance);
 
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < progressBars; i++) {
-            sb.append("&a=");
+            int progressBars = (int) (6 * percent) + (percent == 0 ? 0 : 1);
+            int leftOver = (6 - progressBars);
+
+            String progress;
+
+            if (furnaceBlock.getInventory().getFuel() != null) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < progressBars; i++) {
+                    sb.append("&a=");
+                }
+                for (int i = 0; i < leftOver; i++) {
+                    sb.append("&c=");
+                }
+
+                progress = Methods.formatText(sb.toString());
+            } else {
+                progress = getLocale().getMessage("general.hologram.outoffuel").getMessage();
+            }
+
+            int inAmt = 0;
+            int outAmt = 0;
+            if (furnaceBlock.getInventory().getSmelting() != null) {
+                inAmt = furnaceBlock.getInventory().getSmelting().getAmount();
+            }
+            if (furnaceBlock.getInventory().getResult() != null) {
+                outAmt = furnaceBlock.getInventory().getResult().getAmount();
+            }
+
+            String stats = getLocale().getMessage("general.hologram.stats")
+                    .processPlaceholder("in", inAmt)
+                    .processPlaceholder("out", Math.min(outAmt, 64)).getMessage();
+
+            holograms.put(furnace.getLocation().add(0, .15, 0), Arrays.asList(progress, stats));
         }
-        for (int i = 0; i < leftOver; i++) {
-            sb.append("&c=");
-        }
 
-        ArrayList<String> lines = new ArrayList<>();
-
-        String progress = Methods.formatText(sb.toString());
-
-        if (furnaceBlock.getInventory().getFuel() == null) {
-            progress = getLocale().getMessage("general.hologram.outoffuel").getMessage();
-        }
-
-        int inAmt = 0;
-        int outAmt = 0;
-        if (furnaceBlock.getInventory().getSmelting() != null) {
-            inAmt = furnaceBlock.getInventory().getSmelting().getAmount();
-        }
-        if (furnaceBlock.getInventory().getResult() != null) {
-            outAmt = furnaceBlock.getInventory().getResult().getAmount();
-        }
-
-        String stats = getLocale().getMessage("general.hologram.stats")
-                .processPlaceholder("in", inAmt)
-                .processPlaceholder("out", Math.min(outAmt, 64)).getMessage();
-
-        lines.add(progress);
-        lines.add(stats);
-
-        // create the hologram
-        HologramManager.updateHologram(furnace.getLocation().add(0, .15, 0), lines);
+        // Update holograms
+        HologramManager.bulkUpdateHolograms(holograms);
     }
 
     private void loadLevelManager() {
@@ -424,7 +421,7 @@ public class  EpicFurnaces extends SongodaPlugin {
 
         // Legacy trash.
         if (item.getItemMeta().getDisplayName().contains(":")) {
-            String arr[] = (item.getItemMeta().getDisplayName().replace("§", "")).split(":");
+            String[] arr = (item.getItemMeta().getDisplayName().replace("§", "")).split(":");
             return Integer.parseInt(arr[0]);
         } else {
             return 1;
@@ -440,7 +437,7 @@ public class  EpicFurnaces extends SongodaPlugin {
 
         // Legacy trash.
         if (item.getItemMeta().getDisplayName().contains(":")) {
-            String arr[] = (item.getItemMeta().getDisplayName().replace("§", "")).split(":");
+            String[] arr = (item.getItemMeta().getDisplayName().replace("§", "")).split(":");
             return Integer.parseInt(arr[1]);
         } else {
             return 0;

@@ -16,6 +16,7 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -46,14 +47,13 @@ public class BlockListeners implements Listener {
                 return;
             }
         }
-
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
 
         if (plugin.getBlacklistHandler().isBlacklisted(event.getPlayer().getWorld())
-                || !event.getBlock().getType().name().contains("FURNACE")  && !event.getBlock().getType().name().contains("SMOKER"))
+                || !event.getBlock().getType().name().contains("FURNACE") && !event.getBlock().getType().name().contains("SMOKER"))
             return;
 
         ItemStack item = event.getItemInHand();
@@ -74,7 +74,7 @@ public class BlockListeners implements Listener {
         plugin.getFurnaceManager().addFurnace(furnace);
         plugin.getDataManager().createFurnace(furnace);
 
-        plugin.updateHologram(furnace);
+        plugin.updateHolograms(Collections.singleton(furnace));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)

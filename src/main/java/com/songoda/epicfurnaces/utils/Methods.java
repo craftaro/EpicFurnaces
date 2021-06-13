@@ -6,7 +6,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
@@ -52,7 +51,8 @@ public class Methods {
         str = str.replace(".0", "").replace("/", "");
         return str;
     }
-    private static Map<String, Location> serializeCache = new HashMap<>();
+
+    private static final Map<String, Location> serializeCache = new HashMap<>();
 
     /**
      * Deserializes a location from the string.

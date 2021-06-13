@@ -4,6 +4,7 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
+import com.songoda.core.math.MathUtils;
 import com.songoda.core.hooks.ProtectionManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
@@ -25,9 +26,6 @@ import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.InventoryHolder;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,7 +54,6 @@ public class Furnace {
     private final List<Location> radiusOverheat = new ArrayList<>();
     private final List<Location> radiusFuelshare = new ArrayList<>();
     private final List<UUID> accessList = new ArrayList<>();
-    private final Map<String, Integer> cache = new HashMap<>();
 
     public Furnace(Location location) {
         this.location = location;
@@ -244,20 +241,7 @@ public class Furnace {
     public int getPerformanceTotal(Material material) {
         String cap = (material.name().contains("BLAST") || material.name().contains("SMOKER") ? "100" : "200");
         String equation = "(" + level.getPerformance() + " / 100) * " + cap;
-        try {
-            if (!cache.containsKey(equation)) {
-                ScriptEngineManager mgr = new ScriptEngineManager(null);
-                ScriptEngine engine = mgr.getEngineByName("JavaScript");
-                int num = (int) Math.round(Double.parseDouble(engine.eval("(" + level.getPerformance() + " / 100) * " + cap).toString()));
-                cache.put(equation, num);
-                return num;
-            } else {
-                return cache.get(equation);
-            }
-        } catch (ScriptException e) {
-            e.printStackTrace();
-        }
-        return 0;
+        return (int) MathUtils.eval(equation);
     }
 
     public boolean addToAccessList(OfflinePlayer player) {
