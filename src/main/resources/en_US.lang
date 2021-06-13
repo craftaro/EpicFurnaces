@@ -5,6 +5,7 @@ general:
     prefix: '&8[&6EpicFurnaces&8]'
     next: '&9Next'
     back: '&9Back'
+    exit: '&cExit'
     nameformat: '&eLevel %level% &fFurnace'
   hologram:
     outoffuel: '&cNo Fuel'
@@ -39,12 +40,15 @@ interface:
     itemsneeded: '&7You need one of the following to level up:'
     neededitem: '&6%amount% %type%s'
     remotefurnace: '&5&lRemote Control'
-    remotefurnacelore: '&7Left-Click to assign a nickname.|&7Right-Click to give yourself |&7remote access.|&7Current nickname is: &6%nickname%&7.'
+    remotefurnacelore: '&7Left-Click to assign a nickname.|&7Right-Click to open the menu.|&7Current nickname is: &6%nickname%&7.'
     utilize: '|&7To utilize remote access|&7use the command:|&6/EF Remote %nickname%'
     remotelist: '&7Players with remote access:'
     alreadymaxed: '&7This furnace is already maxed out!'
   button:
     boostedstats: '&a&lCurrently boosted!|&7Reward multiplied by &6%amount%x&7.|&7Expires in &6%time%&7.'
+  remoteaccess:
+    addplayertitle: '&aAdd Player'
+    playerinfo: '&7Click to remove this player.'
 
 # Command Messages
 
@@ -68,3 +72,7 @@ event:
     notloaded: '&cThat furnace isn''t in a loaded chunk...'
     nicknamesuccess: '&aNickname set successfully.'
     nicknameinuse: '&cThat nickname is already in use.'
+    enterplayer: '&7Enter a player to add to this furnace.'
+    playeralreadyadded: '&cThis player has already been added to this furnace.'
+    playeradded: '&aPlayer successfully added!'
+    invalidplayer: '&cInvalid player. Are they online?'

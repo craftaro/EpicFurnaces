@@ -268,8 +268,8 @@ public class Furnace {
         return accessList.add(uuid);
     }
 
-    public boolean removeFromAccessList(String string) {
-        return accessList.remove(string);
+    public boolean removeFromAccessList(UUID uuid) {
+        return accessList.remove(uuid);
     }
 
     public boolean isOnAccessList(OfflinePlayer player) {
