@@ -103,6 +103,9 @@ public class BlockListeners implements Listener {
             ItemStack item = plugin.createLeveledFurnace(block.getType().name().contains("BURNING") ? Material.FURNACE
                     : block.getType(), level, furnace.getUses());
 
+            // By cancelling the event we destroy any chance of items dropping form the furnace. This fixes the problem.
+            furnace.dropItems();
+
             event.getBlock().setType(Material.AIR);
             event.getBlock().getLocation().getWorld().dropItemNaturally(event.getBlock().getLocation(), item);
         }
