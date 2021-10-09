@@ -76,3 +76,5 @@ event:
     playeralreadyadded: '&cThis player has already been added to this furnace.'
     playeradded: '&aPlayer successfully added!'
     invalidplayer: '&cInvalid player. Are they online?'
+  limit:
+    hit: '&7You can only have &6%limit% &7furnaces at a single time.'

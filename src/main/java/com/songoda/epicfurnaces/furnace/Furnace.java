@@ -19,12 +19,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 import org.bukkit.inventory.FurnaceInventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -382,5 +384,22 @@ public class Furnace {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void dropItems() {
+        FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) location.getBlock().getState()).getInventory();
+        ItemStack fuel = inventory.getFuel();
+        ItemStack smelting = inventory.getSmelting();
+        ItemStack result = inventory.getResult();
+
+        World world = location.getWorld();
+        if (world == null) return;
+
+        if (fuel != null)
+            world.dropItemNaturally(location, fuel);
+        if (smelting != null)
+            world.dropItemNaturally(location, smelting);
+        if (result != null)
+            world.dropItemNaturally(location, result);
     }
 }

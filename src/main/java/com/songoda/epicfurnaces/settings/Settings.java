@@ -54,6 +54,11 @@ public class Settings {
             "Should normal furnaces not be converted into",
             "Epic Furnaces?");
 
+    public static final ConfigSetting USE_LIMIT_PERMISSION = new ConfigSetting(config, "Main.Use Limit Permission", true,
+            "Should we use the epicfurnaces.limit.<amount>",
+            "permission? This will limit the amount of Epic Furnaces",
+            "a player can place.");
+
     public static final ConfigSetting PARTICLE_TYPE = new ConfigSetting(config, "Main.Upgrade Particle Type", "SPELL_WITCH",
             "The type of particle shown when a furnace is upgraded.");
 
