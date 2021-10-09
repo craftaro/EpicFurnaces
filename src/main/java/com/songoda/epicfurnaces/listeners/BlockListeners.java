@@ -1,5 +1,6 @@
 package com.songoda.epicfurnaces.listeners;
 
+import com.songoda.core.utils.PlayerUtils;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
@@ -8,6 +9,7 @@ import com.songoda.epicfurnaces.utils.GameArea;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -57,9 +59,26 @@ public class BlockListeners implements Listener {
             return;
 
         ItemStack item = event.getItemInHand();
+        Player player = event.getPlayer();
 
         if (!plugin.isLeveledFurnace(item) && Settings.ALLOW_NORMAL_FURNACES.getBoolean()) {
             return;
+        }
+
+        if (Settings.USE_LIMIT_PERMISSION.getBoolean()) {
+            int amount = 0;
+            for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
+                if (furnace.getPlacedBy() == null || !furnace.getPlacedBy().equals(player.getUniqueId())) continue;
+                amount++;
+            }
+            int limit = PlayerUtils.getNumberFromPermission(player, "epicfurnaces.limit", -1);
+
+            if (limit != -1 && amount >= limit) {
+                event.setCancelled(true);
+                plugin.getLocale().getMessage("event.limit.hit")
+                        .processPlaceholder("limit", limit).sendPrefixedMessage(player);
+                return;
+            }
         }
 
         Location location = event.getBlock().getLocation();
