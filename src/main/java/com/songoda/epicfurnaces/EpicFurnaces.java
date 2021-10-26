@@ -66,7 +66,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class EpicFurnaces extends SongodaPlugin {
-
     private static EpicFurnaces INSTANCE;
 
     private final Config furnaceRecipeFile = new Config(this, "Furnace Recipes.yml");
@@ -94,7 +93,9 @@ public class EpicFurnaces extends SongodaPlugin {
 
     @Override
     public void onPluginDisable() {
+        shutdownDataManager(this.dataManager);
         this.databaseConnector.closeConnection();
+
         HologramManager.removeAllHolograms();
     }
 

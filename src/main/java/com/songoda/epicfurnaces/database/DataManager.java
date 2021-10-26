@@ -15,17 +15,23 @@ import org.bukkit.plugin.Plugin;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 
+// FIXME: The DataMager is used in a way that clogs up the async thread.
+//        A hotfix has been applied trying to not crash the server because of it but it might just make things worse...
+//        The DataManager needs to update furnaces **a lot** more sanely
 public class DataManager extends DataManagerAbstract {
-
     public DataManager(DatabaseConnector connector, Plugin plugin) {
         super(connector, plugin);
     }
 
     public void createBoost(BoostData boostData) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+        this.runAsync(() -> this.databaseConnector.connect(connection -> {
             String createBoostedPlayer = "INSERT INTO " + this.getTablePrefix() + "boosted_players (player, multiplier, end_time) VALUES (?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createBoostedPlayer)) {
                 statement.setString(1, boostData.getPlayer().toString());
@@ -37,8 +43,9 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void getBoosts(Consumer<List<BoostData>> callback) {
-        List<BoostData> boosts = new ArrayList<>();
-        this.async(() -> this.databaseConnector.connect(connection -> {
+        this.runAsync(() -> this.databaseConnector.connect(connection -> {
+            List<BoostData> boosts = new ArrayList<>();
+
             try (Statement statement = connection.createStatement()) {
                 String selectBoostedPlayers = "SELECT * FROM " + this.getTablePrefix() + "boosted_players";
                 ResultSet result = statement.executeQuery(selectBoostedPlayers);
@@ -55,8 +62,9 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void deleteBoost(BoostData boostData) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+        this.runAsync(() -> this.databaseConnector.connect(connection -> {
             String deleteBoost = "DELETE FROM " + this.getTablePrefix() + "boosted_players WHERE end_time = ?";
+
             try (PreparedStatement statement = connection.prepareStatement(deleteBoost)) {
                 statement.setLong(1, boostData.getEndTime());
                 statement.executeUpdate();
@@ -115,7 +123,7 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void updateFurnace(Furnace furnace) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+        this.runAsync(() -> this.databaseConnector.connect(connection -> {
             String updateHopper = "UPDATE " + this.getTablePrefix() + "active_furnaces SET level = ?, nickname = ?, uses = ? WHERE id = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateHopper)) {
                 statement.setInt(1, furnace.getLevel().getLevel());
@@ -128,7 +136,7 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void deleteFurnace(Furnace furnace) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+        this.runAsync(() -> this.databaseConnector.connect(connection -> {
             String deleteFurnace = "DELETE FROM " + this.getTablePrefix() + "active_furnaces WHERE id = ?";
             try (PreparedStatement statement = connection.prepareStatement(deleteFurnace)) {
                 statement.setInt(1, furnace.getId());
@@ -150,7 +158,7 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void createAccessPlayer(Furnace furnace, UUID uuid) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+        this.runAsync(() -> this.databaseConnector.connect(connection -> {
             String createAccessPlayer = "INSERT INTO " + this.getTablePrefix() + "access_list (furnace_id, uuid) VALUES (?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(createAccessPlayer)) {
                 statement.setInt(1, furnace.getId());
@@ -163,7 +171,7 @@ public class DataManager extends DataManagerAbstract {
     // These will be used in the future when the access list gets revamped.
     // Probably by me since I already have a custom version in my server.
     public void deleteAccessPlayer(Furnace furnace, UUID uuid) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+        this.runAsync(() -> this.databaseConnector.connect(connection -> {
             String deleteAccessPlayer = "DELETE FROM " + this.getTablePrefix() + "access_list WHERE furnace_id = ? AND uuid = ?";
             try (PreparedStatement statement = connection.prepareStatement(deleteAccessPlayer)) {
                 statement.setInt(1, furnace.getId());
@@ -174,7 +182,7 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void updateAccessPlayers(Furnace furnace) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+        this.runAsync(() -> this.databaseConnector.connect(connection -> {
             String deletePlayers = "DELETE FROM " + this.getTablePrefix() + "access_list WHERE furnace_id = ?";
             try (PreparedStatement statement = connection.prepareStatement(deletePlayers)) {
                 statement.setInt(1, furnace.getId());
@@ -194,7 +202,7 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void updateLevelupItems(Furnace furnace, CompatibleMaterial material, int amount) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+        this.runAsync(() -> this.databaseConnector.connect(connection -> {
             String deleteLevelupItem = "DELETE FROM " + this.getTablePrefix() + "to_level_new WHERE furnace_id = ? AND item = ?";
             try (PreparedStatement statement = connection.prepareStatement(deleteLevelupItem)) {
                 statement.setInt(1, furnace.getId());
@@ -213,7 +221,7 @@ public class DataManager extends DataManagerAbstract {
     }
 
     public void getFurnaces(Consumer<Map<Integer, Furnace>> callback) {
-        this.async(() -> this.databaseConnector.connect(connection -> {
+        this.runAsync(() -> this.databaseConnector.connect(connection -> {
             Map<Integer, Furnace> furnaces = new HashMap<>();
 
             try (Statement statement = connection.createStatement()) {
