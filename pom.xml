@@ -5,7 +5,7 @@
 
     <groupId>com.songoda</groupId>
     <artifactId>EpicFurnaces</artifactId>
-    <version>4.7.3</version>
+    <version>4.8.0</version>
 
     <build>
         <defaultGoal>clean install</defaultGoal>
