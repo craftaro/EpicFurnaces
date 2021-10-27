@@ -16,18 +16,50 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-// FIXME: The DataMager is used in a way that clogs up the async thread.
-//        A hotfix has been applied trying to not crash the server because of it but it might just make things worse...
-//        The DataManager needs to update furnaces **a lot** more sanely
 public class DataManager extends DataManagerAbstract {
+    private final Set<Furnace> furnaceUpdateQueue = new HashSet<>();
+
     public DataManager(DatabaseConnector connector, Plugin plugin) {
         super(connector, plugin);
+
+        // Updating furnaces every 3 minutes should be plenty I believe
+        Bukkit.getScheduler().runTaskTimer(plugin, this::bulkUpdateFurnaceQueue, 20 * 60 * 3, 20 * 60 * 3);
+    }
+
+    @Override
+    public void shutdownTaskQueue() {
+        bulkUpdateFurnaceQueue();
+
+        super.shutdownTaskQueue();
+    }
+
+    public void queueFurnaceForUpdate(Furnace furnace) {
+        synchronized (this.furnaceUpdateQueue) {
+            this.furnaceUpdateQueue.add(furnace);
+        }
+    }
+
+    public void dequeueFurnaceForUpdate(Furnace furnace) {
+        synchronized (this.furnaceUpdateQueue) {
+            this.furnaceUpdateQueue.remove(furnace);
+        }
+    }
+
+    public void bulkUpdateFurnaceQueue() {
+        synchronized (this.furnaceUpdateQueue) {
+            updateFurnaces(new LinkedHashSet<>(this.furnaceUpdateQueue));
+            this.furnaceUpdateQueue.clear();
+        }
     }
 
     public void createBoost(BoostData boostData) {
@@ -122,20 +154,27 @@ public class DataManager extends DataManagerAbstract {
         }), "create");
     }
 
-    public void updateFurnace(Furnace furnace) {
+    public void updateFurnaces(Collection<Furnace> furnaces) {
         this.runAsync(() -> this.databaseConnector.connect(connection -> {
-            String updateHopper = "UPDATE " + this.getTablePrefix() + "active_furnaces SET level = ?, nickname = ?, uses = ? WHERE id = ?";
-            try (PreparedStatement statement = connection.prepareStatement(updateHopper)) {
-                statement.setInt(1, furnace.getLevel().getLevel());
-                statement.setString(2, furnace.getNickname());
-                statement.setInt(3, furnace.getUses());
-                statement.setInt(4, furnace.getId());
-                statement.executeUpdate();
+            String updateFurnace = "UPDATE " + this.getTablePrefix() + "active_furnaces SET level =?, nickname =?, uses =? WHERE id =?;";
+            try (PreparedStatement statement = connection.prepareStatement(updateFurnace)) {
+                for (Furnace furnace : furnaces) {
+                    statement.setInt(1, furnace.getLevel().getLevel());
+                    statement.setString(2, furnace.getNickname());
+                    statement.setInt(3, furnace.getUses());
+                    statement.setInt(4, furnace.getId());
+
+                    statement.addBatch();
+                }
+
+                statement.executeBatch();
             }
         }));
     }
 
     public void deleteFurnace(Furnace furnace) {
+        dequeueFurnaceForUpdate(furnace);
+
         this.runAsync(() -> this.databaseConnector.connect(connection -> {
             String deleteFurnace = "DELETE FROM " + this.getTablePrefix() + "active_furnaces WHERE id = ?";
             try (PreparedStatement statement = connection.prepareStatement(deleteFurnace)) {
