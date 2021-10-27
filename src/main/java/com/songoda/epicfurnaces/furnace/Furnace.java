@@ -79,7 +79,7 @@ public class Furnace {
         if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) return;
 
         this.uses++;
-        plugin.getDataManager().updateFurnace(this);
+        plugin.getDataManager().queueFurnaceForUpdate(this);
 
         CompatibleMaterial material = CompatibleMaterial.getMaterial(event.getResult());
         int needed = -1;
@@ -172,7 +172,7 @@ public class Furnace {
     private void upgradeFinal(Player player) {
         levelUp();
         syncName();
-        plugin.getDataManager().updateFurnace(this);
+        plugin.getDataManager().queueFurnaceForUpdate(this);
         if (plugin.getLevelManager().getHighestLevel() != level) {
             plugin.getLocale().getMessage("event.upgrade.success")
                     .processPlaceholder("level", level.getLevel()).sendPrefixedMessage(player);

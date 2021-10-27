@@ -1,7 +1,7 @@
 name: EpicFurnaces
 description: EpicFurnaces
 version: maven-version-number
-softdepend: [FabledSkyBlock, HolographicDisplays, PlotSquared, GriefPrevention, USkyBlock, SkyBlock, WorldGuard, Factions, Lands, RedProtect, UltimateClaims, BentoBox]
+softdepend: [ FabledSkyBlock, HolographicDisplays, PlotSquared, GriefPrevention, USkyBlock, SkyBlock, WorldGuard, Factions, Lands, RedProtect, UltimateClaims, BentoBox, Vault ]
 main: com.songoda.epicfurnaces.EpicFurnaces
 author: songoda
 api-version: 1.13
@@ -9,5 +9,5 @@ commands:
   ef:
     description: I have no idea.
     default: true
-    aliases: [EpicFurnaces]
+    aliases: [ EpicFurnaces ]
     usage: /<command> [reload]

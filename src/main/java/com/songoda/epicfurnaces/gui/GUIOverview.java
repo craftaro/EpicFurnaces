@@ -148,7 +148,7 @@ public class GUIOverview extends CustomizableGui {
                                         }
                                     }
 
-                                    plugin.getDataManager().updateFurnace(furnace);
+                                    plugin.getDataManager().queueFurnaceForUpdate(furnace);
                                     furnace.setNickname(promptEvent.getMessage());
                                     plugin.getLocale().getMessage("event.remote.nicknamesuccess").sendPrefixedMessage(player);
                                 }).setOnClose(() -> guiManager.showGUI(player, new GUIOverview(plugin, furnace, player)));
