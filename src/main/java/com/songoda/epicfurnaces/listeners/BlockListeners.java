@@ -18,7 +18,6 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -90,10 +89,10 @@ public class BlockListeners implements Listener {
                 .setPlacedBy(event.getPlayer().getUniqueId()).build()
                 : new FurnaceBuilder(location).setPlacedBy(event.getPlayer().getUniqueId()).build();
 
-        plugin.getFurnaceManager().addFurnace(furnace);
         plugin.getDataManager().createFurnace(furnace);
+        plugin.getFurnaceManager().addFurnace(furnace);
 
-        plugin.updateHolograms(Collections.singleton(furnace));
+        furnace.createHologram();
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
