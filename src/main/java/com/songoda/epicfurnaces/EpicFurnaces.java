@@ -226,7 +226,6 @@ public class EpicFurnaces extends SongodaPlugin {
                 }
 
                 this.dataManager.getFurnaces((furnaces) -> {
-                    furnaces.values().forEach(Furnace::createHologram);
                     this.furnaceManager.addFurnaces(furnaces.values());
                     this.dataManager.getBoosts((boosts) -> this.boostManager.addBoosts(boosts));
                 });
@@ -267,74 +266,72 @@ public class EpicFurnaces extends SongodaPlugin {
     }
 
     public void clearHologram(Furnace furnace) {
-        furnace.removeHologram();
+        HologramManager.removeHologram(furnace.getHologramId());
     }
 
     public void updateHolograms(Collection<Furnace> furnaces) {
         // are holograms enabled?
         if (!Settings.HOLOGRAMS.getBoolean() || !HologramManager.getManager().isEnabled()) return;
 
-        Map<String, List<String>> holograms = new HashMap<>(furnaces.size());
+        Map<String, List<String>> holograms = new HashMap<>();
 
         for (Furnace furnace : furnaces) {
             // don't try to load furnaces in chunks that aren't loaded
             if (!furnace.isInLoadedChunk()) continue;
 
+            BlockState state = furnace.getLocation().getBlock().getState();
+
+            // verify that this is a furnace
+            if (!(state instanceof org.bukkit.block.Furnace)) continue;
+
+            org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) state);
+
+            int performance = (furnaceBlock.getCookTime() - furnace.getPerformanceTotal(furnaceBlock.getType())) <= 0 ? 0 : furnace.getPerformanceTotal(furnaceBlock.getType());
+            float percent = (float) (furnaceBlock.getCookTime() - performance) / (200 - performance);
+
+            int progressBars = (int) (6 * percent) + (percent == 0 ? 0 : 1);
+            int leftOver = (6 - progressBars);
+
+            String progress;
+
+            if (furnaceBlock.getInventory().getFuel() != null) {
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < progressBars; i++) {
+                    sb.append("&a=");
+                }
+                for (int i = 0; i < leftOver; i++) {
+                    sb.append("&c=");
+                }
+
+                progress = Methods.formatText(sb.toString());
+            } else {
+                progress = getLocale().getMessage("general.hologram.outoffuel").getMessage();
+            }
+
+            int inAmt = 0;
+            int outAmt = 0;
+            if (furnaceBlock.getInventory().getSmelting() != null) {
+                inAmt = furnaceBlock.getInventory().getSmelting().getAmount();
+            }
+            if (furnaceBlock.getInventory().getResult() != null) {
+                outAmt = furnaceBlock.getInventory().getResult().getAmount();
+            }
+
+            String stats = getLocale().getMessage("general.hologram.stats")
+                    .processPlaceholder("in", inAmt)
+                    .processPlaceholder("out", Math.min(outAmt, 64)).getMessage();
+
+            List<String> hologramLines = Arrays.asList(progress, stats);
             if (!HologramManager.isHologramLoaded(furnace.getHologramId())) {
+                HologramManager.createHologram(furnace.getHologramId(), furnace.getLocation().add(0, .15, 0), hologramLines);
                 continue;
             }
 
-            holograms.put(furnace.getHologramId(), getHologramLines(furnace));
+            holograms.put(furnace.getHologramId(), hologramLines);
         }
 
         // Update holograms
         HologramManager.bulkUpdateHolograms(holograms);
-    }
-
-    public List<String> getHologramLines(Furnace furnace) {
-        BlockState state = furnace.getLocation().getBlock().getState();
-
-        // verify that this is a furnace
-        if (!(state instanceof org.bukkit.block.Furnace)) return Collections.emptyList();
-
-        org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) state);
-
-        int performance = (furnaceBlock.getCookTime() - furnace.getPerformanceTotal(furnaceBlock.getType())) <= 0 ? 0 : furnace.getPerformanceTotal(furnaceBlock.getType());
-        float percent = (float) (furnaceBlock.getCookTime() - performance) / (200 - performance);
-
-        int progressBars = (int) (6 * percent) + (percent == 0 ? 0 : 1);
-        int leftOver = (6 - progressBars);
-
-        String progress;
-
-        if (furnaceBlock.getInventory().getFuel() != null) {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < progressBars; i++) {
-                sb.append("&a=");
-            }
-            for (int i = 0; i < leftOver; i++) {
-                sb.append("&c=");
-            }
-
-            progress = Methods.formatText(sb.toString());
-        } else {
-            progress = getLocale().getMessage("general.hologram.outoffuel").getMessage();
-        }
-
-        int inAmt = 0;
-        int outAmt = 0;
-        if (furnaceBlock.getInventory().getSmelting() != null) {
-            inAmt = furnaceBlock.getInventory().getSmelting().getAmount();
-        }
-        if (furnaceBlock.getInventory().getResult() != null) {
-            outAmt = furnaceBlock.getInventory().getResult().getAmount();
-        }
-
-        String stats = getLocale().getMessage("general.hologram.stats")
-                .processPlaceholder("in", inAmt)
-                .processPlaceholder("out", Math.min(outAmt, 64)).getMessage();
-
-        return Arrays.asList(progress, stats);
     }
 
     private void loadLevelManager() {

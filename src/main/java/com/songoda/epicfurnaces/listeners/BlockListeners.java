@@ -1,5 +1,6 @@
 package com.songoda.epicfurnaces.listeners;
 
+import com.songoda.core.hooks.HologramManager;
 import com.songoda.core.utils.PlayerUtils;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
@@ -18,6 +19,7 @@ import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -92,7 +94,7 @@ public class BlockListeners implements Listener {
         plugin.getDataManager().createFurnace(furnace);
         plugin.getFurnaceManager().addFurnace(furnace);
 
-        furnace.createHologram();
+        plugin.updateHolograms(Collections.singleton(furnace));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
