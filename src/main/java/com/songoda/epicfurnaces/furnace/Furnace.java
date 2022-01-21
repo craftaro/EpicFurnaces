@@ -4,9 +4,8 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
-import com.songoda.core.hooks.HologramManager;
-import com.songoda.core.math.MathUtils;
 import com.songoda.core.hooks.ProtectionManager;
+import com.songoda.core.math.MathUtils;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.levels.Level;
@@ -40,13 +39,9 @@ import java.util.UUID;
  * Created by songoda on 3/7/2017.
  */
 public class Furnace {
-
     private final EpicFurnaces plugin = EpicFurnaces.getInstance();
 
-    // This is the unique identifier for this furnace.
-    // It is reset on every plugin load.
-    // Used for holograms.
-    private final UUID uniqueId = UUID.randomUUID();
+    private final String hologramId = UUID.randomUUID().toString();
 
     // Identifier for database use.
     private int id;
@@ -410,14 +405,6 @@ public class Furnace {
     }
 
     public String getHologramId() {
-        return "EpicFurnaces-" + uniqueId;
-    }
-
-    public void createHologram() {
-        HologramManager.createHologram(getHologramId(), getLocation().add(0, 0.15, 0), plugin.getHologramLines(this));
-    }
-
-    public void removeHologram() {
-        HologramManager.removeHologram(getHologramId());
+        return this.hologramId;
     }
 }
