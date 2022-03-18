@@ -12,9 +12,7 @@ import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
 import com.songoda.core.hooks.ProtectionManager;
-import com.songoda.core.nms.NmsManager;
-import com.songoda.core.nms.nbt.NBTCore;
-import com.songoda.core.nms.nbt.NBTItem;
+import com.songoda.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.boost.BoostManager;
 import com.songoda.epicfurnaces.commands.CommandBoost;
@@ -396,10 +394,9 @@ public class EpicFurnaces extends SongodaPlugin {
     }
 
     public boolean isLeveledFurnace(ItemStack itemStack) {
-        NBTCore nbt = NmsManager.getNbt();
-        NBTItem nbtItem = nbt.of(itemStack);
+        NBTItem nbtItem = new NBTItem(itemStack);
 
-        return nbtItem.has("level") && nbtItem.has("uses");
+        return nbtItem.hasKey("level") && nbtItem.hasKey("uses");
     }
 
     public ItemStack createLeveledFurnace(Material material, int level, int uses) {
@@ -411,20 +408,18 @@ public class EpicFurnaces extends SongodaPlugin {
             item.setItemMeta(itemmeta);
         }
 
-        NBTCore nbt = NmsManager.getNbt();
-        NBTItem nbtItem = nbt.of(item);
-        nbtItem.set("level", level);
-        nbtItem.set("uses", uses);
+        NBTItem nbtItem = new NBTItem(item);
+        nbtItem.setInteger("level", level);
+        nbtItem.setInteger("uses", uses);
 
-        return nbtItem.finish();
+        return nbtItem.getItem();
     }
 
     public int getFurnaceLevel(ItemStack item) {
-        NBTCore nbt = NmsManager.getNbt();
-        NBTItem nbtItem = nbt.of(item);
+        NBTItem nbtItem = new NBTItem(item);
 
-        if (nbtItem.has("level"))
-            return nbtItem.getNBTObject("level").asInt();
+        if (nbtItem.hasKey("level"))
+            return nbtItem.getInteger("level");
 
         // Legacy trash.
         if (item.getItemMeta().getDisplayName().contains(":")) {
@@ -436,11 +431,10 @@ public class EpicFurnaces extends SongodaPlugin {
     }
 
     public int getFurnaceUses(ItemStack item) {
-        NBTCore nbt = NmsManager.getNbt();
-        NBTItem nbtItem = nbt.of(item);
+        NBTItem nbtItem = new NBTItem(item);
 
-        if (nbtItem.has("uses"))
-            return nbtItem.getNBTObject("uses").asInt();
+        if (nbtItem.hasKey("uses"))
+            return nbtItem.getInteger("uses");
 
         // Legacy trash.
         if (item.getItemMeta().getDisplayName().contains(":")) {
