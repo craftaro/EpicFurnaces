@@ -121,7 +121,7 @@ public class Furnace {
 
         FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
 
-        if (event.getSource().getType().name().contains("SPONGE"))
+        if (event.getSource().getType().name().contains("SPONGE") || event.getSource().getType().name().contains("COBBLESTONE") || event.getSource().getType().name().contains("DEEPSLATE"))
             return;
 
         int num = Integer.parseInt(reward);
