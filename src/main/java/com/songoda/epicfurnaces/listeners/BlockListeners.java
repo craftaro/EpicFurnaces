@@ -124,7 +124,7 @@ public class BlockListeners implements Listener {
                     : block.getType(), level, furnace.getUses());
 
             // By cancelling the event we destroy any chance of items dropping form the furnace. This fixes the problem.
-            furnace.dropItems();
+            //furnace.dropItems(); No need to drop items. dropItemNaturally() will drop the items inside the furnance
 
             event.getBlock().setType(Material.AIR);
             event.getBlock().getLocation().getWorld().dropItemNaturally(event.getBlock().getLocation(), item);

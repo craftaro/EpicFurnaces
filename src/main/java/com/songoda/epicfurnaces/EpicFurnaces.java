@@ -7,6 +7,7 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.Config;
 import com.songoda.core.database.DataMigrationManager;
 import com.songoda.core.database.DatabaseConnector;
+import com.songoda.core.database.MySQLConnector;
 import com.songoda.core.database.SQLiteConnector;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.core.hooks.EconomyManager;
@@ -141,8 +142,26 @@ public class EpicFurnaces extends SongodaPlugin {
         this.blacklistHandler = new BlacklistHandler();
 
         // Database stuff.
-        this.databaseConnector = new SQLiteConnector(this);
-        this.getLogger().info("Data handler connected using SQLite.");
+        try {
+            if (Settings.MYSQL_ENABLED.getBoolean()) {
+                String hostname = Settings.MYSQL_HOSTNAME.getString();
+                int port = Settings.MYSQL_PORT.getInt();
+                String database = Settings.MYSQL_DATABASE.getString();
+                String username = Settings.MYSQL_USERNAME.getString();
+                String password = Settings.MYSQL_PASSWORD.getString();
+                boolean useSSL = Settings.MYSQL_USE_SSL.getBoolean();
+                int poolSize = Settings.MYSQL_POOL_SIZE.getInt();
+
+                this.databaseConnector = new MySQLConnector(this, hostname, port, database, username, password, useSSL, poolSize);
+                this.getLogger().info("Data handler connected using MySQL.");
+            } else {
+                this.databaseConnector = new SQLiteConnector(this);
+                this.getLogger().info("Data handler connected using SQLite.");
+            }
+        } catch (Exception ex) {
+            this.getLogger().severe("Fatal error trying to connect to database. Please make sure all your connection settings are correct and try again. Plugin has been disabled.");
+            this.emergencyStop();
+        }
 
         this.dataManager = new DataManager(this.databaseConnector, this);
         DataMigrationManager dataMigrationManager = new DataMigrationManager(this.databaseConnector, this.dataManager,
@@ -218,7 +237,7 @@ public class EpicFurnaces extends SongodaPlugin {
             }
 
             final boolean finalConverted = converted;
-            dataManager.queueAsync(() -> {
+            dataManager.runAsync(() -> {
                 if (finalConverted) {
                     console.sendMessage("[" + getDescription().getName() + "] " + ChatColor.GREEN + "Conversion complete :)");
                 }
@@ -227,7 +246,7 @@ public class EpicFurnaces extends SongodaPlugin {
                     this.furnaceManager.addFurnaces(furnaces.values());
                     this.dataManager.getBoosts((boosts) -> this.boostManager.addBoosts(boosts));
                 });
-            }, "create");
+            });
         });
 
         setupRecipies();
