@@ -3,7 +3,7 @@ package com.songoda.epicfurnaces.boost;
 import java.util.Objects;
 import java.util.UUID;
 
-public class BoostData {
+public final class BoostData {
 
     private final int multiplier;
     private final long endTime;
@@ -30,10 +30,8 @@ public class BoostData {
     @Override
     public int hashCode() {
         int result = 31 * multiplier;
-
         result = 31 * result + (this.player == null ? 0 : player.hashCode());
         result = 31 * result + (int) (endTime ^ (endTime >>> 32));
-
         return result;
     }
 
@@ -42,7 +40,7 @@ public class BoostData {
         if (this == obj) return true;
         if (!(obj instanceof BoostData)) return false;
 
-        BoostData other = (BoostData) obj;
+        final BoostData other = (BoostData) obj;
         return multiplier == other.multiplier && endTime == other.endTime
                 && Objects.equals(player, other.player);
     }

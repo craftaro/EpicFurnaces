@@ -2,6 +2,7 @@ package com.songoda.epicfurnaces.commands;
 
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.settings.Settings;
 import org.bukkit.block.Block;
@@ -12,18 +13,16 @@ import org.bukkit.inventory.Inventory;
 import java.util.List;
 import java.util.UUID;
 
-public class CommandRemote extends AbstractCommand {
+public final class CommandRemote extends AbstractCommand implements EpicFurnaceInstances {
 
-    private final EpicFurnaces plugin;
-
-    public CommandRemote(EpicFurnaces plugin) {
+    public CommandRemote() {
         super(CommandType.CONSOLE_OK, "remote");
-        this.plugin = plugin;
     }
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-        Player player = ((Player) sender);
+        final EpicFurnaces plugin = getPlugin();
+        final Player player = ((Player) sender);
         if (!Settings.REMOTE.getBoolean() || !sender.hasPermission("EpicFurnaces.Remote")) {
             plugin.getLocale().getMessage("event.general.nopermission").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
@@ -31,7 +30,7 @@ public class CommandRemote extends AbstractCommand {
         if (args.length < 1) return ReturnType.SYNTAX_ERROR;
 
         String name = String.join(" ", args);
-        Furnace furnace = plugin.getFurnaceManager().getFurnaces().values()
+        Furnace furnace = FURNACE_MANAGER.getFurnaces().values()
                 .stream().filter(f -> f.getNickname() != null
                         && f.getNickname().equalsIgnoreCase(name)).findFirst().orElse(null);
         if (furnace == null) {

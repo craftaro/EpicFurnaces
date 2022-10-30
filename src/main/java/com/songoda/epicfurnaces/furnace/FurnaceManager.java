@@ -12,14 +12,15 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FurnaceManager {
+public final class FurnaceManager {
 
     private final Map<Location, Furnace> registeredFurnaces = new HashMap<>();
     private final Multimap<GameArea, Furnace> tickingFurnaces = MultimapBuilder.hashKeys().hashSetValues().build();
 
     public Furnace addFurnace(Furnace furnace) {
-        tickingFurnaces.put(GameArea.of(furnace.getLocation()), furnace);
-        return registeredFurnaces.put(roundLocation(furnace.getLocation()), furnace);
+        final Location location = furnace.getLocation();
+        tickingFurnaces.put(GameArea.of(location), furnace);
+        return registeredFurnaces.put(roundLocation(location), furnace);
     }
 
     public void addFurnaces(Collection<Furnace> furnaces) {
@@ -29,7 +30,7 @@ public class FurnaceManager {
     }
 
     public Furnace removeFurnace(Location location) {
-        Furnace furnace = registeredFurnaces.remove(location);
+        final Furnace furnace = registeredFurnaces.remove(location);
         if (furnace != null) {
             tickingFurnaces.remove(GameArea.of(furnace.getLocation()), furnace);
         }

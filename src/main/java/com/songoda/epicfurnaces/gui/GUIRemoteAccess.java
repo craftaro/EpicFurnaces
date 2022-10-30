@@ -5,7 +5,9 @@ import com.songoda.core.compatibility.ServerVersion;
 import com.songoda.core.gui.CustomizableGui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.input.ChatPrompt;
+import com.songoda.core.locale.Locale;
 import com.songoda.core.utils.TextUtils;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.settings.Settings;
@@ -20,15 +22,13 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class GUIRemoteAccess extends CustomizableGui {
+public final class GUIRemoteAccess extends CustomizableGui implements EpicFurnaceInstances {
 
-    private final EpicFurnaces plugin;
     private final Furnace furnace;
     private final Player player;
 
-    public GUIRemoteAccess(EpicFurnaces plugin, Furnace furnace, Player player) {
-        super(plugin, "remoteAccess");
-        this.plugin = plugin;
+    public GUIRemoteAccess(Furnace furnace, Player player) {
+        super(EpicFurnaces.getInstance(), "remoteAccess");
         this.furnace = furnace;
         this.player = player;
 
@@ -53,44 +53,46 @@ public class GUIRemoteAccess extends CustomizableGui {
         mirrorFill("mirrorfill_5", 0, 1, true, true, glass2);
 
         pages = (int) Math.max(1, Math.ceil(furnace.getAccessList().size() / ((double) 28)));
-
-        setNextPage(5, 7, GuiUtils.createButtonItem(CompatibleMaterial.ARROW, plugin.getLocale().getMessage("general.nametag.next").getMessage()));
-        setPrevPage(5, 1, GuiUtils.createButtonItem(CompatibleMaterial.ARROW, plugin.getLocale().getMessage("general.nametag.back").getMessage()));
+        
+        final EpicFurnaces plugin = getPlugin();
+        final Locale locale = plugin.getLocale();
+        setNextPage(5, 7, GuiUtils.createButtonItem(CompatibleMaterial.ARROW, locale.getMessage("general.nametag.next").getMessage()));
+        setPrevPage(5, 1, GuiUtils.createButtonItem(CompatibleMaterial.ARROW, locale.getMessage("general.nametag.back").getMessage()));
         setOnPage((event) -> showPage());
 
         setButton("exit", 8, GuiUtils.createButtonItem(CompatibleMaterial.OAK_DOOR,
-                plugin.getLocale().getMessage("general.nametag.exit").getMessage()), (event) -> player.closeInventory());
+                locale.getMessage("general.nametag.exit").getMessage()), (event) -> player.closeInventory());
 
         setButton("addplayer", 4, GuiUtils.createButtonItem(CompatibleMaterial.EMERALD,
-                plugin.getLocale().getMessage("interface.remoteaccess.addplayertitle").getMessage()), (event) -> {
-            plugin.getLocale().getMessage("event.remote.enterplayer").sendPrefixedMessage(player);
+                locale.getMessage("interface.remoteaccess.addplayertitle").getMessage()), (event) -> {
+            locale.getMessage("event.remote.enterplayer").sendPrefixedMessage(player);
             ChatPrompt.showPrompt(plugin, player, chat -> {
                 Player toAdd = Bukkit.getPlayer(chat.getMessage());
                 if (toAdd == null) {
-                    plugin.getLocale().getMessage("event.remote.invalidplayer").sendPrefixedMessage(player);
+                    locale.getMessage("event.remote.invalidplayer").sendPrefixedMessage(player);
                     return;
                 }
 
                 if (furnace.getAccessList().contains(toAdd.getUniqueId())) {
-                    plugin.getLocale().getMessage("event.remote.playeralreadyadded").sendPrefixedMessage(player);
+                    locale.getMessage("event.remote.playeralreadyadded").sendPrefixedMessage(player);
                     return;
                 }
 
                 furnace.addToAccessList(toAdd);
                 plugin.getDataManager().createAccessPlayer(furnace, toAdd.getUniqueId());
-                plugin.getLocale().getMessage("event.remote.playeradded").sendPrefixedMessage(player);
-            }).setOnClose(() -> guiManager.showGUI(player, new GUIRemoteAccess(plugin, furnace, player)));
+                locale.getMessage("event.remote.playeradded").sendPrefixedMessage(player);
+            }).setOnClose(() -> guiManager.showGUI(player, new GUIRemoteAccess(furnace, player)));
         });
 
-        List<UUID> entries = furnace.getAccessList().stream().skip((page - 1) * 28).limit(28).collect(Collectors.toList());
+        final List<UUID> entries = furnace.getAccessList().stream().skip((page - 1) * 28).limit(28).collect(Collectors.toList());
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             int num = 11;
             for (UUID entry : entries) {
                 if (num == 16 || num == 36)
                     num = num + 2;
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(entry);
-                ItemStack itemStack = GuiUtils.createButtonItem(CompatibleMaterial.PLAYER_HEAD, TextUtils.formatText("&6" + offlinePlayer.getName()),
-                        plugin.getLocale().getMessage("interface.remoteaccess.playerinfo")
+                final ItemStack itemStack = GuiUtils.createButtonItem(CompatibleMaterial.PLAYER_HEAD, TextUtils.formatText("&6" + offlinePlayer.getName()),
+                        locale.getMessage("interface.remoteaccess.playerinfo")
                                 .getMessage().split("\\|"));
                 SkullMeta meta = (SkullMeta)itemStack.getItemMeta();
 
@@ -104,7 +106,7 @@ public class GUIRemoteAccess extends CustomizableGui {
                 setButton(num, itemStack, event -> {
                     furnace.removeFromAccessList(entry);
                     plugin.getDataManager().deleteAccessPlayer(furnace, entry);
-                    guiManager.showGUI(player, new GUIRemoteAccess(plugin, furnace, player));
+                    guiManager.showGUI(player, new GUIRemoteAccess(furnace, player));
                 });
                 num++;
             }

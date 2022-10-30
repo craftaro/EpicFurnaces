@@ -3,6 +3,7 @@ package com.songoda.epicfurnaces.storage;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.configuration.Config;
 import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.utils.Methods;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public abstract class Storage {
+public abstract class Storage implements EpicFurnaceInstances {
 
     protected final EpicFurnaces plugin;
     protected final Config dataFile;
@@ -31,13 +32,12 @@ public abstract class Storage {
 
     public abstract void prepareSaveItem(String group, StorageItem... items);
 
-    public void updateData(EpicFurnaces plugin) {
+    public void updateData() {
         /*
          * Dump FurnaceManager to file.
          */
-        for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
+        for (Furnace furnace : FURNACE_MANAGER.getFurnaces().values()) {
             if (furnace == null
-                    || furnace.getLocation() == null
                     || furnace.getLocation().getWorld() == null
                     || furnace.getLevel() == null) continue;
             String locationStr = Methods.serializeLocation(furnace.getLocation());
@@ -58,7 +58,7 @@ public abstract class Storage {
         /*
          * Dump BoostManager to file.
          */
-        for (BoostData boostData : plugin.getBoostManager().getBoosts()) {
+        for (BoostData boostData : BOOST_MANAGER.getBoosts()) {
             prepareSaveItem("boosts", new StorageItem("endtime", String.valueOf(boostData.getEndTime())),
                     new StorageItem("amount", boostData.getMultiplier()),
                     new StorageItem("uuid", boostData.getPlayer().toString()));

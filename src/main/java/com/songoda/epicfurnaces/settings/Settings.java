@@ -7,7 +7,7 @@ import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.HologramManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 
-public class Settings {
+public final class Settings {
 
     static final Config config = EpicFurnaces.getInstance().getCoreConfig();
 

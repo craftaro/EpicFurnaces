@@ -2,6 +2,7 @@ package com.songoda.epicfurnaces.commands;
 
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.furnace.levels.Level;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -10,21 +11,18 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CommandGive extends AbstractCommand {
+public final class CommandGive extends AbstractCommand implements EpicFurnaceInstances {
 
-    private final EpicFurnaces plugin;
-
-    public CommandGive(EpicFurnaces plugin) {
+    public CommandGive() {
         super(CommandType.CONSOLE_OK, "give");
-        this.plugin = plugin;
     }
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
         if (args.length == 1) return ReturnType.SYNTAX_ERROR;
 
-        Level level = plugin.getLevelManager().getLowestLevel();
-        Player player;
+        final EpicFurnaces plugin = getPlugin();
+        final Player player;
         if (args.length != 0 && Bukkit.getPlayer(args[0]) == null) {
             plugin.getLocale().newMessage("&cThat player does not exist or is currently offline.").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
@@ -38,14 +36,14 @@ public class CommandGive extends AbstractCommand {
             player = Bukkit.getPlayer(args[0]);
         }
 
-
-        if (args.length >= 2 && !plugin.getLevelManager().isLevel(Integer.parseInt(args[1]))) {
+        Level level = LEVEL_MANAGER.getLowestLevel();
+        if (args.length >= 2 && !LEVEL_MANAGER.isLevel(Integer.parseInt(args[1]))) {
             plugin.getLocale().newMessage("&cNot a valid level... The current valid levels are: &4"
-                    + plugin.getLevelManager().getLowestLevel().getLevel() + "-"
-                    + plugin.getLevelManager().getHighestLevel().getLevel() + "&c.").sendPrefixedMessage(sender);
+                    + LEVEL_MANAGER.getLowestLevel().getLevel() + "-"
+                    + LEVEL_MANAGER.getHighestLevel().getLevel() + "&c.").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         } else if (args.length != 0) {
-            level = plugin.getLevelManager().getLevel(Integer.parseInt(args[1]));
+            level = LEVEL_MANAGER.getLevel(Integer.parseInt(args[1]));
         }
         player.getInventory().addItem(plugin.createLeveledFurnace(Material.FURNACE, level.getLevel(), 0));
         plugin.getLocale().getMessage("command.give.success")

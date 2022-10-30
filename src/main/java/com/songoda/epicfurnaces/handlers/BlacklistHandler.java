@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by songoda on 2/25/2017.
  */
-public class BlacklistHandler {
+public final class BlacklistHandler {
 
     private final Config blackConfig = new Config(EpicFurnaces.getInstance(), "blacklist.yml");
 
@@ -19,7 +19,7 @@ public class BlacklistHandler {
     }
 
     public boolean isBlacklisted(World world) {
-        List<String> list = blackConfig.getStringList("settings.blacklist");
+        final List<String> list = blackConfig.getStringList("settings.blacklist");
         final String checkWorld = world.getName();
         return list.stream().anyMatch(w -> w.equalsIgnoreCase(checkWorld));
     }

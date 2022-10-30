@@ -15,25 +15,14 @@ import com.songoda.core.hooks.HologramManager;
 import com.songoda.core.hooks.ProtectionManager;
 import com.songoda.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.songoda.epicfurnaces.boost.BoostData;
-import com.songoda.epicfurnaces.boost.BoostManager;
-import com.songoda.epicfurnaces.commands.CommandBoost;
-import com.songoda.epicfurnaces.commands.CommandGive;
-import com.songoda.epicfurnaces.commands.CommandReload;
-import com.songoda.epicfurnaces.commands.CommandRemote;
-import com.songoda.epicfurnaces.commands.CommandSettings;
+import com.songoda.epicfurnaces.commands.*;
 import com.songoda.epicfurnaces.compatibility.FabledSkyBlockLoader;
 import com.songoda.epicfurnaces.database.DataManager;
 import com.songoda.epicfurnaces.database.migrations._1_InitialMigration;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
-import com.songoda.epicfurnaces.furnace.FurnaceManager;
-import com.songoda.epicfurnaces.furnace.levels.LevelManager;
 import com.songoda.epicfurnaces.handlers.BlacklistHandler;
-import com.songoda.epicfurnaces.listeners.BlockListeners;
-import com.songoda.epicfurnaces.listeners.EntityListeners;
-import com.songoda.epicfurnaces.listeners.FurnaceListeners;
-import com.songoda.epicfurnaces.listeners.InteractListeners;
-import com.songoda.epicfurnaces.listeners.InventoryListeners;
+import com.songoda.epicfurnaces.listeners.*;
 import com.songoda.epicfurnaces.settings.Settings;
 import com.songoda.epicfurnaces.storage.Storage;
 import com.songoda.epicfurnaces.storage.StorageRow;
@@ -53,27 +42,16 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class EpicFurnaces extends SongodaPlugin {
+public final class EpicFurnaces extends SongodaPlugin implements EpicFurnaceInstances {
     private static EpicFurnaces INSTANCE;
 
     private final Config furnaceRecipeFile = new Config(this, "Furnace Recipes.yml");
     private final Config levelsFile = new Config(this, "levels.yml");
 
     private final GuiManager guiManager = new GuiManager(this);
-    private LevelManager levelManager;
-    private FurnaceManager furnaceManager;
-    private BoostManager boostManager;
     private CommandManager commandManager;
 
     private BlacklistHandler blacklistHandler;
@@ -128,29 +106,27 @@ public class EpicFurnaces extends SongodaPlugin {
         this.commandManager = new CommandManager(this);
         this.commandManager.addMainCommand("EpicFurnaces")
                 .addSubCommands(
-                        new CommandBoost(this),
-                        new CommandGive(this),
-                        new CommandReload(this),
-                        new CommandRemote(this),
-                        new CommandSettings(this, guiManager)
+                        new CommandBoost(),
+                        new CommandGive(),
+                        new CommandReload(),
+                        new CommandRemote(),
+                        new CommandSettings(guiManager)
                 );
 
         loadLevelManager();
 
-        this.furnaceManager = new FurnaceManager();
-        this.boostManager = new BoostManager();
         this.blacklistHandler = new BlacklistHandler();
 
         // Database stuff.
         try {
             if (Settings.MYSQL_ENABLED.getBoolean()) {
-                String hostname = Settings.MYSQL_HOSTNAME.getString();
-                int port = Settings.MYSQL_PORT.getInt();
-                String database = Settings.MYSQL_DATABASE.getString();
-                String username = Settings.MYSQL_USERNAME.getString();
-                String password = Settings.MYSQL_PASSWORD.getString();
-                boolean useSSL = Settings.MYSQL_USE_SSL.getBoolean();
-                int poolSize = Settings.MYSQL_POOL_SIZE.getInt();
+                final String hostname = Settings.MYSQL_HOSTNAME.getString();
+                final int port = Settings.MYSQL_PORT.getInt();
+                final String database = Settings.MYSQL_DATABASE.getString();
+                final String username = Settings.MYSQL_USERNAME.getString();
+                final String password = Settings.MYSQL_PASSWORD.getString();
+                final boolean useSSL = Settings.MYSQL_USE_SSL.getBoolean();
+                final int poolSize = Settings.MYSQL_POOL_SIZE.getInt();
 
                 this.databaseConnector = new MySQLConnector(this, hostname, port, database, username, password, useSSL, poolSize);
                 this.getLogger().info("Data handler connected using MySQL.");
@@ -211,7 +187,7 @@ public class EpicFurnaces extends SongodaPlugin {
                         }
 
                         furnaces.add(new FurnaceBuilder(location)
-                                .setLevel(levelManager.getLevel(row.get("level").asInt()))
+                                .setLevel(LEVEL_MANAGER.getLevel(row.get("level").asInt()))
                                 .setNickname(row.get("nickname").asString())
                                 .setUses(row.get("uses").asInt())
                                 .setToLevel(toLevel)
@@ -243,8 +219,8 @@ public class EpicFurnaces extends SongodaPlugin {
                 }
 
                 this.dataManager.getFurnaces((furnaces) -> {
-                    this.furnaceManager.addFurnaces(furnaces.values());
-                    this.dataManager.getBoosts((boosts) -> this.boostManager.addBoosts(boosts));
+                    FURNACE_MANAGER.addFurnaces(furnaces.values());
+                    this.dataManager.getBoosts(BOOST_MANAGER::addBoosts);
                 });
             });
         });
@@ -258,11 +234,11 @@ public class EpicFurnaces extends SongodaPlugin {
         // Register Listeners
         guiManager.init();
         PluginManager pluginManager = Bukkit.getPluginManager();
-        pluginManager.registerEvents(new BlockListeners(this), this);
-        pluginManager.registerEvents(new FurnaceListeners(this), this);
-        pluginManager.registerEvents(new InteractListeners(this, guiManager), this);
-        pluginManager.registerEvents(new InventoryListeners(this), this);
-        pluginManager.registerEvents(new EntityListeners(this), this);
+        pluginManager.registerEvents(new BlockListeners(), this);
+        pluginManager.registerEvents(new FurnaceListeners(), this);
+        pluginManager.registerEvents(new InteractListeners(guiManager), this);
+        pluginManager.registerEvents(new InventoryListeners(), this);
+        pluginManager.registerEvents(new EntityListeners(), this);
     }
 
     @Override
@@ -356,14 +332,12 @@ public class EpicFurnaces extends SongodaPlugin {
             this.saveResource("levels.yml", false);
         levelsFile.load();
 
-        // Load an plugin of LevelManager
-        levelManager = new LevelManager();
         /*
          * Register Levels into LevelManager from configuration.
          */
-        levelManager.clear();
+        LEVEL_MANAGER.clear();
         for (String levelName : levelsFile.getKeys(false)) {
-            int level = Integer.parseInt(levelName.split("-")[1]);
+            final int level = Integer.parseInt(levelName.split("-")[1]);
 
             ConfigurationSection levels = levelsFile.getConfigurationSection(levelName);
 
@@ -373,7 +347,7 @@ public class EpicFurnaces extends SongodaPlugin {
             String performanceStr = levels.getString("Performance");
             int performance = performanceStr == null ? 0 : Integer.parseInt(performanceStr.substring(0, performanceStr.length() - 1));
 
-            String reward = levels.getString("Reward");
+            final String reward = levels.getString("Reward");
 
             String fuelDurationStr = levels.getString("Fuel-duration");
             int fuelDuration = fuelDurationStr == null ? 0 : Integer.parseInt(fuelDurationStr.substring(0, fuelDurationStr.length() - 1));
@@ -389,12 +363,12 @@ public class EpicFurnaces extends SongodaPlugin {
                 }
             }
 
-            levelManager.addLevel(level, costExperiance, costEconomy, performance, reward, fuelDuration, overheat, fuelShare, materials);
+            LEVEL_MANAGER.addLevel(level, costExperiance, costEconomy, performance, reward, fuelDuration, overheat, fuelShare, materials);
         }
     }
 
     private void setupRecipies() {
-        File config = new File(getDataFolder(), "Furnace Recipes.yml");
+        final File config = new File(getDataFolder(), "Furnace Recipes.yml");
         if (!config.exists()) {
             saveResource("Furnace Recipes.yml", false);
         }
@@ -441,12 +415,7 @@ public class EpicFurnaces extends SongodaPlugin {
             return nbtItem.getInteger("level");
 
         // Legacy trash.
-        if (item.getItemMeta().getDisplayName().contains(":")) {
-            String[] arr = (item.getItemMeta().getDisplayName().replace("§", "")).split(":");
-            return Integer.parseInt(arr[0]);
-        } else {
-            return 1;
-        }
+        return getFurnaceValue(item, true);
     }
 
     public int getFurnaceUses(ItemStack item) {
@@ -456,11 +425,16 @@ public class EpicFurnaces extends SongodaPlugin {
             return nbtItem.getInteger("uses");
 
         // Legacy trash.
-        if (item.getItemMeta().getDisplayName().contains(":")) {
-            String[] arr = (item.getItemMeta().getDisplayName().replace("§", "")).split(":");
-            return Integer.parseInt(arr[1]);
+        return getFurnaceValue(item, false);
+    }
+
+    private int getFurnaceValue(ItemStack item, boolean isLevel) {
+        final ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta != null && itemMeta.getDisplayName().contains(":")) {
+            final String[] arr = (itemMeta.getDisplayName().replace("§", "")).split(":");
+            return Integer.parseInt(arr[isLevel ? 0 : 1]);
         } else {
-            return 0;
+            return isLevel ? 1 : 0;
         }
     }
 
@@ -472,20 +446,8 @@ public class EpicFurnaces extends SongodaPlugin {
         return commandManager;
     }
 
-    public BoostManager getBoostManager() {
-        return boostManager;
-    }
-
     public BlacklistHandler getBlacklistHandler() {
         return blacklistHandler;
-    }
-
-    public FurnaceManager getFurnaceManager() {
-        return furnaceManager;
-    }
-
-    public LevelManager getLevelManager() {
-        return levelManager;
     }
 
     public DatabaseConnector getDatabaseConnector() {

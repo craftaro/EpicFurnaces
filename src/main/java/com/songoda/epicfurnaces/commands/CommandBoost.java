@@ -1,6 +1,7 @@
 package com.songoda.epicfurnaces.commands;
 
 import com.songoda.core.commands.AbstractCommand;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.utils.Methods;
@@ -12,17 +13,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CommandBoost extends AbstractCommand {
+public final class CommandBoost extends AbstractCommand implements EpicFurnaceInstances {
 
-    private final EpicFurnaces instance;
-
-    public CommandBoost(EpicFurnaces instance) {
+    public CommandBoost() {
         super(CommandType.CONSOLE_OK, "boost");
-        this.instance = instance;
     }
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
+        final EpicFurnaces instance = getPlugin();
         if (args.length < 2) {
             instance.getLocale().newMessage("&7Syntax error...").sendPrefixedMessage(sender);
             return ReturnType.SYNTAX_ERROR;
@@ -33,24 +32,22 @@ public class CommandBoost extends AbstractCommand {
         }
 
         long duration = 0L;
-
         if (args.length > 2) {
             for (int i = 0; i < args.length; i++) {
                 String line = args[i];
                 long time = Methods.parseTime(line);
                 duration += time;
-
             }
         }
 
-        Player player = Bukkit.getPlayer(args[0]);
+        final Player player = Bukkit.getPlayer(args[0]);
         if (player == null) {
             instance.getLocale().newMessage("&cThat player does not exist or is not online...").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
 
-        BoostData boostData = new BoostData(Integer.parseInt(args[1]), duration == 0L ? Long.MAX_VALUE : System.currentTimeMillis() + duration, player.getUniqueId());
-        instance.getBoostManager().addBoostToPlayer(boostData);
+        final BoostData boostData = new BoostData(Integer.parseInt(args[1]), duration == 0L ? Long.MAX_VALUE : System.currentTimeMillis() + duration, player.getUniqueId());
+        BOOST_MANAGER.addBoostToPlayer(boostData);
         instance.getDataManager().createBoost(boostData);
         instance.getLocale().newMessage("&7Successfully boosted &6" + Bukkit.getPlayer(args[0]).getName()
                 + "'s &7furnace reward amounts &6" + args[1] + "x" + (duration == 0L ? "" : (" for " + Methods.makeReadable(duration))) + "&7.").sendPrefixedMessage(sender);

@@ -6,7 +6,7 @@ import org.bukkit.Location;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StorageItem {
+public final class StorageItem {
 
     private final Object object;
     private String key = null;
@@ -44,8 +44,7 @@ public class StorageItem {
     }
 
     public String asString() {
-        if (object == null) return null;
-        return (String) object;
+        return object == null ? null : (String) object;
     }
 
     public boolean asBoolean() {
@@ -55,8 +54,7 @@ public class StorageItem {
     }
 
     public int asInt() {
-        if (object == null) return 0;
-        return (int) object;
+        return object == null ? 0 : (int) object;
     }
 
     public Object asObject() {

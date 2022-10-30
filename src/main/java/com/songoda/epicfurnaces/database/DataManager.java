@@ -3,7 +3,7 @@ package com.songoda.epicfurnaces.database;
 import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.database.DataManagerAbstract;
 import com.songoda.core.database.DatabaseConnector;
-import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
@@ -16,18 +16,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
-public class DataManager extends DataManagerAbstract {
+public final class DataManager extends DataManagerAbstract implements EpicFurnaceInstances {
     private final Set<Furnace> furnaceUpdateQueue = new HashSet<>();
 
     public DataManager(DatabaseConnector connector, Plugin plugin) {
@@ -131,10 +123,11 @@ public class DataManager extends DataManagerAbstract {
                     statement.setString(4,
                             furnace.getPlacedBy() == null ? null : furnace.getPlacedBy().toString());
 
-                    statement.setString(5, furnace.getLocation().getWorld().getName());
-                    statement.setInt(6, furnace.getLocation().getBlockX());
-                    statement.setInt(7, furnace.getLocation().getBlockY());
-                    statement.setInt(8, furnace.getLocation().getBlockZ());
+                    final Location location = furnace.getLocation();
+                    statement.setString(5, location.getWorld().getName());
+                    statement.setInt(6, location.getBlockX());
+                    statement.setInt(7, location.getBlockY());
+                    statement.setInt(8, location.getBlockZ());
 
                     statement.executeUpdate();
                 }
@@ -325,7 +318,7 @@ public class DataManager extends DataManagerAbstract {
 
                         Furnace furnace = new FurnaceBuilder(location)
                                 .setId(id)
-                                .setLevel(EpicFurnaces.getInstance().getLevelManager().getLevel(level))
+                                .setLevel(LEVEL_MANAGER.getLevel(level))
                                 .setUses(uses)
                                 .setPlacedBy(placedBy)
                                 .setNickname(nickname)

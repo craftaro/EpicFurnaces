@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
-public class LevelManager {
+public final class LevelManager {
 
     private final NavigableMap<Integer, Level> registeredLevels = new TreeMap<>();
 

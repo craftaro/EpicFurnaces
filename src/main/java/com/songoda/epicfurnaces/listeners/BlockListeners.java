@@ -1,7 +1,7 @@
 package com.songoda.epicfurnaces.listeners;
 
-import com.songoda.core.hooks.HologramManager;
 import com.songoda.core.utils.PlayerUtils;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.FurnaceBuilder;
@@ -10,6 +10,7 @@ import com.songoda.epicfurnaces.utils.GameArea;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -18,33 +19,30 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFormEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by songoda on 2/26/2017.
  */
-public class BlockListeners implements Listener {
-
-    private final EpicFurnaces plugin;
-
-    public BlockListeners(EpicFurnaces plugin) {
-        this.plugin = plugin;
-    }
+public final class BlockListeners implements Listener, EpicFurnaceInstances {
 
     @EventHandler
     public void onSnowLand(BlockFormEvent event) {
-        Material material = event.getNewState().getType();
+        final BlockState newState = event.getNewState();
+        final Material material = newState.getType();
 
         if (material != Material.SNOW && material != Material.ICE) return;
 
-        for (Furnace furnace : plugin.getFurnaceManager().getFurnaces(GameArea.of(event.getBlock().getLocation()))) {
-            List<Location> radius = furnace.getRadius(false);
+        for (Furnace furnace : FURNACE_MANAGER.getFurnaces(GameArea.of(event.getBlock().getLocation()))) {
+            final List<Location> radius = furnace.getRadius(false);
             if (radius == null || ((org.bukkit.block.Furnace) furnace.getLocation().getBlock().getState()).getBurnTime() == 0)
                 continue;
             for (Location location : radius) {
-                if (location.getX() != event.getNewState().getX() || location.getY() != event.getNewState().getY() || location.getZ() != event.getNewState().getZ())
+                if (location.getX() != newState.getX() || location.getY() != newState.getY() || location.getZ() != newState.getZ())
                     continue;
                 event.setCancelled(true);
                 return;
@@ -54,25 +52,26 @@ public class BlockListeners implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockPlace(BlockPlaceEvent event) {
-
-        if (plugin.getBlacklistHandler().isBlacklisted(event.getPlayer().getWorld())
+        final Player player = event.getPlayer();
+        final EpicFurnaces plugin = getPlugin();
+        if (plugin.getBlacklistHandler().isBlacklisted(player.getWorld())
                 || !event.getBlock().getType().name().contains("FURNACE") && !event.getBlock().getType().name().contains("SMOKER"))
             return;
 
-        ItemStack item = event.getItemInHand();
-        Player player = event.getPlayer();
+        final ItemStack item = event.getItemInHand();
 
         if (!plugin.isLeveledFurnace(item) && Settings.ALLOW_NORMAL_FURNACES.getBoolean()) {
             return;
         }
-
+        
+        final UUID playerUUID = player.getUniqueId();
         if (Settings.USE_LIMIT_PERMISSION.getBoolean()) {
             int amount = 0;
-            for (Furnace furnace : plugin.getFurnaceManager().getFurnaces().values()) {
-                if (furnace.getPlacedBy() == null || !furnace.getPlacedBy().equals(player.getUniqueId())) continue;
+            for (Furnace furnace : FURNACE_MANAGER.getFurnaces().values()) {
+                if (furnace.getPlacedBy() == null || !furnace.getPlacedBy().equals(playerUUID)) continue;
                 amount++;
             }
-            int limit = PlayerUtils.getNumberFromPermission(player, "epicfurnaces.limit", -1);
+            final int limit = PlayerUtils.getNumberFromPermission(player, "epicfurnaces.limit", -1);
 
             if (limit != -1 && amount >= limit) {
                 event.setCancelled(true);
@@ -81,55 +80,58 @@ public class BlockListeners implements Listener {
                 return;
             }
         }
-
-        Location location = event.getBlock().getLocation();
-
-        Furnace furnace = event.getItemInHand().getItemMeta().hasDisplayName() && plugin.getFurnaceLevel(item) != 1
+        final Location location = event.getBlock().getLocation();
+        final ItemMeta itemMeta = event.getItemInHand().getItemMeta();
+        final Furnace furnace = itemMeta != null && itemMeta.hasDisplayName() && plugin.getFurnaceLevel(item) != 1
                 ? new FurnaceBuilder(location)
-                .setLevel(plugin.getLevelManager().getLevel(plugin.getFurnaceLevel(item)))
+                .setLevel(LEVEL_MANAGER.getLevel(plugin.getFurnaceLevel(item)))
                 .setUses(plugin.getFurnaceUses(item))
-                .setPlacedBy(event.getPlayer().getUniqueId()).build()
-                : new FurnaceBuilder(location).setPlacedBy(event.getPlayer().getUniqueId()).build();
+                .setPlacedBy(playerUUID).build()
+                : new FurnaceBuilder(location).setPlacedBy(playerUUID).build();
 
         plugin.getDataManager().createFurnace(furnace);
-        plugin.getFurnaceManager().addFurnace(furnace);
+        FURNACE_MANAGER.addFurnace(furnace);
 
         plugin.updateHolograms(Collections.singleton(furnace));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBlockBreak(BlockBreakEvent event) {
-        if (!event.getPlayer().hasPermission("EpicFurnaces.overview") && !event.getPlayer().hasPermission("epicfurnaces.*")) {
+        final Player player = event.getPlayer();
+        if (!player.hasPermission("EpicFurnaces.overview") && !player.hasPermission("epicfurnaces.*")) {
             return;
         }
-        Block block = event.getBlock();
-        if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")
-                || plugin.getBlacklistHandler().isBlacklisted(event.getPlayer().getWorld()))
+        final Block block = event.getBlock();
+        final Material blockType = block.getType();
+        final String blockTypeName = blockType.name();
+        final EpicFurnaces plugin = getPlugin();
+        if (!blockTypeName.contains("FURNACE") && !blockTypeName.contains("SMOKER")
+                || plugin.getBlacklistHandler().isBlacklisted(player.getWorld()))
             return;
-
-        Furnace furnace = plugin.getFurnaceManager().getFurnace(block);
+        
+        final Furnace furnace = FURNACE_MANAGER.getFurnace(block);
 
         if (furnace == null) {
             return;
         }
 
-        int level = plugin.getFurnaceManager().getFurnace(block).getLevel().getLevel();
+        final int level = FURNACE_MANAGER.getFurnace(block).getLevel().getLevel();
 
         plugin.clearHologram(furnace);
-
+        final Location location = block.getLocation();
         if (level != 0) {
             event.setCancelled(true);
 
-            ItemStack item = plugin.createLeveledFurnace(block.getType().name().contains("BURNING") ? Material.FURNACE
-                    : block.getType(), level, furnace.getUses());
+            ItemStack item = plugin.createLeveledFurnace(blockTypeName.contains("BURNING") ? Material.FURNACE
+                    : blockType, level, furnace.getUses());
 
             // By cancelling the event we destroy any chance of items dropping form the furnace. This fixes the problem.
             //furnace.dropItems(); No need to drop items. dropItemNaturally() will drop the items inside the furnance
 
-            event.getBlock().setType(Material.AIR);
-            event.getBlock().getLocation().getWorld().dropItemNaturally(event.getBlock().getLocation(), item);
+            block.setType(Material.AIR);
+            location.getWorld().dropItemNaturally(location, item);
         }
-        plugin.getFurnaceManager().removeFurnace(block.getLocation());
+        FURNACE_MANAGER.removeFurnace(location);
         plugin.getDataManager().deleteFurnace(furnace);
     }
 }
