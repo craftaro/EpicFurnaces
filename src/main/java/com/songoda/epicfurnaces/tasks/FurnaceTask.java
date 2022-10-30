@@ -6,6 +6,7 @@ import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.settings.Settings;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
@@ -72,13 +73,13 @@ public class FurnaceTask extends BukkitRunnable {
 
             if (random != 1) continue;
 
-            Block block = location.getBlock();
+            final Block block = location.getBlock();
+            final Material material = block.getType();
+            if (material == Material.AIR || block.getRelative(BlockFace.UP).getType() != Material.AIR) continue;
 
-            if (block.getType() == Material.AIR || block.getRelative(BlockFace.UP).getType() != Material.AIR) continue;
-
-            if (block.getType() == Material.SNOW)
+            if (material == Material.SNOW)
                 block.setType(Material.AIR);
-            else if (block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE)
+            else if (material == Material.ICE || material == Material.PACKED_ICE)
                 block.setType(Material.WATER);
             else
                 continue;
@@ -126,18 +127,19 @@ public class FurnaceTask extends BukkitRunnable {
     }
 
     private void cache(Furnace furnace, boolean overheat) {
-        Block block = furnace.getLocation().getBlock();
-        int radius = 3 * (overheat ? furnace.getLevel().getOverheat() : furnace.getLevel().getFuelShare());
-        int rSquared = radius * radius;
-        int bx = block.getX();
-        int by = block.getY();
-        int bz = block.getZ();
+        final Block block = furnace.getLocation().getBlock();
+        final World blockWorld = block.getWorld();
+        final int radius = 3 * (overheat ? furnace.getLevel().getOverheat() : furnace.getLevel().getFuelShare());
+        final int rSquared = radius * radius;
+        final int bx = block.getX();
+        final int by = block.getY();
+        final int bz = block.getZ();
 
         for (int fx = -radius; fx <= radius; fx++) {
             for (int fy = -2; fy <= 1; fy++) {
                 for (int fz = -radius; fz <= radius; fz++) {
                     if ((fx * fx) + (fz * fz) <= rSquared) {
-                        Location location = new Location(block.getWorld(), bx + fx, by + fy, bz + fz);
+                        Location location = new Location(blockWorld, bx + fx, by + fy, bz + fz);
                         furnace.addToRadius(location, overheat);
                     }
                 }

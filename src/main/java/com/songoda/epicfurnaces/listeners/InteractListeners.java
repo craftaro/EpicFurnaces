@@ -16,7 +16,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 /**
  * Created by songoda on 2/26/2017.
  */
-public class InteractListeners implements Listener {
+public final class InteractListeners implements Listener {
 
     private final EpicFurnaces plugin;
     private final GuiManager guiManager;
@@ -29,12 +29,10 @@ public class InteractListeners implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onClick(PlayerInteractEvent event) {
         final Block block = event.getClickedBlock();
-        if (block == null) return;
-
-        if (plugin.getBlacklistHandler().isBlacklisted(block.getWorld())) {
+        if (block == null || plugin.getBlacklistHandler().isBlacklisted(block.getWorld())) {
             return;
         }
-        Player player = event.getPlayer();
+        final Player player = event.getPlayer();
         if (event.getAction() != Action.LEFT_CLICK_BLOCK
                 || !block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")
                 || player.isSneaking()
@@ -44,17 +42,14 @@ public class InteractListeners implements Listener {
         }
     
         if (Bukkit.getPluginManager().isPluginEnabled("FabledSkyBlock")) {
-            SkyBlock skyBlock = SkyBlock.getInstance();
-        
-            if (skyBlock.getWorldManager().isIslandWorld(event.getPlayer().getWorld()))
-                if (!skyBlock.getPermissionManager().hasPermission(event.getPlayer(),
-                        skyBlock.getIslandManager().getIslandAtLocation(event.getClickedBlock().getLocation()),
-                        "EpicFurnaces"))
+            final SkyBlock skyBlock = SkyBlock.getInstance();
+            if (skyBlock.getWorldManager().isIslandWorld(player.getWorld())
+                    && !skyBlock.getPermissionManager().hasPermission(player, skyBlock.getIslandManager().getIslandAtLocation(event.getClickedBlock().getLocation()), "EpicFurnaces"))
                     return;
         }
     
 
-        Furnace furnace = plugin.getFurnaceManager().getFurnace(block.getLocation());
+        final Furnace furnace = plugin.getFurnaceManager().getFurnace(block.getLocation());
         if (furnace == null) {
             return;
         }

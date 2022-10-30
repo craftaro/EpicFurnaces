@@ -187,17 +187,18 @@ public class Furnace {
         if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_12)) return;
 
         player.getWorld().spawnParticle(org.bukkit.Particle.valueOf(plugin.getConfig().getString("Main.Upgrade Particle Type")), loc, 200, .5, .5, .5);
-
+        
+        final Location playerLocation = player.getLocation();
         if (plugin.getLevelManager().getHighestLevel() != level) {
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
+            player.playSound(playerLocation, Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
         } else {
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 25.0F);
+            player.playSound(playerLocation, Sound.ENTITY_PLAYER_LEVELUP, 2F, 25.0F);
 
             if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) return;
 
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 2F, 25.0F);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.2F, 35.0F), 5L);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.8F, 35.0F), 10L);
+            player.playSound(playerLocation, Sound.BLOCK_NOTE_BLOCK_CHIME, 2F, 25.0F);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.playSound(playerLocation, Sound.BLOCK_NOTE_BLOCK_CHIME, 1.2F, 35.0F), 5L);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.playSound(playerLocation, Sound.BLOCK_NOTE_BLOCK_CHIME, 1.8F, 35.0F), 10L);
         }
     }
 

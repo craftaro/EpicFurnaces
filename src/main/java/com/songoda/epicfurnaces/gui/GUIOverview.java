@@ -4,6 +4,7 @@ import com.songoda.core.compatibility.CompatibleMaterial;
 import com.songoda.core.gui.CustomizableGui;
 import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.input.ChatPrompt;
+import com.songoda.core.locale.Locale;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.Furnace;
@@ -46,9 +47,9 @@ public class GUIOverview extends CustomizableGui {
     }
 
     private void constructGUI() {
-        ItemStack glass1 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial());
-        ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial());
-        ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial());
+        final ItemStack glass1 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_1.getMaterial());
+        final ItemStack glass2 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_2.getMaterial());
+        final ItemStack glass3 = GuiUtils.getBorderItem(Settings.GLASS_TYPE_3.getMaterial());
 
         setDefaultItem(glass1);
 
@@ -87,43 +88,44 @@ public class GUIOverview extends CustomizableGui {
         }
 
         int current = 0;
-
+        
+        final Locale locale = plugin.getLocale();
         if (level.getPerformance() != 0) {
             setItem("performance",  infoIconOrder[num][current++], GuiUtils.createButtonItem(
                     Settings.PERFORMANCE_ICON.getMaterial(CompatibleMaterial.REDSTONE),
-                    plugin.getLocale().getMessage("interface.furnace.performancetitle").getMessage(),
-                    plugin.getLocale().getMessage("interface.furnace.performanceinfo")
+                    locale.getMessage("interface.furnace.performancetitle").getMessage(),
+                    locale.getMessage("interface.furnace.performanceinfo")
                             .processPlaceholder("amount", level.getPerformance()).getMessage().split("\\|")));
         }
         if (level.getReward() != null) {
             setItem("reward", infoIconOrder[num][current++], GuiUtils.createButtonItem(
                     Settings.REWARD_ICON.getMaterial(CompatibleMaterial.GOLDEN_APPLE),
-                    plugin.getLocale().getMessage("interface.furnace.rewardtitle").getMessage(),
-                    plugin.getLocale().getMessage("interface.furnace.rewardinfo")
+                    locale.getMessage("interface.furnace.rewardtitle").getMessage(),
+                    locale.getMessage("interface.furnace.rewardinfo")
                             .processPlaceholder("amount", level.getReward().split(":")[0].replace("%", ""))
                             .getMessage().split("\\|")));
         }
         if (level.getFuelDuration() != 0) {
             setItem("fuel", infoIconOrder[num][current++], GuiUtils.createButtonItem(
                     Settings.FUEL_DURATION_ICON.getMaterial(CompatibleMaterial.COAL),
-                    plugin.getLocale().getMessage("interface.furnace.fueldurationtitle").getMessage(),
-                    plugin.getLocale().getMessage("interface.furnace.fueldurationinfo")
+                    locale.getMessage("interface.furnace.fueldurationtitle").getMessage(),
+                    locale.getMessage("interface.furnace.fueldurationinfo")
                             .processPlaceholder("amount", level.getFuelDuration())
                             .getMessage().split("\\|")));
         }
         if (level.getFuelShare() != 0) {
             setItem("fuel_share", infoIconOrder[num][current++], GuiUtils.createButtonItem(
                     Settings.FUEL_SHARE_ICON.getMaterial(CompatibleMaterial.COAL_BLOCK),
-                    plugin.getLocale().getMessage("interface.furnace.fuelsharetitle").getMessage(),
-                    plugin.getLocale().getMessage("interface.furnace.fuelshareinfo")
+                    locale.getMessage("interface.furnace.fuelsharetitle").getMessage(),
+                    locale.getMessage("interface.furnace.fuelshareinfo")
                             .processPlaceholder("amount", level.getOverheat() * 3)
                             .getMessage().split("\\|")));
         }
         if (level.getOverheat() != 0) {
             setItem("overheat", infoIconOrder[num][current++], GuiUtils.createButtonItem(
                     Settings.OVERHEAT_ICON.getMaterial(CompatibleMaterial.FIRE_CHARGE),
-                    plugin.getLocale().getMessage("interface.furnace.overheattitle").getMessage(),
-                    plugin.getLocale().getMessage("interface.furnace.overheatinfo")
+                    locale.getMessage("interface.furnace.overheattitle").getMessage(),
+                    locale.getMessage("interface.furnace.overheatinfo")
                             .processPlaceholder("amount", level.getOverheat() * 3)
                             .getMessage().split("\\|")));
         }
@@ -132,10 +134,10 @@ public class GUIOverview extends CustomizableGui {
         if (Settings.REMOTE.getBoolean() && player.hasPermission("EpicFurnaces.Remote")) {
             setButton("remote", 4, GuiUtils.createButtonItem(
                     CompatibleMaterial.TRIPWIRE_HOOK,
-                    plugin.getLocale().getMessage("interface.furnace.remotefurnace").getMessage(),
+                    locale.getMessage("interface.furnace.remotefurnace").getMessage(),
                     getFurnaceRemoteLore(furnace)),
                     ClickType.LEFT, (event) -> {
-                        ChatPrompt.showPrompt(plugin, event.player, plugin.getLocale().getMessage("event.remote.enter").getMessage(),
+                        ChatPrompt.showPrompt(plugin, event.player, locale.getMessage("event.remote.enter").getMessage(),
                                 promptEvent -> {
                                     for (Furnace other : plugin.getFurnaceManager().getFurnaces().values()) {
                                         if (other.getNickname() == null) {
@@ -143,14 +145,14 @@ public class GUIOverview extends CustomizableGui {
                                         }
 
                                         if (other.getNickname().equalsIgnoreCase(promptEvent.getMessage())) {
-                                            plugin.getLocale().getMessage("event.remote.nicknameinuse").sendPrefixedMessage(player);
+                                            locale.getMessage("event.remote.nicknameinuse").sendPrefixedMessage(player);
                                             return;
                                         }
                                     }
 
                                     plugin.getDataManager().queueFurnaceForUpdate(furnace);
                                     furnace.setNickname(promptEvent.getMessage());
-                                    plugin.getLocale().getMessage("event.remote.nicknamesuccess").sendPrefixedMessage(player);
+                                    locale.getMessage("event.remote.nicknamesuccess").sendPrefixedMessage(player);
                                 }).setOnClose(() -> guiManager.showGUI(player, new GUIOverview(plugin, furnace, player)));
 
                     }).setAction(4, ClickType.RIGHT, (event) -> {
@@ -163,11 +165,11 @@ public class GUIOverview extends CustomizableGui {
                 && player.hasPermission("EpicFurnaces.Upgrade.XP")) {
             setButton("upgrade_xp", 1, 2, GuiUtils.createButtonItem(
                     Settings.XP_ICON.getMaterial(CompatibleMaterial.EXPERIENCE_BOTTLE),
-                    plugin.getLocale().getMessage("interface.furnace.upgradewithxp").getMessage(),
+                    locale.getMessage("interface.furnace.upgradewithxp").getMessage(),
                     nextLevel != null
-                            ? plugin.getLocale().getMessage("interface.furnace.upgradewithxplore")
+                            ? locale.getMessage("interface.furnace.upgradewithxplore")
                             .processPlaceholder("cost", nextLevel.getCostExperience()).getMessage()
-                            : plugin.getLocale().getMessage("interface.furnace.alreadymaxed").getMessage()),
+                            : locale.getMessage("interface.furnace.alreadymaxed").getMessage()),
                     (event) -> {
                         furnace.upgrade(player, CostType.EXPERIENCE);
                         furnace.overview(guiManager, player);
@@ -178,11 +180,11 @@ public class GUIOverview extends CustomizableGui {
                 && player.hasPermission("EpicFurnaces.Upgrade.ECO")) {
             setButton("upgrade_economy", 1, 6, GuiUtils.createButtonItem(
                     Settings.ECO_ICON.getMaterial(CompatibleMaterial.SUNFLOWER),
-                    plugin.getLocale().getMessage("interface.furnace.upgradewitheconomy").getMessage(),
+                    locale.getMessage("interface.furnace.upgradewitheconomy").getMessage(),
                     nextLevel != null
-                            ? plugin.getLocale().getMessage("interface.furnace.upgradewitheconomylore")
+                            ? locale.getMessage("interface.furnace.upgradewitheconomylore")
                             .processPlaceholder("cost", Methods.formatEconomy(nextLevel.getCostEconomy())).getMessage()
-                            : plugin.getLocale().getMessage("interface.furnace.alreadymaxed").getMessage()),
+                            : locale.getMessage("interface.furnace.alreadymaxed").getMessage()),
                     (event) -> {
                         furnace.upgrade(player, CostType.ECONOMY);
                         furnace.overview(guiManager, player);
@@ -197,23 +199,24 @@ public class GUIOverview extends CustomizableGui {
         }, 5L, 5L);
     }
 
-    List<String> getFurnaceDescription(Furnace furnace, Level level, Level nextLevel) {
-        ArrayList<String> lore = new ArrayList<>();
-        lore.add(plugin.getLocale().getMessage("interface.furnace.smeltedx")
+    private List<String> getFurnaceDescription(Furnace furnace, Level level, Level nextLevel) {
+        final Locale locale = plugin.getLocale();
+        final ArrayList<String> lore = new ArrayList<>();
+        lore.add(locale.getMessage("interface.furnace.smeltedx")
                 .processPlaceholder("amount", furnace.getUses()).getMessage());
         lore.addAll(level.getDescription());
         lore.add("");
         if (nextLevel == null) {
-            lore.add(plugin.getLocale().getMessage("interface.furnace.alreadymaxed").getMessage());
+            lore.add(locale.getMessage("interface.furnace.alreadymaxed").getMessage());
         } else {
-            lore.add(plugin.getLocale().getMessage("interface.furnace.level")
+            lore.add(locale.getMessage("interface.furnace.level")
                     .processPlaceholder("level", nextLevel.getLevel()).getMessage());
             lore.addAll(nextLevel.getDescription());
 
             if (Settings.UPGRADE_BY_SMELTING.getBoolean()) {
-                lore.add(plugin.getLocale().getMessage("interface.furnace.itemsneeded").getMessage());
+                lore.add(locale.getMessage("interface.furnace.itemsneeded").getMessage());
                 for (Map.Entry<CompatibleMaterial, Integer> entry : level.getMaterials().entrySet())
-                    lore.add(plugin.getLocale().getMessage("interface.furnace.neededitem")
+                    lore.add(locale.getMessage("interface.furnace.neededitem")
                             .processPlaceholder("amount", entry.getValue() - furnace.getToLevel(entry.getKey()))
                             .processPlaceholder("type", Methods.cleanString(entry.getKey().name()))
                             .getMessage());
@@ -222,7 +225,7 @@ public class GUIOverview extends CustomizableGui {
 
         BoostData boostData = plugin.getBoostManager().getBoost(furnace.getPlacedBy());
         if (boostData != null) {
-            lore.addAll(Arrays.asList(plugin.getLocale().getMessage("interface.button.boostedstats")
+            lore.addAll(Arrays.asList(locale.getMessage("interface.button.boostedstats")
                     .processPlaceholder("amount", Integer.toString(boostData.getMultiplier()))
                     .processPlaceholder("time", Methods.makeReadable(boostData.getEndTime() - System.currentTimeMillis()))
                     .getMessage().split("\\|")));
@@ -230,20 +233,21 @@ public class GUIOverview extends CustomizableGui {
         return lore;
     }
 
-    List<String> getFurnaceRemoteLore(Furnace furnace) {
-        String nickname = furnace.getNickname();
-        ArrayList<String> lorehook = new ArrayList<>(Arrays.asList(plugin.getLocale().getMessage("interface.furnace.remotefurnacelore")
+    private List<String> getFurnaceRemoteLore(Furnace furnace) {
+        final String nickname = furnace.getNickname();
+        final Locale locale = plugin.getLocale();
+        final ArrayList<String> lorehook = new ArrayList<>(Arrays.asList(locale.getMessage("interface.furnace.remotefurnacelore")
                 .processPlaceholder("nickname", nickname == null ? "Unset" : nickname).getMessage().split("\\|")));
 
         if (nickname != null) {
-            lorehook.addAll(Arrays.asList(plugin.getLocale().getMessage("interface.furnace.utilize")
+            lorehook.addAll(Arrays.asList(locale.getMessage("interface.furnace.utilize")
                     .processPlaceholder("nickname", nickname).getMessage().split("\\|")));
         }
 
         lorehook.add("");
-        lorehook.add(plugin.getLocale().getMessage("interface.furnace.remotelist").getMessage());
+        lorehook.add(locale.getMessage("interface.furnace.remotelist").getMessage());
         for (UUID uuid : furnace.getAccessList()) {
-            OfflinePlayer remotePlayer = Bukkit.getOfflinePlayer(uuid);
+            final OfflinePlayer remotePlayer = Bukkit.getOfflinePlayer(uuid);
             lorehook.add(Methods.formatText("&6" + remotePlayer.getName()));
         }
         return lorehook;

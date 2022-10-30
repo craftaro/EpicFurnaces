@@ -33,23 +33,21 @@ public class CommandBoost extends AbstractCommand {
         }
 
         long duration = 0L;
-
         if (args.length > 2) {
             for (int i = 0; i < args.length; i++) {
                 String line = args[i];
                 long time = Methods.parseTime(line);
                 duration += time;
-
             }
         }
 
-        Player player = Bukkit.getPlayer(args[0]);
+        final Player player = Bukkit.getPlayer(args[0]);
         if (player == null) {
             instance.getLocale().newMessage("&cThat player does not exist or is not online...").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
 
-        BoostData boostData = new BoostData(Integer.parseInt(args[1]), duration == 0L ? Long.MAX_VALUE : System.currentTimeMillis() + duration, player.getUniqueId());
+        final BoostData boostData = new BoostData(Integer.parseInt(args[1]), duration == 0L ? Long.MAX_VALUE : System.currentTimeMillis() + duration, player.getUniqueId());
         instance.getBoostManager().addBoostToPlayer(boostData);
         instance.getDataManager().createBoost(boostData);
         instance.getLocale().newMessage("&7Successfully boosted &6" + Bukkit.getPlayer(args[0]).getName()

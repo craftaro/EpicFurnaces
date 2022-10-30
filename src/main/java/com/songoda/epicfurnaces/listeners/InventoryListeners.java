@@ -9,12 +9,13 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 /**
  * Created by songoda on 2/26/2017.
  */
-public class InventoryListeners implements Listener {
+public final class InventoryListeners implements Listener {
 
     private final EpicFurnaces plugin;
 
@@ -24,29 +25,27 @@ public class InventoryListeners implements Listener {
 
     @EventHandler
     public void onInventoryMove(InventoryMoveItemEvent event) {
-        if (!event.getDestination().getType().equals(InventoryType.FURNACE)
-                || event.getDestination().getItem(0) == null
-                || event.getDestination().getItem(0).getType() != event.getItem().getType()
-                || event.getDestination().getItem(0).getAmount() != 1) {
+        final Inventory destination = event.getDestination();
+        if (!destination.getType().equals(InventoryType.FURNACE)
+                || destination.getItem(0) == null
+                || destination.getItem(0).getType() != event.getItem().getType()
+                || destination.getItem(0).getAmount() != 1) {
             return;
         }
         Furnace furnace = plugin.getFurnaceManager().getFurnace(((org.bukkit.block.Furnace)
-                event.getDestination().getHolder()).getLocation());
+                destination.getHolder()).getLocation());
         if (furnace != null)
             furnace.updateCook();
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getSlot() != 64537) {
-            if (event.getInventory().getType() == InventoryType.ANVIL) {
-                if (event.getAction() != InventoryAction.NOTHING) {
-                    if (event.getCurrentItem().getType() != Material.AIR) {
-                        ItemStack item = event.getCurrentItem();
-                        if (item.getType().name().contains("FURNACE") && !item.getType().name().contains("SMOKER")) {
-                            event.setCancelled(true);
-                        }
-                    }
+        if (event.getSlot() != 64537 && event.getInventory().getType() == InventoryType.ANVIL && event.getAction() != InventoryAction.NOTHING) {
+            final ItemStack item = event.getCurrentItem();
+            if (item != null) {
+                final Material material = item.getType();
+                if (material != Material.AIR && material.name().contains("FURNACE") && !material.name().contains("SMOKER")) {
+                    event.setCancelled(true);
                 }
             }
         }
