@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by songoda on 2/25/2017.
  */
-public class Methods {
+public final class Methods {
 
     public static String cleanString(String typ) {
         String type = typ.replaceAll("_", " ");

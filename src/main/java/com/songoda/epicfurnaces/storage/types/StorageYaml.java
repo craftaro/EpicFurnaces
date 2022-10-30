@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StorageYaml extends Storage {
+public final class StorageYaml extends Storage {
 
     private final Map<String, Object> toSave = new HashMap<>();
     private Map<String, Object> lastSave = null;
@@ -64,7 +64,7 @@ public class StorageYaml extends Storage {
 
     @Override
     public void doSave() {
-        this.updateData(plugin);
+        this.updateData();
 
         if (lastSave == null)
             lastSave = new HashMap<>(toSave);
@@ -84,14 +84,15 @@ public class StorageYaml extends Storage {
     public void save() {
         try {
             for (Map.Entry<String, Object> entry : lastSave.entrySet()) {
-                if (toSave.containsKey(entry.getKey())) {
-                    Object newValue = toSave.get(entry.getKey());
+                final String key = entry.getKey();
+                if (toSave.containsKey(key)) {
+                    Object newValue = toSave.get(key);
                     if (!entry.getValue().equals(newValue)) {
-                        dataFile.set(entry.getKey(), newValue);
+                        dataFile.set(key, newValue);
                     }
-                    toSave.remove(entry.getKey());
+                    toSave.remove(key);
                 } else {
-                    dataFile.set(entry.getKey(), null);
+                    dataFile.set(key, null);
                 }
             }
 

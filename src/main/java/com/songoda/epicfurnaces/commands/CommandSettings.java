@@ -3,26 +3,23 @@ package com.songoda.epicfurnaces.commands;
 import com.songoda.core.commands.AbstractCommand;
 import com.songoda.core.configuration.editor.PluginConfigGui;
 import com.songoda.core.gui.GuiManager;
-import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public class CommandSettings extends AbstractCommand {
-
-    private final EpicFurnaces plugin;
+public final class CommandSettings extends AbstractCommand implements EpicFurnaceInstances {
     private final GuiManager guiManager;
 
-    public CommandSettings(EpicFurnaces plugin, GuiManager guiManager) {
+    public CommandSettings(GuiManager guiManager) {
         super(CommandType.CONSOLE_OK, "settings");
-        this.plugin = plugin;
         this.guiManager = guiManager;
     }
 
     @Override
     protected ReturnType runCommand(CommandSender sender, String... args) {
-        guiManager.showGUI((Player) sender, new PluginConfigGui(plugin));
+        guiManager.showGUI((Player) sender, new PluginConfigGui(getPlugin()));
         return ReturnType.SUCCESS;
     }
 

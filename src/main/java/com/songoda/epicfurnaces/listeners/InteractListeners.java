@@ -1,7 +1,7 @@
 package com.songoda.epicfurnaces.listeners;
 
 import com.songoda.core.gui.GuiManager;
-import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.skyblock.SkyBlock;
 import org.bukkit.Bukkit;
@@ -16,20 +16,18 @@ import org.bukkit.event.player.PlayerInteractEvent;
 /**
  * Created by songoda on 2/26/2017.
  */
-public final class InteractListeners implements Listener {
+public final class InteractListeners implements Listener, EpicFurnaceInstances {
 
-    private final EpicFurnaces plugin;
     private final GuiManager guiManager;
 
-    public InteractListeners(EpicFurnaces plugin, GuiManager guiManager) {
-        this.plugin = plugin;
+    public InteractListeners(GuiManager guiManager) {
         this.guiManager = guiManager;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onClick(PlayerInteractEvent event) {
         final Block block = event.getClickedBlock();
-        if (block == null || plugin.getBlacklistHandler().isBlacklisted(block.getWorld())) {
+        if (block == null || getPlugin().getBlacklistHandler().isBlacklisted(block.getWorld())) {
             return;
         }
         final Player player = event.getPlayer();
@@ -49,7 +47,7 @@ public final class InteractListeners implements Listener {
         }
     
 
-        final Furnace furnace = plugin.getFurnaceManager().getFurnace(block.getLocation());
+        final Furnace furnace = FURNACE_MANAGER.getFurnace(block.getLocation());
         if (furnace == null) {
             return;
         }

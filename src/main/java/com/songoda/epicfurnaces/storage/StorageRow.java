@@ -3,7 +3,7 @@ package com.songoda.epicfurnaces.storage;
 import java.util.Collections;
 import java.util.Map;
 
-public class StorageRow {
+public final class StorageRow {
     private final String key;
 
     private final Map<String, StorageItem> items;

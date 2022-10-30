@@ -1,23 +1,20 @@
 package com.songoda.epicfurnaces.furnace.levels;
 
 import com.songoda.core.compatibility.CompatibleMaterial;
+import com.songoda.core.locale.Locale;
 import com.songoda.epicfurnaces.EpicFurnaces;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Level {
+public final class Level {
 
-    private int level, costExperience, costEconomy, performance, fuelDuration, overheat, fuelShare;
-
-    private Map<CompatibleMaterial, Integer> materials = new LinkedHashMap<>();
-
-    private String reward;
-
-    private List<String> description = new ArrayList<>();
+    private final int level, costExperience, costEconomy, performance, fuelDuration, overheat, fuelShare;
+    private final Map<CompatibleMaterial, Integer> materials;
+    private final String reward;
+    private final List<String> description;
 
     Level(int level, int costExperience, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare, Map<CompatibleMaterial, Integer> materials) {
         this.level = level;
@@ -30,26 +27,27 @@ public class Level {
         this.fuelShare = fuelShare;
         this.materials = materials;
 
-        EpicFurnaces plugin = EpicFurnaces.getInstance();
+        final Locale locale = EpicFurnaces.getInstance().getLocale();
+        description = new ArrayList<>();
 
         if (performance != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.performance")
+            description.add(locale.getMessage("interface.furnace.performance")
                     .processPlaceholder("amount", performance + "%").getMessage());
 
         if (reward != null)
-            description.add(plugin.getLocale().getMessage("interface.furnace.reward")
+            description.add(locale.getMessage("interface.furnace.reward")
                     .processPlaceholder("amount", reward.split("%:")[0] + "%").getMessage());
 
         if (fuelDuration != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.fuelduration")
+            description.add(locale.getMessage("interface.furnace.fuelduration")
                     .processPlaceholder("amount", fuelDuration + "%").getMessage());
 
         if (fuelShare != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.fuelshare")
+            description.add(locale.getMessage("interface.furnace.fuelshare")
                     .processPlaceholder("amount", fuelShare).getMessage());
 
         if (overheat != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.overheat")
+            description.add(locale.getMessage("interface.furnace.overheat")
                     .processPlaceholder("amount", overheat).getMessage());
     }
 

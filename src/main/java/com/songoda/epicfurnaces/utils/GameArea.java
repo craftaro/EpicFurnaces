@@ -6,7 +6,7 @@ import org.bukkit.World;
 
 import java.util.Objects;
 
-public class GameArea {
+public final class GameArea {
 
     private static final int size = Math.max(16, Settings.FURNACE_AREA.getInt());
 
@@ -28,7 +28,7 @@ public class GameArea {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GameArea gameArea = (GameArea) o;
+        final GameArea gameArea = (GameArea) o;
         return x == gameArea.x &&
                 y == gameArea.y &&
                 world.equals(gameArea.world);

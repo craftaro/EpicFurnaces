@@ -1,6 +1,6 @@
 package com.songoda.epicfurnaces.listeners;
 
-import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
@@ -15,13 +15,7 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Created by songoda on 2/26/2017.
  */
-public final class InventoryListeners implements Listener {
-
-    private final EpicFurnaces plugin;
-
-    public InventoryListeners(EpicFurnaces plugin) {
-        this.plugin = plugin;
-    }
+public final class InventoryListeners implements Listener, EpicFurnaceInstances {
 
     @EventHandler
     public void onInventoryMove(InventoryMoveItemEvent event) {
@@ -32,7 +26,7 @@ public final class InventoryListeners implements Listener {
                 || destination.getItem(0).getAmount() != 1) {
             return;
         }
-        Furnace furnace = plugin.getFurnaceManager().getFurnace(((org.bukkit.block.Furnace)
+        final Furnace furnace = FURNACE_MANAGER.getFurnace(((org.bukkit.block.Furnace)
                 destination.getHolder()).getLocation());
         if (furnace != null)
             furnace.updateCook();

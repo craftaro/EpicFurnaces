@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class FurnaceBuilder {
+public final class FurnaceBuilder {
 
     //Level level, String nickname, int uses, int tolevel, List<String> accessList, UUID placedBy
 

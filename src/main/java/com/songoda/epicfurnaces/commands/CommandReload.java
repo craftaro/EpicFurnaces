@@ -1,22 +1,21 @@
 package com.songoda.epicfurnaces.commands;
 
 import com.songoda.core.commands.AbstractCommand;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
 
-public class CommandReload extends AbstractCommand {
+public final class CommandReload extends AbstractCommand implements EpicFurnaceInstances {
 
-    private final EpicFurnaces plugin;
-
-    public CommandReload(EpicFurnaces plugin) {
+    public CommandReload() {
         super(CommandType.CONSOLE_OK, "reload");
-        this.plugin = plugin;
     }
 
     @Override
     protected AbstractCommand.ReturnType runCommand(CommandSender sender, String... args) {
+        final EpicFurnaces plugin = getPlugin();
         plugin.reloadConfig();
         plugin.getLocale().getMessage("&7Configuration and Language files reloaded.").sendPrefixedMessage(sender);
         return ReturnType.SUCCESS;

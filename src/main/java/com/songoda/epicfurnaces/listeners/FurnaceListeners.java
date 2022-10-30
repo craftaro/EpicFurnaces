@@ -1,6 +1,6 @@
 package com.songoda.epicfurnaces.listeners;
 
-import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.levels.Level;
 import org.bukkit.block.Block;
@@ -12,22 +12,16 @@ import org.bukkit.event.inventory.FurnaceSmeltEvent;
 /**
  * Created by songoda on 2/26/2017.
  */
-public final class FurnaceListeners implements Listener {
-
-    private final EpicFurnaces plugin;
-
-    public FurnaceListeners(EpicFurnaces plugin) {
-        this.plugin = plugin;
-    }
+public final class FurnaceListeners implements Listener, EpicFurnaceInstances {
 
     @EventHandler
     public void onCook(FurnaceSmeltEvent event) {
         final Block block = event.getBlock();
-        if ((block.isBlockPowered() && plugin.getConfig().getBoolean("Main.Redstone Deactivates Furnaces")) || event.getResult() == null) {
+        if ((block.isBlockPowered() && getPlugin().getConfig().getBoolean("Main.Redstone Deactivates Furnaces")) || event.getResult() == null) {
             event.setCancelled(true);
             return;
         }
-        final Furnace furnace = plugin.getFurnaceManager().getFurnace(block.getLocation());
+        final Furnace furnace = FURNACE_MANAGER.getFurnace(block.getLocation());
 
         if (furnace != null)
             furnace.plus(event);
@@ -35,7 +29,7 @@ public final class FurnaceListeners implements Listener {
 
     @EventHandler
     public void onFuel(FurnaceBurnEvent event) {
-        final Furnace furnace = plugin.getFurnaceManager().getFurnace(event.getBlock().getLocation());
+        final Furnace furnace = FURNACE_MANAGER.getFurnace(event.getBlock().getLocation());
         if (furnace == null) {
             return;
         }

@@ -6,6 +6,7 @@ import com.songoda.core.gui.GuiUtils;
 import com.songoda.core.input.ChatPrompt;
 import com.songoda.core.locale.Locale;
 import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.levels.Level;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class GUIOverview extends CustomizableGui {
+public final class GUIOverview extends CustomizableGui implements EpicFurnaceInstances {
 
     private final EpicFurnaces plugin;
     private final Furnace furnace;
@@ -59,8 +60,8 @@ public class GUIOverview extends CustomizableGui {
         mirrorFill("mirrorfill_4", 1, 0, false, true, glass2);
         mirrorFill("mirrorfill_5", 1, 1, false, true, glass3);
 
-        Level level = furnace.getLevel();
-        Level nextLevel = plugin.getLevelManager().getHighestLevel().getLevel() > level.getLevel() ? plugin.getLevelManager().getLevel(level.getLevel() + 1) : null;
+        final Level level = furnace.getLevel();
+        final Level nextLevel = LEVEL_MANAGER.getHighestLevel().getLevel() > level.getLevel() ? LEVEL_MANAGER.getLevel(level.getLevel() + 1) : null;
 
         // main furnace information icon
         setItem("information",1, 4, GuiUtils.createButtonItem(
@@ -139,24 +140,26 @@ public class GUIOverview extends CustomizableGui {
                     ClickType.LEFT, (event) -> {
                         ChatPrompt.showPrompt(plugin, event.player, locale.getMessage("event.remote.enter").getMessage(),
                                 promptEvent -> {
-                                    for (Furnace other : plugin.getFurnaceManager().getFurnaces().values()) {
-                                        if (other.getNickname() == null) {
+                                    final String promptMessage = promptEvent.getMessage();
+                                    for (Furnace other : FURNACE_MANAGER.getFurnaces().values()) {
+                                        final String nickname = other.getNickname();
+                                        if (nickname == null) {
                                             continue;
                                         }
 
-                                        if (other.getNickname().equalsIgnoreCase(promptEvent.getMessage())) {
+                                        if (nickname.equalsIgnoreCase(promptMessage)) {
                                             locale.getMessage("event.remote.nicknameinuse").sendPrefixedMessage(player);
                                             return;
                                         }
                                     }
 
                                     plugin.getDataManager().queueFurnaceForUpdate(furnace);
-                                    furnace.setNickname(promptEvent.getMessage());
+                                    furnace.setNickname(promptMessage);
                                     locale.getMessage("event.remote.nicknamesuccess").sendPrefixedMessage(player);
                                 }).setOnClose(() -> guiManager.showGUI(player, new GUIOverview(plugin, furnace, player)));
 
                     }).setAction(4, ClickType.RIGHT, (event) -> {
-                guiManager.showGUI(player, new GUIRemoteAccess(plugin, furnace, player));
+                guiManager.showGUI(player, new GUIRemoteAccess(furnace, player));
             });
         }
 
@@ -223,7 +226,7 @@ public class GUIOverview extends CustomizableGui {
             }
         }
 
-        BoostData boostData = plugin.getBoostManager().getBoost(furnace.getPlacedBy());
+        BoostData boostData = BOOST_MANAGER.getBoost(furnace.getPlacedBy());
         if (boostData != null) {
             lore.addAll(Arrays.asList(locale.getMessage("interface.button.boostedstats")
                     .processPlaceholder("amount", Integer.toString(boostData.getMultiplier()))

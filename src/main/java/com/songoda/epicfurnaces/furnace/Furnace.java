@@ -7,6 +7,7 @@ import com.songoda.core.hooks.EconomyManager;
 import com.songoda.core.hooks.ProtectionManager;
 import com.songoda.core.math.MathUtils;
 import com.songoda.epicfurnaces.EpicFurnaces;
+import com.songoda.epicfurnaces.EpicFurnaceInstances;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.levels.Level;
 import com.songoda.epicfurnaces.gui.GUIOverview;
@@ -38,16 +39,14 @@ import java.util.UUID;
 /**
  * Created by songoda on 3/7/2017.
  */
-public class Furnace {
-    private final EpicFurnaces plugin = EpicFurnaces.getInstance();
-
+public final class Furnace implements EpicFurnaceInstances {
     private final String hologramId = UUID.randomUUID().toString();
 
     // Identifier for database use.
     private int id;
 
     private final Location location;
-    private Level level = plugin.getLevelManager().getLowestLevel();
+    private Level level = LEVEL_MANAGER.getLowestLevel();
     private String nickname = null;
     private UUID placedBy = null;
     private int uses, radiusOverheatLast, radiusFuelshareLast = 0;
@@ -68,25 +67,27 @@ public class Furnace {
         if (!player.hasPermission("epicfurnaces.overview")) return;
 
         if (Settings.USE_PROTECTION_PLUGINS.getBoolean() && !ProtectionManager.canInteract(player, location)) {
-            player.sendMessage(plugin.getLocale().getMessage("event.general.protected").getPrefixedMessage());
+            player.sendMessage(getPlugin().getLocale().getMessage("event.general.protected").getPrefixedMessage());
             return;
         }
 
-        guiManager.showGUI(player, new GUIOverview(plugin, this, player));
+        guiManager.showGUI(player, new GUIOverview(getPlugin(), this, player));
     }
 
     public void plus(FurnaceSmeltEvent event) {
-        Block block = location.getBlock();
+        final Block block = location.getBlock();
         if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) return;
 
         this.uses++;
+        final EpicFurnaces plugin = getPlugin();
         plugin.getDataManager().queueFurnaceForUpdate(this);
 
-        CompatibleMaterial material = CompatibleMaterial.getMaterial(event.getResult());
+        final ItemStack result = event.getResult();
+        final CompatibleMaterial material = CompatibleMaterial.getMaterial(result);
         int needed = -1;
 
         if (level.getMaterials().containsKey(material)) {
-            int amount = addToLevel(material, 1);
+            final int amount = addToLevel(material, 1);
             plugin.getDataManager().updateLevelupItems(this, material, amount);
             needed = level.getMaterials().get(material) - getToLevel(material);
         }
@@ -95,10 +96,9 @@ public class Furnace {
         if (level.getReward() == null) return;
 
         String reward = level.getReward();
-        int min = 1;
-        int max = 1;
+        int min = 1, max = 1;
         if (reward.contains(":")) {
-            String[] rewardSplit = reward.split(":");
+            final String[] rewardSplit = reward.split(":");
             reward = rewardSplit[0].substring(0, rewardSplit[0].length() - 1);
             if (rewardSplit[1].contains("-")) {
                 String[] split = rewardSplit[1].split("-");
@@ -112,22 +112,22 @@ public class Furnace {
 
         if (Settings.UPGRADE_BY_SMELTING.getBoolean()
                 && needed == 0
-                && plugin.getLevelManager().getLevel(level.getLevel() + 1) != null) {
+                && LEVEL_MANAGER.getLevel(level.getLevel() + 1) != null) {
             this.toLevel.remove(material);
             levelUp();
         }
 
         this.updateCook();
 
-        FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
+        final FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
 
         if (event.getSource().getType().name().contains("SPONGE") || event.getSource().getType().name().contains("COBBLESTONE") || event.getSource().getType().name().contains("DEEPSLATE"))
             return;
 
-        int num = Integer.parseInt(reward);
-        double rand = Math.random() * 100;
+        final int num = Integer.parseInt(reward);
+        final double rand = Math.random() * 100;
         if (rand >= num
-                || event.getResult().equals(Material.SPONGE)
+                || result.getType().equals(Material.SPONGE)
                 || Settings.NO_REWARDS_FROM_RECIPES.getBoolean()
                 && plugin.getFurnaceRecipeFile().contains("Recipes." + inventory.getSmelting().getType().toString())) {
             return;
@@ -135,61 +135,63 @@ public class Furnace {
 
         int randomAmount = min == max ? min : (int) (Math.random() * ((max - min) + 1)) + min;
 
-        BoostData boostData = plugin.getBoostManager().getBoost(placedBy);
+        final BoostData boostData = BOOST_MANAGER.getBoost(placedBy);
         randomAmount = randomAmount * (boostData == null ? 1 : boostData.getMultiplier());
 
-        event.getResult().setAmount(Math.min(event.getResult().getAmount() + randomAmount, event.getResult().getMaxStackSize()));
+        result.setAmount(Math.min(result.getAmount() + randomAmount, result.getMaxStackSize()));
     }
 
     public void upgrade(Player player, CostType type) {
-        if (!plugin.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1)) return;
+        if (!LEVEL_MANAGER.getLevels().containsKey(this.level.getLevel() + 1)) return;
 
-        Level level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
-        int cost = type == CostType.ECONOMY ? level.getCostEconomy() : level.getCostExperience();
+        final Level level = LEVEL_MANAGER.getLevel(this.level.getLevel() + 1);
+        final int cost = type == CostType.ECONOMY ? level.getCostEconomy() : level.getCostExperience();
 
-        if (type == CostType.ECONOMY) {
-            if (!EconomyManager.isEnabled()) {
-                player.sendMessage("Economy not enabled.");
-                return;
-            }
-            if (!EconomyManager.hasBalance(player, cost)) {
-                plugin.getInstance().getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
-                return;
-            }
-            EconomyManager.withdrawBalance(player, cost);
-            upgradeFinal(player);
-        } else if (type == CostType.EXPERIENCE) {
-            if (player.getLevel() >= cost || player.getGameMode() == GameMode.CREATIVE) {
-                if (player.getGameMode() != GameMode.CREATIVE) {
-                    player.setLevel(player.getLevel() - cost);
+        switch (type) {
+            case ECONOMY:
+                if (!EconomyManager.isEnabled()) {
+                    player.sendMessage("Economy not enabled.");
+                    return;
                 }
+                if (!EconomyManager.hasBalance(player, cost)) {
+                    getPlugin().getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
+                    return;
+                }
+                EconomyManager.withdrawBalance(player, cost);
                 upgradeFinal(player);
-            } else {
-                plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
-            }
+                break;
+            case EXPERIENCE:
+                final int playerLevel = player.getLevel();
+                if (playerLevel >= cost || player.getGameMode() == GameMode.CREATIVE) {
+                    if (player.getGameMode() != GameMode.CREATIVE) {
+                        player.setLevel(playerLevel - cost);
+                    }
+                    upgradeFinal(player);
+                } else {
+                    getPlugin().getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
+                }
+                break;
+            default:
+                break;
         }
     }
 
     private void upgradeFinal(Player player) {
         levelUp();
         syncName();
+        final EpicFurnaces plugin = getPlugin();
         plugin.getDataManager().queueFurnaceForUpdate(this);
-        if (plugin.getLevelManager().getHighestLevel() != level) {
-            plugin.getLocale().getMessage("event.upgrade.success")
-                    .processPlaceholder("level", level.getLevel()).sendPrefixedMessage(player);
-
-        } else {
-            plugin.getLocale().getMessage("event.upgrade.maxed")
-                    .processPlaceholder("level", level.getLevel()).sendPrefixedMessage(player);
-        }
-        Location loc = location.clone().add(.5, .5, .5);
+        final boolean notHighestLevel = LEVEL_MANAGER.getHighestLevel() != level;
+        final String node = "event.upgrade." + (notHighestLevel ? "success" : "maxed");
+        plugin.getLocale().getMessage(node).processPlaceholder("level", level.getLevel()).sendPrefixedMessage(player);
+        final Location loc = location.clone().add(.5, .5, .5);
 
         if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_12)) return;
 
         player.getWorld().spawnParticle(org.bukkit.Particle.valueOf(plugin.getConfig().getString("Main.Upgrade Particle Type")), loc, 200, .5, .5, .5);
         
         final Location playerLocation = player.getLocation();
-        if (plugin.getLevelManager().getHighestLevel() != level) {
+        if (notHighestLevel) {
             player.playSound(playerLocation, Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
         } else {
             player.playSound(playerLocation, Sound.ENTITY_PLAYER_LEVELUP, 2F, 25.0F);
@@ -203,7 +205,7 @@ public class Furnace {
     }
 
     public void levelUp() {
-        level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
+        level = LEVEL_MANAGER.getLevel(this.level.getLevel() + 1);
     }
 
     private void syncName() {
@@ -214,19 +216,20 @@ public class Furnace {
     }
 
     public void updateCook() {
-        Block block = location.getBlock();
-        if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) return;
+        final Block block = location.getBlock();
+        final String blockType = block.getType().name();
+        if (!blockType.contains("FURNACE") && !blockType.contains("SMOKER")) return;
 
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(getPlugin(), () -> {
             int num = getPerformanceTotal(block.getType());
 
-            int max = (block.getType().name().contains("BLAST") || block.getType().name().contains("SMOKER") ? 100 : 200);
+            final int max = (blockType.contains("BLAST") || blockType.contains("SMOKER") ? 100 : 200);
             if (num >= max)
                 num = max - 1;
 
             if (num != 0) {
-                BlockState bs = (block.getState());
-                ((org.bukkit.block.Furnace) bs).setCookTime(Short.parseShort(Integer.toString(num)));
+                final BlockState bs = (block.getState());
+                ((org.bukkit.block.Furnace) bs).setCookTime((short) num);
                 bs.update();
             }
         }, 1L);
@@ -344,9 +347,7 @@ public class Furnace {
     }
 
     public int getToLevel(CompatibleMaterial material) {
-        if (!this.toLevel.containsKey(material))
-            return 0;
-        return this.toLevel.get(material);
+        return this.toLevel.getOrDefault(material, 0);
     }
 
     public Map<CompatibleMaterial, Integer> getToLevel() {
@@ -355,11 +356,10 @@ public class Furnace {
 
     public int addToLevel(CompatibleMaterial material, int amount) {
         if (this.toLevel.containsKey(material)) {
-            int newAmount = this.toLevel.get(material) + amount;
+            final int newAmount = this.toLevel.get(material) + amount;
             this.toLevel.put(material, newAmount);
             return newAmount;
         }
-
         this.toLevel.put(material, amount);
         return amount;
     }
@@ -389,12 +389,12 @@ public class Furnace {
     }
 
     public void dropItems() {
-        FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) location.getBlock().getState()).getInventory();
-        ItemStack fuel = inventory.getFuel();
-        ItemStack smelting = inventory.getSmelting();
-        ItemStack result = inventory.getResult();
+        final FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) location.getBlock().getState()).getInventory();
+        final ItemStack fuel = inventory.getFuel();
+        final ItemStack smelting = inventory.getSmelting();
+        final ItemStack result = inventory.getResult();
 
-        World world = location.getWorld();
+        final World world = location.getWorld();
         if (world == null) return;
 
         if (fuel != null)
