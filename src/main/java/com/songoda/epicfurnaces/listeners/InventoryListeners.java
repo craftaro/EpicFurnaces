@@ -41,7 +41,7 @@ public class InventoryListeners implements Listener {
         if (event.getSlot() != 64537) {
             if (event.getInventory().getType() == InventoryType.ANVIL) {
                 if (event.getAction() != InventoryAction.NOTHING) {
-                    if (event.getCurrentItem().getType() != Material.AIR) {
+                    if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
                         ItemStack item = event.getCurrentItem();
                         if (item.getType().name().contains("FURNACE") && !item.getType().name().contains("SMOKER")) {
                             event.setCancelled(true);
