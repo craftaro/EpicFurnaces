@@ -19,6 +19,7 @@ softdepend:
   - UltimateClaims
   - Vault
   - WorldGuard
+  - EpicHoppers
 
 author: Songoda
 website: ${project.url}
