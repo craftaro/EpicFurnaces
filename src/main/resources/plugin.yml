@@ -7,6 +7,7 @@ main: com.songoda.epicfurnaces.EpicFurnaces
 softdepend:
   - BentoBox
   - DecentHolograms
+  - EpicHoppers
   - FabledSkyBlock
   - Factions
   - GriefPrevention
@@ -15,13 +16,12 @@ softdepend:
   - PlotSquared
   - RedProtect
   - SkyBlock
-  - USkyBlock
   - UltimateClaims
+  - USkyBlock
   - Vault
   - WorldGuard
-  - EpicHoppers
 
-author: Songoda
+author: Craftaro
 website: ${project.url}
 
 commands:

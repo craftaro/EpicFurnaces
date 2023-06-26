@@ -9,50 +9,37 @@
     <version>4.9.7</version>
 
     <name>EpicFurnaces</name>
-    <description>EpicFurnaces</description>
-    <url>https://songoda.com/marketplace/product/22</url>
+    <description></description>
+    <url>https://craftaro.com/marketplace/product/22</url>
 
     <properties>
-        <java.version>1.8</java.version>
-        <java.release>8</java.release>
+        <maven.compiler.release>8</maven.compiler.release>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <issueManagement>
-        <url>https://support.songoda.com/servicedesk/customer/portal/3</url>
-        <system>Jira Service Desk</system>
+        <url>https://discord.gg/craftaro</url>
+        <system>Discord server</system>
     </issueManagement>
 
     <scm>
-        <url>https://github.com/songoda/EpicFurnaces</url>
-        <connection>scm:git:git:github.com/songoda/EpicFurnaces.git</connection>
+        <url>https://github.com/craftaro/EpicFurnaces</url>
+        <connection>scm:git:git://github.com/craftaro/EpicFurnaces.git</connection>
     </scm>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-
-                    <release>${java.release}</release>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.1</version>
 
                 <executions>
                     <execution>
                         <phase>package</phase>
-
                         <goals>
                             <goal>shade</goal>
                         </goals>
@@ -60,12 +47,13 @@
                         <configuration>
                             <finalName>${project.name}-${project.version}</finalName>
 
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <useDependencyReducedPomInJar>true</useDependencyReducedPomInJar>
                             <minimizeJar>true</minimizeJar>
 
                             <relocations>
                                 <relocation>
-                                    <pattern>com.songoda.core</pattern>
+                                    <pattern>com.craftaro.core</pattern>
                                     <shadedPattern>com.songoda.epicfurnaces.core</shadedPattern>
                                 </relocation>
                             </relocations>
@@ -95,38 +83,36 @@
         </resources>
     </build>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>apache.snapshots</id>
-            <url>https://repository.apache.org/snapshots/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <repositories>
         <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <id>craftaro-minecraft-plugins</id>
+            <url>https://repo.craftaro.com/repository/minecraft-plugins/</url>
         </repository>
 
         <repository>
-            <id>songoda-public</id>
+            <id>public</id>
             <url>https://repo.songoda.com/repository/public/</url>
+        </repository>
+
+        <repository>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.19.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>com.songoda</groupId>
             <artifactId>SongodaCore</artifactId>
             <version>2.6.19</version>
             <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.19.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
