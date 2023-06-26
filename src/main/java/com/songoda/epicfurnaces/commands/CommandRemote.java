@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class CommandRemote extends AbstractCommand {
-
     private final EpicFurnaces plugin;
 
     public CommandRemote(EpicFurnaces plugin) {
@@ -25,39 +24,43 @@ public class CommandRemote extends AbstractCommand {
     protected ReturnType runCommand(CommandSender sender, String... args) {
         Player player = ((Player) sender);
         if (!Settings.REMOTE.getBoolean() || !sender.hasPermission("EpicFurnaces.Remote")) {
-            plugin.getLocale().getMessage("event.general.nopermission").sendPrefixedMessage(sender);
+            this.plugin.getLocale().getMessage("event.general.nopermission").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
-        if (args.length < 1) return ReturnType.SYNTAX_ERROR;
+        if (args.length < 1) {
+            return ReturnType.SYNTAX_ERROR;
+        }
 
         String name = String.join(" ", args);
-        Furnace furnace = plugin.getFurnaceManager().getFurnaces().values()
+        Furnace furnace = this.plugin.getFurnaceManager().getFurnaces().values()
                 .stream().filter(f -> f.getNickname() != null
                         && f.getNickname().equalsIgnoreCase(name)).findFirst().orElse(null);
         if (furnace == null) {
-            plugin.getLocale().getMessage("event.remote.notfound").sendPrefixedMessage(sender);
+            this.plugin.getLocale().getMessage("event.remote.notfound").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
 
         if (!furnace.isInLoadedChunk()) {
-            plugin.getLocale().getMessage("event.remote.notloaded").sendPrefixedMessage(sender);
+            this.plugin.getLocale().getMessage("event.remote.notloaded").sendPrefixedMessage(sender);
             return ReturnType.FAILURE;
         }
 
         for (UUID uuid : furnace.getAccessList()) {
-            if (!uuid.equals(((Player) sender).getUniqueId())) continue;
-                Block b = furnace.getLocation().getBlock();
-            org.bukkit.block.Furnace furnaceBlock = (org.bukkit.block.Furnace) b.getState();
+            if (!uuid.equals(((Player) sender).getUniqueId())) {
+                continue;
+            }
+            Block block = furnace.getLocation().getBlock();
+            org.bukkit.block.Furnace furnaceBlock = (org.bukkit.block.Furnace) block.getState();
             Inventory inventory = furnaceBlock.getInventory();
             player.openInventory(inventory);
             return ReturnType.SUCCESS;
         }
-        plugin.getLocale().getMessage("event.general.nopermission").sendPrefixedMessage(sender);
+        this.plugin.getLocale().getMessage("event.general.nopermission").sendPrefixedMessage(sender);
         return ReturnType.FAILURE;
     }
 
     @Override
-    protected List<String> onTab(CommandSender commandSender, String... strings) {
+    protected List<String> onTab(CommandSender sender, String... args) {
         return null;
     }
 

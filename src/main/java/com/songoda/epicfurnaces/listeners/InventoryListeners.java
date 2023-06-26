@@ -11,11 +11,7 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 
-/**
- * Created by songoda on 2/26/2017.
- */
 public class InventoryListeners implements Listener {
-
     private final EpicFurnaces plugin;
 
     public InventoryListeners(EpicFurnaces plugin) {
@@ -30,25 +26,25 @@ public class InventoryListeners implements Listener {
                 || event.getDestination().getItem(0).getAmount() != 1) {
             return;
         }
-        Furnace furnace = plugin.getFurnaceManager().getFurnace(((org.bukkit.block.Furnace)
-                event.getDestination().getHolder()).getLocation());
-        if (furnace != null)
+        Furnace furnace = this.plugin.getFurnaceManager().getFurnace(((org.bukkit.block.Furnace) event.getDestination().getHolder()).getLocation());
+        if (furnace != null) {
             furnace.updateCook();
+        }
     }
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        if (event.getSlot() != 64537) {
-            if (event.getInventory().getType() == InventoryType.ANVIL) {
-                if (event.getAction() != InventoryAction.NOTHING) {
-                    if (event.getCurrentItem() != null && event.getCurrentItem().getType() != Material.AIR) {
-                        ItemStack item = event.getCurrentItem();
-                        if (item.getType().name().contains("FURNACE") && !item.getType().name().contains("SMOKER")) {
-                            event.setCancelled(true);
-                        }
-                    }
-                }
-            }
+        if (event.getSlot() == 64537 ||
+                event.getInventory().getType() != InventoryType.ANVIL ||
+                event.getAction() == InventoryAction.NOTHING ||
+                event.getCurrentItem() == null ||
+                event.getCurrentItem().getType() == Material.AIR) {
+            return;
+        }
+
+        ItemStack item = event.getCurrentItem();
+        if (item.getType().name().contains("FURNACE") && !item.getType().name().contains("SMOKER")) {
+            event.setCancelled(true);
         }
     }
 }

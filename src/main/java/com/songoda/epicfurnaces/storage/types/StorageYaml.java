@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 public class StorageYaml extends Storage {
-
     private final Map<String, Object> toSave = new HashMap<>();
     private Map<String, Object> lastSave = null;
 
@@ -23,23 +22,25 @@ public class StorageYaml extends Storage {
 
     @Override
     public boolean containsGroup(String group) {
-        return dataFile.contains("data." + group);
+        return this.dataFile.contains("data." + group);
     }
 
     @Override
     public List<StorageRow> getRowsByGroup(String group) {
         List<StorageRow> rows = new ArrayList<>();
-        ConfigurationSection currentSection = dataFile.getConfigurationSection("data." + group);
+        ConfigurationSection currentSection = this.dataFile.getConfigurationSection("data." + group);
         for (String key : currentSection.getKeys(false)) {
 
             Map<String, StorageItem> items = new HashMap<>();
-            ConfigurationSection currentSection2 = dataFile.getConfigurationSection("data." + group + "." + key);
+            ConfigurationSection currentSection2 = this.dataFile.getConfigurationSection("data." + group + "." + key);
             for (String key2 : currentSection2.getKeys(false)) {
                 String path = "data." + group + "." + key + "." + key2;
-                items.put(key2, new StorageItem(dataFile.get(path) instanceof MemorySection
-                        ? convertToInLineList(path) : dataFile.get(path)));
+                items.put(key2, new StorageItem(this.dataFile.get(path) instanceof MemorySection
+                        ? convertToInLineList(path) : this.dataFile.get(path)));
             }
-            if (items.isEmpty()) continue;
+            if (items.isEmpty()) {
+                continue;
+            }
             StorageRow row = new StorageRow(key, items);
             rows.add(row);
         }
@@ -48,8 +49,8 @@ public class StorageYaml extends Storage {
 
     private String convertToInLineList(String path) {
         StringBuilder converted = new StringBuilder();
-        for (String key : dataFile.getConfigurationSection(path).getKeys(false)) {
-            converted.append(key).append(":").append(dataFile.getInt(path + "." + key)).append(";");
+        for (String key : this.dataFile.getConfigurationSection(path).getKeys(false)) {
+            converted.append(key).append(":").append(this.dataFile.getInt(path + "." + key)).append(";");
         }
         return converted.toString();
     }
@@ -57,51 +58,56 @@ public class StorageYaml extends Storage {
     @Override
     public void prepareSaveItem(String group, StorageItem... items) {
         for (StorageItem item : items) {
-            if (item == null || item.asObject() == null) continue;
-            toSave.put("data." + group + "." + items[0].asString() + "." + item.getKey(), item.asObject());
+            if (item == null || item.asObject() == null) {
+                continue;
+            }
+            this.toSave.put("data." + group + "." + items[0].asString() + "." + item.getKey(), item.asObject());
         }
     }
 
     @Override
     public void doSave() {
-        this.updateData(plugin);
+        this.updateData(this.plugin);
 
-        if (lastSave == null)
-            lastSave = new HashMap<>(toSave);
+        if (this.lastSave == null) {
+            this.lastSave = new HashMap<>(this.toSave);
+        }
 
-        if (toSave.isEmpty()) return;
-        Map<String, Object> nextSave = new HashMap<>(toSave);
+        if (this.toSave.isEmpty()) {
+            return;
+        }
+        Map<String, Object> nextSave = new HashMap<>(this.toSave);
 
         this.makeBackup();
         this.save();
 
-        toSave.clear();
-        lastSave.clear();
-        lastSave.putAll(nextSave);
+        this.toSave.clear();
+        this.lastSave.clear();
+        this.lastSave.putAll(nextSave);
     }
 
     @Override
     public void save() {
         try {
-            for (Map.Entry<String, Object> entry : lastSave.entrySet()) {
-                if (toSave.containsKey(entry.getKey())) {
-                    Object newValue = toSave.get(entry.getKey());
+            for (Map.Entry<String, Object> entry : this.lastSave.entrySet()) {
+                if (this.toSave.containsKey(entry.getKey())) {
+                    Object newValue = this.toSave.get(entry.getKey());
                     if (!entry.getValue().equals(newValue)) {
-                        dataFile.set(entry.getKey(), newValue);
+                        this.dataFile.set(entry.getKey(), newValue);
                     }
-                    toSave.remove(entry.getKey());
+                    this.toSave.remove(entry.getKey());
                 } else {
-                    dataFile.set(entry.getKey(), null);
+                    this.dataFile.set(entry.getKey(), null);
                 }
             }
 
-            for (Map.Entry<String, Object> entry : toSave.entrySet()) {
-                dataFile.set(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, Object> entry : this.toSave.entrySet()) {
+                this.dataFile.set(entry.getKey(), entry.getValue());
             }
 
-            dataFile.save();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+            this.dataFile.save();
+        } catch (NullPointerException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -111,7 +117,6 @@ public class StorageYaml extends Storage {
 
     @Override
     public void closeConnection() {
-        dataFile.save();
+        this.dataFile.save();
     }
-
 }

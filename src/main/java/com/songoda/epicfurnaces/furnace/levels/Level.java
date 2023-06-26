@@ -10,14 +10,19 @@ import java.util.List;
 import java.util.Map;
 
 public class Level {
+    private final int level;
+    private final int costExperience;
+    private final int costEconomy;
+    private final int performance;
+    private final int fuelDuration;
+    private final int overheat;
+    private final int fuelShare;
 
-    private int level, costExperience, costEconomy, performance, fuelDuration, overheat, fuelShare;
+    private Map<CompatibleMaterial, Integer> materials;
 
-    private Map<CompatibleMaterial, Integer> materials = new LinkedHashMap<>();
+    private final String reward;
 
-    private String reward;
-
-    private List<String> description = new ArrayList<>();
+    private final List<String> description = new ArrayList<>();
 
     Level(int level, int costExperience, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare, Map<CompatibleMaterial, Integer> materials) {
         this.level = level;
@@ -30,75 +35,90 @@ public class Level {
         this.fuelShare = fuelShare;
         this.materials = materials;
 
-        EpicFurnaces plugin = EpicFurnaces.getInstance();
+        EpicFurnaces plugin = EpicFurnaces.getPlugin(EpicFurnaces.class);
 
-        if (performance != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.performance")
-                    .processPlaceholder("amount", performance + "%").getMessage());
+        if (performance != 0) {
+            this.description.add(plugin.getLocale()
+                    .getMessage("interface.furnace.performance")
+                    .processPlaceholder("amount", performance + "%")
+                    .getMessage());
+        }
 
-        if (reward != null)
-            description.add(plugin.getLocale().getMessage("interface.furnace.reward")
-                    .processPlaceholder("amount", reward.split("%:")[0] + "%").getMessage());
+        if (reward != null) {
+            this.description.add(plugin.getLocale()
+                    .getMessage("interface.furnace.reward")
+                    .processPlaceholder("amount", reward.split("%:")[0] + "%")
+                    .getMessage());
+        }
 
-        if (fuelDuration != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.fuelduration")
-                    .processPlaceholder("amount", fuelDuration + "%").getMessage());
+        if (fuelDuration != 0) {
+            this.description.add(plugin.getLocale()
+                    .getMessage("interface.furnace.fuelduration")
+                    .processPlaceholder("amount", fuelDuration + "%")
+                    .getMessage());
+        }
 
-        if (fuelShare != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.fuelshare")
-                    .processPlaceholder("amount", fuelShare).getMessage());
+        if (fuelShare != 0) {
+            this.description.add(plugin.getLocale()
+                    .getMessage("interface.furnace.fuelshare")
+                    .processPlaceholder("amount", fuelShare)
+                    .getMessage());
+        }
 
-        if (overheat != 0)
-            description.add(plugin.getLocale().getMessage("interface.furnace.overheat")
-                    .processPlaceholder("amount", overheat).getMessage());
+        if (overheat != 0) {
+            this.description.add(plugin.getLocale()
+                    .getMessage("interface.furnace.overheat")
+                    .processPlaceholder("amount", overheat)
+                    .getMessage());
+        }
     }
 
 
     public List<String> getDescription() {
-        return new ArrayList<>(description);
+        return new ArrayList<>(this.description);
     }
 
 
     public int getLevel() {
-        return level;
+        return this.level;
     }
 
 
     public int getPerformance() {
-        return performance;
+        return this.performance;
     }
 
 
     public String getReward() {
-        return reward;
+        return this.reward;
     }
 
 
     public int getOverheat() {
-        return overheat;
+        return this.overheat;
     }
 
 
     public int getFuelShare() {
-        return fuelShare;
+        return this.fuelShare;
     }
 
 
     public int getFuelDuration() {
-        return fuelDuration;
+        return this.fuelDuration;
     }
 
 
     public int getCostExperience() {
-        return costExperience;
+        return this.costExperience;
     }
 
 
     public int getCostEconomy() {
-        return costEconomy;
+        return this.costEconomy;
     }
 
     public Map<CompatibleMaterial, Integer> getMaterials() {
-        return Collections.unmodifiableMap(materials);
+        return Collections.unmodifiableMap(this.materials);
     }
 }

@@ -7,8 +7,7 @@ import org.bukkit.World;
 import java.util.Objects;
 
 public class GameArea {
-
-    private static final int size = Math.max(16, Settings.FURNACE_AREA.getInt());
+    private static final int SIZE = Math.max(16, Settings.FURNACE_AREA.getInt());
 
     private final String world;
     private final int x;
@@ -21,21 +20,24 @@ public class GameArea {
     }
 
     public static GameArea of(Location location) {
-        return new GameArea(location.getWorld(), location.getBlockX() / size, location.getBlockZ() / size);
+        return new GameArea(location.getWorld(), location.getBlockX() / SIZE, location.getBlockZ() / SIZE);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
         GameArea gameArea = (GameArea) o;
-        return x == gameArea.x &&
-                y == gameArea.y &&
-                world.equals(gameArea.world);
+        return this.x == gameArea.x && this.y == gameArea.y && this.world.equals(gameArea.world);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(world, x, y);
+        return Objects.hash(this.world, this.x, this.y);
     }
 }

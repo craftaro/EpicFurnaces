@@ -5,7 +5,6 @@ import com.songoda.epicfurnaces.EpicFurnaces;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class HologramTask extends BukkitRunnable {
-
     private static HologramTask instance;
 
     private final EpicFurnaces plugin;
@@ -25,8 +24,10 @@ public class HologramTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (!HologramManager.getManager().isEnabled()) return;
+        if (!HologramManager.getManager().isEnabled()) {
+            return;
+        }
 
-        plugin.updateHolograms(plugin.getFurnaceManager().getFurnaces().values());
+        this.plugin.updateHolograms(this.plugin.getFurnaceManager().getFurnaces().values());
     }
 }

@@ -13,13 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FurnaceManager {
-
     private final Map<Location, Furnace> registeredFurnaces = new HashMap<>();
     private final Multimap<GameArea, Furnace> tickingFurnaces = MultimapBuilder.hashKeys().hashSetValues().build();
 
     public Furnace addFurnace(Furnace furnace) {
-        tickingFurnaces.put(GameArea.of(furnace.getLocation()), furnace);
-        return registeredFurnaces.put(roundLocation(furnace.getLocation()), furnace);
+        this.tickingFurnaces.put(GameArea.of(furnace.getLocation()), furnace);
+        return this.registeredFurnaces.put(roundLocation(furnace.getLocation()), furnace);
     }
 
     public void addFurnaces(Collection<Furnace> furnaces) {
@@ -29,22 +28,22 @@ public class FurnaceManager {
     }
 
     public Furnace removeFurnace(Location location) {
-        Furnace furnace = registeredFurnaces.remove(location);
+        Furnace furnace = this.registeredFurnaces.remove(location);
         if (furnace != null) {
-            tickingFurnaces.remove(GameArea.of(furnace.getLocation()), furnace);
+            this.tickingFurnaces.remove(GameArea.of(furnace.getLocation()), furnace);
         }
         return furnace;
     }
 
     public Furnace getFurnace(Location location) {
-        if (!Settings.ALLOW_NORMAL_FURNACES.getBoolean() && !registeredFurnaces.containsKey(location)) {
+        if (!Settings.ALLOW_NORMAL_FURNACES.getBoolean() && !this.registeredFurnaces.containsKey(location)) {
             addFurnace(new FurnaceBuilder(location).build());
         }
-        return registeredFurnaces.get(location);
+        return this.registeredFurnaces.get(location);
     }
 
     public Collection<Furnace> getFurnaces(GameArea gameArea) {
-        return tickingFurnaces.get(gameArea);
+        return this.tickingFurnaces.get(gameArea);
     }
 
     public Furnace getFurnace(Block block) {
@@ -52,7 +51,7 @@ public class FurnaceManager {
     }
 
     public Map<Location, Furnace> getFurnaces() {
-        return Collections.unmodifiableMap(registeredFurnaces);
+        return Collections.unmodifiableMap(this.registeredFurnaces);
     }
 
     private Location roundLocation(Location location) {

@@ -17,11 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-/**
- * Created by songoda on 2/26/2017.
- */
 public class InteractListeners implements Listener {
-
     private final EpicFurnaces plugin;
     private final GuiManager guiManager;
 
@@ -33,9 +29,11 @@ public class InteractListeners implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onClick(PlayerInteractEvent event) {
         final Block block = event.getClickedBlock();
-        if (block == null) return;
+        if (block == null) {
+            return;
+        }
 
-        if (plugin.getBlacklistHandler().isBlacklisted(block.getWorld())) {
+        if (this.plugin.getBlacklistHandler().isBlacklisted(block.getWorld())) {
             return;
         }
         Player player = event.getPlayer();
@@ -46,15 +44,17 @@ public class InteractListeners implements Listener {
                 || !player.hasPermission("EpicFurnaces.overview")) {
             return;
         }
-    
+
         if (Bukkit.getPluginManager().isPluginEnabled("FabledSkyBlock")) {
             SkyBlock skyBlock = SkyBlock.getInstance();
-        
-            if (skyBlock.getWorldManager().isIslandWorld(event.getPlayer().getWorld()))
+
+            if (skyBlock.getWorldManager().isIslandWorld(event.getPlayer().getWorld())) {
                 if (!skyBlock.getPermissionManager().hasPermission(event.getPlayer(),
                         skyBlock.getIslandManager().getIslandAtLocation(event.getClickedBlock().getLocation()),
-                        "EpicFurnaces"))
+                        "EpicFurnaces")) {
                     return;
+                }
+            }
         }
 
         //EpicHoppers compatibility
@@ -75,6 +75,6 @@ public class InteractListeners implements Listener {
 
         event.setCancelled(true);
 
-        furnace.overview(guiManager, player);
+        furnace.overview(this.guiManager, player);
     }
 }

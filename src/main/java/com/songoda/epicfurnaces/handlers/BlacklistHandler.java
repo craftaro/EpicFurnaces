@@ -1,34 +1,31 @@
 package com.songoda.epicfurnaces.handlers;
 
 import com.songoda.core.configuration.Config;
-import com.songoda.epicfurnaces.EpicFurnaces;
 import org.bukkit.World;
+import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by songoda on 2/25/2017.
- */
 public class BlacklistHandler {
+    private final Config blackConfig;
 
-    private final Config blackConfig = new Config(EpicFurnaces.getInstance(), "blacklist.yml");
-
-    public BlacklistHandler() {
+    public BlacklistHandler(Plugin plugin) {
+        this.blackConfig = new Config(plugin, "blacklist.yml");
         loadBlacklistFile();
     }
 
     public boolean isBlacklisted(World world) {
-        List<String> list = blackConfig.getStringList("settings.blacklist");
+        List<String> list = this.blackConfig.getStringList("settings.blacklist");
         final String checkWorld = world.getName();
         return list.stream().anyMatch(w -> w.equalsIgnoreCase(checkWorld));
     }
 
     private void loadBlacklistFile() {
-        blackConfig.addDefault("settings.blacklist", Arrays.asList("world2", "world3", "world4", "world5"));
-        blackConfig.load();
+        this.blackConfig.addDefault("settings.blacklist", Arrays.asList("world2", "world3", "world4", "world5"));
+        this.blackConfig.load();
 
-        blackConfig.saveChanges();
+        this.blackConfig.saveChanges();
     }
 
     public void reload() {

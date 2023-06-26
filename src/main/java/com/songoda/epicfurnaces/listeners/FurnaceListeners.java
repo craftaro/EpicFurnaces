@@ -9,11 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.FurnaceSmeltEvent;
 
-/**
- * Created by songoda on 2/26/2017.
- */
 public class FurnaceListeners implements Listener {
-
     private final EpicFurnaces plugin;
 
     public FurnaceListeners(EpicFurnaces plugin) {
@@ -23,26 +19,29 @@ public class FurnaceListeners implements Listener {
     @EventHandler
     public void onCook(FurnaceSmeltEvent event) {
         Block block = event.getBlock();
-        if ((event.getBlock().isBlockPowered() && plugin.getConfig().getBoolean("Main.Redstone Deactivates Furnaces")) || event.getResult() == null) {
+        if ((event.getBlock().isBlockPowered() && this.plugin.getConfig().getBoolean("Main.Redstone Deactivates Furnaces")) || event.getResult() == null) {
             event.setCancelled(true);
             return;
         }
-        Furnace furnace = plugin.getFurnaceManager().getFurnace(block.getLocation());
+        Furnace furnace = this.plugin.getFurnaceManager().getFurnace(block.getLocation());
 
-        if (furnace != null)
+        if (furnace != null) {
             furnace.plus(event);
+        }
     }
 
     @EventHandler
     public void onFuel(FurnaceBurnEvent event) {
-        Furnace furnace = plugin.getFurnaceManager().getFurnace(event.getBlock().getLocation());
+        Furnace furnace = this.plugin.getFurnaceManager().getFurnace(event.getBlock().getLocation());
         if (furnace == null) {
             return;
         }
 
         Level level = furnace.getLevel();
 
-        if (level.getFuelDuration() != 0) return;
+        if (level.getFuelDuration() != 0) {
+            return;
+        }
 
         int num = level.getFuelDuration();
         int per = (event.getBurnTime() / 100) * num;

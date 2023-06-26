@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.UUID;
 
 public class FurnaceBuilder {
-
     //Level level, String nickname, int uses, int tolevel, List<String> accessList, UUID placedBy
 
     private final Furnace furnace;
@@ -34,14 +33,16 @@ public class FurnaceBuilder {
     }
 
     public FurnaceBuilder setToLevel(Map<CompatibleMaterial, Integer> toLevel) {
-        for (Map.Entry<CompatibleMaterial, Integer> entry : toLevel.entrySet())
+        for (Map.Entry<CompatibleMaterial, Integer> entry : toLevel.entrySet()) {
             this.furnace.addToLevel(entry.getKey(), entry.getValue());
+        }
         return this;
     }
 
     public FurnaceBuilder setAccessList(List<UUID> accessList) {
-        for (UUID uuid : accessList)
+        for (UUID uuid : accessList) {
             this.furnace.addToAccessList(uuid);
+        }
         return this;
     }
 

@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class FurnaceTask extends BukkitRunnable {
-
     private static FurnaceTask instance;
 
     private final EpicFurnaces plugin;
@@ -37,15 +36,15 @@ public class FurnaceTask extends BukkitRunnable {
 
     @Override
     public void run() {
-        doParticles = Settings.OVERHEAT_PARTICLES.getBoolean();
-        plugin.getFurnaceManager().getFurnaces().values().stream()
+        this.doParticles = Settings.OVERHEAT_PARTICLES.getBoolean();
+        this.plugin.getFurnaceManager().getFurnaces().values().stream()
                 .filter(Furnace::isInLoadedChunk)
                 .forEach(furnace -> {
                     Location location = furnace.getLocation();
                     BlockState state = location.getBlock().getState();
 
                     if (!(state instanceof org.bukkit.block.Furnace)) {
-                        toRemove.add(location);
+                        this.toRemove.add(location);
                     } else if (((org.bukkit.block.Furnace) state).getBurnTime() != 0) {
                         if (furnace.getLevel().getOverheat() != 0) {
                             overheat(furnace);
@@ -55,9 +54,9 @@ public class FurnaceTask extends BukkitRunnable {
                         }
                     }
                 });
-        if (!toRemove.isEmpty()) {
-            toRemove.forEach(l -> plugin.getFurnaceManager().removeFurnace(l));
-            toRemove.clear();
+        if (!this.toRemove.isEmpty()) {
+            this.toRemove.forEach(location -> this.plugin.getFurnaceManager().removeFurnace(location));
+            this.toRemove.clear();
         }
     }
 
@@ -69,21 +68,24 @@ public class FurnaceTask extends BukkitRunnable {
 
         for (Location location : furnace.getRadius(true)) {
             int random = ThreadLocalRandom.current().nextInt(0, 10);
-
-            if (random != 1) continue;
+            if (random != 1) {
+                continue;
+            }
 
             Block block = location.getBlock();
-
-            if (block.getType() == Material.AIR || block.getRelative(BlockFace.UP).getType() != Material.AIR) continue;
-
-            if (block.getType() == Material.SNOW)
-                block.setType(Material.AIR);
-            else if (block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE)
-                block.setType(Material.WATER);
-            else
+            if (block.getType() == Material.AIR || block.getRelative(BlockFace.UP).getType() != Material.AIR) {
                 continue;
+            }
 
-            if (doParticles) {
+            if (block.getType() == Material.SNOW) {
+                block.setType(Material.AIR);
+            } else if (block.getType() == Material.ICE || block.getType() == Material.PACKED_ICE) {
+                block.setType(Material.WATER);
+            } else {
+                continue;
+            }
+
+            if (this.doParticles) {
                 float xx = (float) (0 + (Math.random() * .75));
                 float yy = (float) (0 + (Math.random() * 1));
                 float zz = (float) (0 + (Math.random() * .75));
@@ -101,20 +103,25 @@ public class FurnaceTask extends BukkitRunnable {
         for (Location location : furnace.getRadius(false)) {
             int random = ThreadLocalRandom.current().nextInt(0, 10);
 
-            if (random != 1) continue;
+            if (random != 1) {
+                continue;
+            }
 
             Block block = location.getBlock();
 
-            if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) continue;
-            Furnace furnace1 = plugin.getFurnaceManager().getFurnace(block);
-            if (furnace == furnace1) continue;
+            if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) {
+                continue;
+            }
+            Furnace furnace1 = this.plugin.getFurnaceManager().getFurnace(block);
+            if (furnace == furnace1) {
+                continue;
+            }
             org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) block.getState());
             if (furnaceBlock.getBurnTime() == 0) {
                 furnaceBlock.setBurnTime((short) 100);
                 furnaceBlock.update();
 
-                if (doParticles) {
-
+                if (this.doParticles) {
                     float xx = (float) (0 + (Math.random() * .75));
                     float yy = (float) (0 + (Math.random() * 1));
                     float zz = (float) (0 + (Math.random() * .75));

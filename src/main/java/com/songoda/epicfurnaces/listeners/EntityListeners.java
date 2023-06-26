@@ -9,11 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
-/**
- * Created by songoda on 2/26/2017.
- */
 public class EntityListeners implements Listener {
-
     private final EpicFurnaces plugin;
     private final FurnaceManager furnaceManager;
 
@@ -25,11 +21,14 @@ public class EntityListeners implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onBlow(EntityExplodeEvent event) {
         for (Block block : event.blockList()) {
-            Furnace furnace = furnaceManager.getFurnace(block);
-            if (furnace == null) continue;
-            furnaceManager.removeFurnace(block.getLocation());
-            plugin.getDataManager().deleteFurnace(furnace);
-            plugin.clearHologram(furnace);
+            Furnace furnace = this.furnaceManager.getFurnace(block);
+            if (furnace == null) {
+                continue;
+            }
+
+            this.furnaceManager.removeFurnace(block.getLocation());
+            this.plugin.getDataManager().deleteFurnace(furnace);
+            this.plugin.clearHologram(furnace);
         }
     }
 }

@@ -14,10 +14,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public abstract class Storage {
-
     protected final EpicFurnaces plugin;
     protected final Config dataFile;
-
 
     public Storage(EpicFurnaces plugin) {
         this.plugin = plugin;
@@ -72,5 +70,4 @@ public abstract class Storage {
     public abstract void makeBackup();
 
     public abstract void closeConnection();
-
 }

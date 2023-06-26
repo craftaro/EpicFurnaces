@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StorageItem {
-
     private final Object object;
     private String key = null;
 
@@ -40,38 +39,56 @@ public class StorageItem {
     }
 
     public String getKey() {
-        return key;
+        return this.key;
     }
 
     public String asString() {
-        if (object == null) return null;
-        return (String) object;
+        if (this.object == null) {
+            return null;
+        }
+        return (String) this.object;
     }
 
     public boolean asBoolean() {
-        if (object == null) return false;
-        if (object instanceof Integer) return (Integer) object == 1;
-        return (boolean) object;
+        if (this.object == null) {
+            return false;
+        }
+        if (this.object instanceof Integer) {
+            return (Integer) this.object == 1;
+        }
+        return (boolean) this.object;
     }
 
     public int asInt() {
-        if (object == null) return 0;
-        return (int) object;
+        if (this.object == null) {
+            return 0;
+        }
+        return (int) this.object;
     }
 
     public Object asObject() {
-        if (object == null) return null;
-        if (object instanceof Boolean) return (Boolean) object ? 1 : 0;
-        return object;
+        if (this.object == null) {
+            return null;
+        }
+        if (this.object instanceof Boolean) {
+            return (Boolean) this.object ? 1 : 0;
+        }
+        return this.object;
     }
 
     public List<String> asStringList() {
-        if (object instanceof ArrayList) return new ArrayList<>();
+        if (this.object instanceof ArrayList) {
+            return new ArrayList<>();
+        }
         List<String> list = new ArrayList<>();
-        if (object == null) return list;
-        String[] stack = ((String) object).split(";");
+        if (this.object == null) {
+            return list;
+        }
+        String[] stack = ((String) this.object).split(";");
         for (String item : stack) {
-            if (item.equals("")) continue;
+            if (item.equals("")) {
+                continue;
+            }
             list.add(item);
         }
         return list;

@@ -39,7 +39,7 @@ import java.util.UUID;
  * Created by songoda on 3/7/2017.
  */
 public class Furnace {
-    private final EpicFurnaces plugin = EpicFurnaces.getInstance();
+    private final EpicFurnaces plugin = EpicFurnaces.getPlugin(EpicFurnaces.class);
 
     private final String hologramId = UUID.randomUUID().toString();
 
@@ -47,7 +47,7 @@ public class Furnace {
     private int id;
 
     private final Location location;
-    private Level level = plugin.getLevelManager().getLowestLevel();
+    private Level level = this.plugin.getLevelManager().getLowestLevel();
     private String nickname = null;
     private UUID placedBy = null;
     private int uses, radiusOverheatLast, radiusFuelshareLast = 0;
@@ -63,38 +63,46 @@ public class Furnace {
     }
 
     public void overview(GuiManager guiManager, Player player) {
-        if (placedBy == null) placedBy = player.getUniqueId();
+        if (this.placedBy == null) {
+            this.placedBy = player.getUniqueId();
+        }
 
-        if (!player.hasPermission("epicfurnaces.overview")) return;
-
-        if (Settings.USE_PROTECTION_PLUGINS.getBoolean() && !ProtectionManager.canInteract(player, location)) {
-            player.sendMessage(plugin.getLocale().getMessage("event.general.protected").getPrefixedMessage());
+        if (!player.hasPermission("epicfurnaces.overview")) {
             return;
         }
 
-        guiManager.showGUI(player, new GUIOverview(plugin, this, player));
+        if (Settings.USE_PROTECTION_PLUGINS.getBoolean() && !ProtectionManager.canInteract(player, this.location)) {
+            player.sendMessage(this.plugin.getLocale().getMessage("event.general.protected").getPrefixedMessage());
+            return;
+        }
+
+        guiManager.showGUI(player, new GUIOverview(this.plugin, this, player));
     }
 
     public void plus(FurnaceSmeltEvent event) {
-        Block block = location.getBlock();
-        if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) return;
+        Block block = this.location.getBlock();
+        if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) {
+            return;
+        }
 
         this.uses++;
-        plugin.getDataManager().queueFurnaceForUpdate(this);
+        this.plugin.getDataManager().queueFurnaceForUpdate(this);
 
         CompatibleMaterial material = CompatibleMaterial.getMaterial(event.getResult());
         int needed = -1;
 
-        if (level.getMaterials().containsKey(material)) {
+        if (this.level.getMaterials().containsKey(material)) {
             int amount = addToLevel(material, 1);
-            plugin.getDataManager().updateLevelupItems(this, material, amount);
-            needed = level.getMaterials().get(material) - getToLevel(material);
+            this.plugin.getDataManager().updateLevelupItems(this, material, amount);
+            needed = this.level.getMaterials().get(material) - getToLevel(material);
         }
 
 
-        if (level.getReward() == null) return;
+        if (this.level.getReward() == null) {
+            return;
+        }
 
-        String reward = level.getReward();
+        String reward = this.level.getReward();
         int min = 1;
         int max = 1;
         if (reward.contains(":")) {
@@ -110,9 +118,9 @@ public class Furnace {
             }
         }
 
-        if (Settings.UPGRADE_BY_SMELTING.getBoolean()
-                && needed == 0
-                && plugin.getLevelManager().getLevel(level.getLevel() + 1) != null) {
+        if (Settings.UPGRADE_BY_SMELTING.getBoolean() &&
+                needed == 0 &&
+                this.plugin.getLevelManager().getLevel(this.level.getLevel() + 1) != null) {
             this.toLevel.remove(material);
             levelUp();
         }
@@ -121,30 +129,35 @@ public class Furnace {
 
         FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
 
-        if (event.getSource().getType().name().contains("SPONGE") || event.getSource().getType().name().contains("COBBLESTONE") || event.getSource().getType().name().contains("DEEPSLATE"))
+        if (event.getSource().getType().name().contains("SPONGE") ||
+                event.getSource().getType().name().contains("COBBLESTONE") ||
+                event.getSource().getType().name().contains("DEEPSLATE")) {
             return;
+        }
 
         int num = Integer.parseInt(reward);
         double rand = Math.random() * 100;
         if (rand >= num
                 || event.getResult().equals(Material.SPONGE)
                 || Settings.NO_REWARDS_FROM_RECIPES.getBoolean()
-                && plugin.getFurnaceRecipeFile().contains("Recipes." + inventory.getSmelting().getType().toString())) {
+                && this.plugin.getFurnaceRecipeFile().contains("Recipes." + inventory.getSmelting().getType())) {
             return;
         }
 
         int randomAmount = min == max ? min : (int) (Math.random() * ((max - min) + 1)) + min;
 
-        BoostData boostData = plugin.getBoostManager().getBoost(placedBy);
+        BoostData boostData = this.plugin.getBoostManager().getBoost(this.placedBy);
         randomAmount = randomAmount * (boostData == null ? 1 : boostData.getMultiplier());
 
         event.getResult().setAmount(Math.min(event.getResult().getAmount() + randomAmount, event.getResult().getMaxStackSize()));
     }
 
     public void upgrade(Player player, CostType type) {
-        if (!plugin.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1)) return;
+        if (!this.plugin.getLevelManager().getLevels().containsKey(this.level.getLevel() + 1)) {
+            return;
+        }
 
-        Level level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
+        Level level = this.plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
         int cost = type == CostType.ECONOMY ? level.getCostEconomy() : level.getCostExperience();
 
         if (type == CostType.ECONOMY) {
@@ -153,7 +166,7 @@ public class Furnace {
                 return;
             }
             if (!EconomyManager.hasBalance(player, cost)) {
-                plugin.getInstance().getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
+                this.plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
                 return;
             }
             EconomyManager.withdrawBalance(player, cost);
@@ -165,7 +178,7 @@ public class Furnace {
                 }
                 upgradeFinal(player);
             } else {
-                plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
+                this.plugin.getLocale().getMessage("event.upgrade.cannotafford").sendPrefixedMessage(player);
             }
         }
     }
@@ -173,55 +186,63 @@ public class Furnace {
     private void upgradeFinal(Player player) {
         levelUp();
         syncName();
-        plugin.getDataManager().queueFurnaceForUpdate(this);
-        if (plugin.getLevelManager().getHighestLevel() != level) {
-            plugin.getLocale().getMessage("event.upgrade.success")
-                    .processPlaceholder("level", level.getLevel()).sendPrefixedMessage(player);
+        this.plugin.getDataManager().queueFurnaceForUpdate(this);
+        if (this.plugin.getLevelManager().getHighestLevel() != this.level) {
+            this.plugin.getLocale().getMessage("event.upgrade.success")
+                    .processPlaceholder("level", this.level.getLevel()).sendPrefixedMessage(player);
 
         } else {
-            plugin.getLocale().getMessage("event.upgrade.maxed")
-                    .processPlaceholder("level", level.getLevel()).sendPrefixedMessage(player);
+            this.plugin.getLocale().getMessage("event.upgrade.maxed")
+                    .processPlaceholder("level", this.level.getLevel()).sendPrefixedMessage(player);
         }
-        Location loc = location.clone().add(.5, .5, .5);
+        Location loc = this.location.clone().add(.5, .5, .5);
 
-        if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_12)) return;
+        if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_12)) {
+            return;
+        }
 
-        player.getWorld().spawnParticle(org.bukkit.Particle.valueOf(plugin.getConfig().getString("Main.Upgrade Particle Type")), loc, 200, .5, .5, .5);
+        player.getWorld().spawnParticle(org.bukkit.Particle.valueOf(this.plugin.getConfig().getString("Main.Upgrade Particle Type")), loc, 200, .5, .5, .5);
 
-        if (plugin.getLevelManager().getHighestLevel() != level) {
+        if (this.plugin.getLevelManager().getHighestLevel() != this.level) {
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
         } else {
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 25.0F);
 
-            if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) return;
+            if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
+                return;
+            }
 
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 2F, 25.0F);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.2F, 35.0F), 5L);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.8F, 35.0F), 10L);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.2F, 35.0F), 5L);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.8F, 35.0F), 10L);
         }
     }
 
     public void levelUp() {
-        level = plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
+        this.level = this.plugin.getLevelManager().getLevel(this.level.getLevel() + 1);
     }
 
     private void syncName() {
-        org.bukkit.block.Furnace furnace = (org.bukkit.block.Furnace) location.getBlock().getState();
-        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_10))
-            furnace.setCustomName(Methods.formatName(level.getLevel()));
+        org.bukkit.block.Furnace furnace = (org.bukkit.block.Furnace) this.location.getBlock().getState();
+        if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_10)) {
+            furnace.setCustomName(Methods.formatName(this.level.getLevel()));
+        }
         furnace.update(true);
     }
 
     public void updateCook() {
-        Block block = location.getBlock();
-        if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) return;
+        Block block = this.location.getBlock();
+        if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) {
+            return;
+        }
 
-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, () -> {
             int num = getPerformanceTotal(block.getType());
 
             int max = (block.getType().name().contains("BLAST") || block.getType().name().contains("SMOKER") ? 100 : 200);
-            if (num >= max)
+            if (num >= max) {
                 num = max - 1;
+            }
 
             if (num != 0) {
                 BlockState bs = (block.getState());
@@ -233,17 +254,17 @@ public class Furnace {
 
 
     public Level getLevel() {
-        return level;
+        return this.level;
     }
 
 
     public List<UUID> getAccessList() {
-        return Collections.unmodifiableList(accessList);
+        return Collections.unmodifiableList(this.accessList);
     }
 
     public int getPerformanceTotal(Material material) {
         String cap = (material.name().contains("BLAST") || material.name().contains("SMOKER") ? "100" : "200");
-        String equation = "(" + level.getPerformance() + " / 100) * " + cap;
+        String equation = "(" + this.level.getPerformance() + " / 100) * " + cap;
         return (int) MathUtils.eval(equation);
     }
 
@@ -252,66 +273,71 @@ public class Furnace {
     }
 
     public boolean addToAccessList(UUID uuid) {
-        return accessList.add(uuid);
+        return this.accessList.add(uuid);
     }
 
     public boolean removeFromAccessList(UUID uuid) {
-        return accessList.remove(uuid);
+        return this.accessList.remove(uuid);
     }
 
     public boolean isOnAccessList(OfflinePlayer player) {
-        return accessList.contains(player.getUniqueId());
+        return this.accessList.contains(player.getUniqueId());
     }
 
     public void clearAccessList() {
-        accessList.clear();
+        this.accessList.clear();
     }
 
     public List<Location> getRadius(boolean overHeat) {
-        if (overHeat)
-            return radiusOverheat.isEmpty() ? null : Collections.unmodifiableList(radiusOverheat);
-        else
-            return radiusFuelshare.isEmpty() ? null : Collections.unmodifiableList(radiusFuelshare);
+        if (overHeat) {
+            return this.radiusOverheat.isEmpty() ? null : Collections.unmodifiableList(this.radiusOverheat);
+        } else {
+            return this.radiusFuelshare.isEmpty() ? null : Collections.unmodifiableList(this.radiusFuelshare);
+        }
     }
 
 
     public void addToRadius(Location location, boolean overHeat) {
-        if (overHeat)
-            radiusOverheat.add(location);
-        else
-            radiusFuelshare.add(location);
+        if (overHeat) {
+            this.radiusOverheat.add(location);
+        } else {
+            this.radiusFuelshare.add(location);
+        }
     }
 
 
     public void clearRadius(boolean overHeat) {
-        if (overHeat)
-            radiusOverheat.clear();
-        else
-            radiusFuelshare.clear();
+        if (overHeat) {
+            this.radiusOverheat.clear();
+        } else {
+            this.radiusFuelshare.clear();
+        }
     }
 
 
     public int getRadiusLast(boolean overHeat) {
-        if (overHeat)
-            return radiusOverheatLast;
-        else
-            return radiusFuelshareLast;
+        if (overHeat) {
+            return this.radiusOverheatLast;
+        } else {
+            return this.radiusFuelshareLast;
+        }
     }
 
 
     public void setRadiusLast(int radiusLast, boolean overHeat) {
-        if (overHeat)
+        if (overHeat) {
             this.radiusOverheatLast = radiusLast;
-        else
+        } else {
             this.radiusFuelshareLast = radiusLast;
+        }
     }
 
     public Location getLocation() {
-        return location.clone();
+        return this.location.clone();
     }
 
     public boolean isInLoadedChunk() {
-        return location != null && location.getWorld() != null && location.getWorld().isChunkLoaded(((int) location.getX()) >> 4, ((int) location.getZ()) >> 4);
+        return this.location != null && this.location.getWorld() != null && this.location.getWorld().isChunkLoaded(((int) this.location.getX()) >> 4, ((int) this.location.getZ()) >> 4);
     }
 
     public void setLevel(Level level) {
@@ -319,7 +345,7 @@ public class Furnace {
     }
 
     public String getNickname() {
-        return nickname;
+        return this.nickname;
     }
 
     public void setNickname(String nickname) {
@@ -327,7 +353,7 @@ public class Furnace {
     }
 
     public UUID getPlacedBy() {
-        return placedBy;
+        return this.placedBy;
     }
 
     public void setPlacedBy(UUID placedBy) {
@@ -335,7 +361,7 @@ public class Furnace {
     }
 
     public int getUses() {
-        return uses;
+        return this.uses;
     }
 
     public void setUses(int uses) {
@@ -343,13 +369,14 @@ public class Furnace {
     }
 
     public int getToLevel(CompatibleMaterial material) {
-        if (!this.toLevel.containsKey(material))
+        if (!this.toLevel.containsKey(material)) {
             return 0;
+        }
         return this.toLevel.get(material);
     }
 
     public Map<CompatibleMaterial, Integer> getToLevel() {
-        return Collections.unmodifiableMap(toLevel);
+        return Collections.unmodifiableMap(this.toLevel);
     }
 
     public int addToLevel(CompatibleMaterial material, int amount) {
@@ -364,7 +391,7 @@ public class Furnace {
     }
 
     public int getRadiusOverheatLast() {
-        return radiusOverheatLast;
+        return this.radiusOverheatLast;
     }
 
     public void setRadiusOverheatLast(int radiusOverheatLast) {
@@ -372,7 +399,7 @@ public class Furnace {
     }
 
     public int getRadiusFuelshareLast() {
-        return radiusFuelshareLast;
+        return this.radiusFuelshareLast;
     }
 
     public void setRadiusFuelshareLast(int radiusFuelshareLast) {
@@ -380,7 +407,7 @@ public class Furnace {
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(int id) {
@@ -388,20 +415,25 @@ public class Furnace {
     }
 
     public void dropItems() {
-        FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) location.getBlock().getState()).getInventory();
+        FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) this.location.getBlock().getState()).getInventory();
         ItemStack fuel = inventory.getFuel();
         ItemStack smelting = inventory.getSmelting();
         ItemStack result = inventory.getResult();
 
-        World world = location.getWorld();
-        if (world == null) return;
+        World world = this.location.getWorld();
+        if (world == null) {
+            return;
+        }
 
-        if (fuel != null)
-            world.dropItemNaturally(location, fuel);
-        if (smelting != null)
-            world.dropItemNaturally(location, smelting);
-        if (result != null)
-            world.dropItemNaturally(location, result);
+        if (fuel != null) {
+            world.dropItemNaturally(this.location, fuel);
+        }
+        if (smelting != null) {
+            world.dropItemNaturally(this.location, smelting);
+        }
+        if (result != null) {
+            world.dropItemNaturally(this.location, result);
+        }
     }
 
     public String getHologramId() {
