@@ -1,5 +1,9 @@
-out/
-.idea/
+## JetBrains IDEs
+/.idea/
 *.iml
-META-INF/
-target/
+
+## Maven
+/**/target/
+
+## Misc.
+.DS_Store
