@@ -3,6 +3,7 @@ package com.songoda.epicfurnaces.listeners;
 import com.craftaro.epichoppers.EpicHoppersApi;
 import com.craftaro.epichoppers.player.PlayerData;
 import com.craftaro.epichoppers.player.SyncType;
+import com.songoda.core.compatibility.CompatibleHand;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
@@ -39,7 +40,7 @@ public class InteractListeners implements Listener {
         if (event.getAction() != Action.LEFT_CLICK_BLOCK
                 || !block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")
                 || player.isSneaking()
-                || player.getInventory().getItemInHand().getType().name().contains("PICKAXE")
+                || CompatibleHand.MAIN_HAND.getItem(player).getType().name().contains("PICKAXE")
                 || !player.hasPermission("EpicFurnaces.overview")) {
             return;
         }
@@ -67,7 +68,7 @@ public class InteractListeners implements Listener {
         }
 
 
-        Furnace furnace = plugin.getFurnaceManager().getFurnace(block.getLocation());
+        Furnace furnace = this.plugin.getFurnaceManager().getFurnace(block.getLocation());
         if (furnace == null) {
             return;
         }
