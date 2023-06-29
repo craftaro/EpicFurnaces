@@ -1,12 +1,11 @@
 package com.songoda.epicfurnaces.listeners;
 
+import com.craftaro.epichoppers.EpicHoppersApi;
+import com.craftaro.epichoppers.player.PlayerData;
+import com.craftaro.epichoppers.player.SyncType;
 import com.songoda.core.gui.GuiManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
-import com.songoda.epichoppers.EpicHoppers;
-import com.songoda.epichoppers.hopper.Hopper;
-import com.songoda.epichoppers.player.PlayerData;
-import com.songoda.epichoppers.player.SyncType;
 import com.songoda.skyblock.SkyBlock;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
@@ -59,7 +58,7 @@ public class InteractListeners implements Listener {
 
         //EpicHoppers compatibility
         if (Bukkit.getPluginManager().isPluginEnabled("EpicHoppers")) {
-            PlayerData playerData = EpicHoppers.getInstance().getPlayerDataManager().getPlayerData(player);
+            PlayerData playerData = EpicHoppersApi.getApi().getPlayerDataManager().getPlayerData(player);
             if (playerData != null) {
                 if (playerData.getSyncType() == SyncType.REGULAR) {
                     return;
