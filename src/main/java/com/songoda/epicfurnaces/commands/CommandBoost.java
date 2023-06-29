@@ -1,8 +1,8 @@
 package com.songoda.epicfurnaces.commands;
 
-import com.songoda.core.commands.AbstractCommand;
-import com.songoda.core.utils.NumberUtils;
-import com.songoda.core.utils.TimeUtils;
+import com.craftaro.core.commands.AbstractCommand;
+import com.craftaro.core.utils.NumberUtils;
+import com.craftaro.core.utils.TimeUtils;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import org.bukkit.Bukkit;

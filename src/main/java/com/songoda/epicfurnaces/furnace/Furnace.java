@@ -1,11 +1,13 @@
 package com.songoda.epicfurnaces.furnace;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.compatibility.ServerVersion;
-import com.songoda.core.gui.GuiManager;
-import com.songoda.core.hooks.EconomyManager;
-import com.songoda.core.hooks.ProtectionManager;
-import com.songoda.core.math.MathUtils;
+import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.compatibility.ServerVersion;
+import com.craftaro.core.gui.GuiManager;
+import com.craftaro.core.hooks.EconomyManager;
+import com.craftaro.core.hooks.ProtectionManager;
+import com.craftaro.core.math.MathUtils;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XSound;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.levels.Level;
@@ -18,7 +20,6 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
@@ -35,9 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Created by songoda on 3/7/2017.
- */
 public class Furnace {
     private final EpicFurnaces plugin = EpicFurnaces.getPlugin(EpicFurnaces.class);
 
@@ -52,7 +50,7 @@ public class Furnace {
     private UUID placedBy = null;
     private int uses, radiusOverheatLast, radiusFuelshareLast = 0;
 
-    private final Map<CompatibleMaterial, Integer> toLevel = new HashMap<>();
+    private final Map<XMaterial, Integer> toLevel = new HashMap<>();
 
     private final List<Location> radiusOverheat = new ArrayList<>();
     private final List<Location> radiusFuelshare = new ArrayList<>();
@@ -88,7 +86,7 @@ public class Furnace {
         this.uses++;
         this.plugin.getDataManager().queueFurnaceForUpdate(this);
 
-        CompatibleMaterial material = CompatibleMaterial.getMaterial(event.getResult());
+        XMaterial material = CompatibleMaterial.getMaterial(event.getResult().getType()).get();
         int needed = -1;
 
         if (this.level.getMaterials().containsKey(material)) {
@@ -204,17 +202,17 @@ public class Furnace {
         player.getWorld().spawnParticle(org.bukkit.Particle.valueOf(this.plugin.getConfig().getString("Main.Upgrade Particle Type")), loc, 200, .5, .5, .5);
 
         if (this.plugin.getLevelManager().getHighestLevel() != this.level) {
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.6F, 15.0F);
+            XSound.ENTITY_PLAYER_LEVELUP.play(player, .6f, 15);
         } else {
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 2F, 25.0F);
+            XSound.ENTITY_PLAYER_LEVELUP.play(player, 2, 25);
 
             if (!ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {
                 return;
             }
 
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 2F, 25.0F);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.2F, 35.0F), 5L);
-            Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.8F, 35.0F), 10L);
+            XSound.BLOCK_NOTE_BLOCK_CHIME.play(player, 2, 25);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> XSound.BLOCK_NOTE_BLOCK_CHIME.play(player, 1.2f, 35), 5);
+            Bukkit.getScheduler().scheduleSyncDelayedTask(this.plugin, () -> XSound.BLOCK_NOTE_BLOCK_CHIME.play(player, 1.8f, 35), 10);
         }
     }
 
@@ -368,18 +366,18 @@ public class Furnace {
         this.uses = uses;
     }
 
-    public int getToLevel(CompatibleMaterial material) {
+    public int getToLevel(XMaterial material) {
         if (!this.toLevel.containsKey(material)) {
             return 0;
         }
         return this.toLevel.get(material);
     }
 
-    public Map<CompatibleMaterial, Integer> getToLevel() {
+    public Map<XMaterial, Integer> getToLevel() {
         return Collections.unmodifiableMap(this.toLevel);
     }
 
-    public int addToLevel(CompatibleMaterial material, int amount) {
+    public int addToLevel(XMaterial material, int amount) {
         if (this.toLevel.containsKey(material)) {
             int newAmount = this.toLevel.get(material) + amount;
             this.toLevel.put(material, newAmount);

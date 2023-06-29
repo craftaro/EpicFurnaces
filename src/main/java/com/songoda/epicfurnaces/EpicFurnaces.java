@@ -1,20 +1,21 @@
 package com.songoda.epicfurnaces;
 
-import com.songoda.core.SongodaCore;
-import com.songoda.core.SongodaPlugin;
-import com.songoda.core.commands.CommandManager;
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.configuration.Config;
-import com.songoda.core.database.DataMigrationManager;
-import com.songoda.core.database.DatabaseConnector;
-import com.songoda.core.database.MySQLConnector;
-import com.songoda.core.database.SQLiteConnector;
-import com.songoda.core.gui.GuiManager;
-import com.songoda.core.hooks.EconomyManager;
-import com.songoda.core.hooks.HologramManager;
-import com.songoda.core.hooks.ProtectionManager;
-import com.songoda.core.third_party.de.tr7zw.nbtapi.NBTItem;
-import com.songoda.core.utils.TextUtils;
+import com.craftaro.core.SongodaCore;
+import com.craftaro.core.SongodaPlugin;
+import com.craftaro.core.commands.CommandManager;
+import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.configuration.Config;
+import com.craftaro.core.database.DataMigrationManager;
+import com.craftaro.core.database.DatabaseConnector;
+import com.craftaro.core.database.MySQLConnector;
+import com.craftaro.core.database.SQLiteConnector;
+import com.craftaro.core.gui.GuiManager;
+import com.craftaro.core.hooks.EconomyManager;
+import com.craftaro.core.hooks.HologramManager;
+import com.craftaro.core.hooks.ProtectionManager;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.core.third_party.de.tr7zw.nbtapi.NBTItem;
+import com.craftaro.core.utils.TextUtils;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.boost.BoostManager;
 import com.songoda.epicfurnaces.commands.CommandBoost;
@@ -103,7 +104,7 @@ public class EpicFurnaces extends SongodaPlugin {
     @Override
     public void onPluginEnable() {
         // Run Songoda Updater
-        SongodaCore.registerPlugin(this, 22, CompatibleMaterial.FURNACE);
+        SongodaCore.registerPlugin(this, 22, XMaterial.FURNACE);
 
         // Load Economy
         EconomyManager.load();
@@ -180,7 +181,7 @@ public class EpicFurnaces extends SongodaPlugin {
                 converted = true;
                 Storage storage = new StorageYaml(this);
                 if (storage.containsGroup("charged")) {
-                    this.console.sendMessage("[" + getDescription().getName() + "] " + ChatColor.RED +
+                    Bukkit.getConsoleSender().sendMessage("[" + getDescription().getName() + "] " + ChatColor.RED +
                             "Conversion process starting. Do NOT turn off your server." +
                             "EpicFurnaces hasn't fully loaded yet, so make sure users don't" +
                             "interact with the plugin until the conversion process is complete.");
@@ -210,11 +211,11 @@ public class EpicFurnaces extends SongodaPlugin {
                         }
                         List<UUID> usableList = list.stream().map(UUID::fromString).collect(Collectors.toList());
 
-                        Map<CompatibleMaterial, Integer> toLevel = new HashMap<>();
+                        Map<XMaterial, Integer> toLevel = new HashMap<>();
                         List<String> toLevelCompiled = row.get("tolevelnew").asStringList();
                         for (String line : toLevelCompiled) {
                             String[] split = line.split(":");
-                            toLevel.put(CompatibleMaterial.getMaterial(split[0]), Integer.parseInt(split[1]));
+                            toLevel.put(CompatibleMaterial.getMaterial(split[0]).get(), Integer.parseInt(split[1]));
                         }
 
                         furnaces.add(new FurnaceBuilder(location)
@@ -247,7 +248,7 @@ public class EpicFurnaces extends SongodaPlugin {
             final boolean finalConverted = converted;
             this.dataManager.runAsync(() -> {
                 if (finalConverted) {
-                    this.console.sendMessage("[" + getDescription().getName() + "] " + ChatColor.GREEN + "Conversion complete :)");
+                    Bukkit.getConsoleSender().sendMessage("[" + getDescription().getName() + "] " + ChatColor.GREEN + "Conversion complete :)");
                 }
 
                 this.dataManager.getFurnaces((furnaces) -> {
@@ -396,11 +397,11 @@ public class EpicFurnaces extends SongodaPlugin {
             int overheat = levels.getInt("Overheat");
             int fuelShare = levels.getInt("Fuel-share");
 
-            Map<CompatibleMaterial, Integer> materials = new LinkedHashMap<>();
+            Map<XMaterial, Integer> materials = new LinkedHashMap<>();
             if (levels.contains("Cost-item")) {
                 for (String materialStr : levels.getStringList("Cost-item")) {
                     String[] materialSplit = materialStr.split(":");
-                    materials.put(CompatibleMaterial.getMaterial(materialSplit[0]), Integer.parseInt(materialSplit[1]));
+                    materials.put(CompatibleMaterial.getMaterial(materialSplit[0]).get(), Integer.parseInt(materialSplit[1]));
                 }
             }
 

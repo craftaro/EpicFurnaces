@@ -1,6 +1,7 @@
 package com.songoda.epicfurnaces.furnace;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.songoda.epicfurnaces.furnace.levels.Level;
 import org.bukkit.Location;
 
@@ -32,8 +33,8 @@ public class FurnaceBuilder {
         return this;
     }
 
-    public FurnaceBuilder setToLevel(Map<CompatibleMaterial, Integer> toLevel) {
-        for (Map.Entry<CompatibleMaterial, Integer> entry : toLevel.entrySet()) {
+    public FurnaceBuilder setToLevel(Map<XMaterial, Integer> toLevel) {
+        for (Map.Entry<XMaterial, Integer> entry : toLevel.entrySet()) {
             this.furnace.addToLevel(entry.getKey(), entry.getValue());
         }
         return this;

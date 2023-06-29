@@ -1,6 +1,7 @@
 package com.songoda.epicfurnaces.furnace.levels;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 
 import java.util.Collections;
 import java.util.Map;
@@ -10,7 +11,7 @@ import java.util.TreeMap;
 public class LevelManager {
     private final NavigableMap<Integer, Level> registeredLevels = new TreeMap<>();
 
-    public void addLevel(int level, int costExperience, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare, Map<CompatibleMaterial, Integer> materials) {
+    public void addLevel(int level, int costExperience, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare, Map<XMaterial, Integer> materials) {
         this.registeredLevels.put(level, new Level(level, costExperience, costEconomy, performance, reward, fuelDuration, overheat, fuelShare, materials));
     }
 

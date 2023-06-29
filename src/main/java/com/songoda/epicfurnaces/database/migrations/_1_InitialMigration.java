@@ -1,7 +1,7 @@
 package com.songoda.epicfurnaces.database.migrations;
 
-import com.songoda.core.database.DataMigration;
-import com.songoda.core.database.MySQLConnector;
+import com.craftaro.core.database.DataMigration;
+import com.craftaro.core.database.MySQLConnector;
 import com.songoda.epicfurnaces.EpicFurnaces;
 
 import java.sql.Connection;

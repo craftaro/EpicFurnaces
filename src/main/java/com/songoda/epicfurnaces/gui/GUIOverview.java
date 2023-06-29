@@ -1,12 +1,13 @@
 package com.songoda.epicfurnaces.gui;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.gui.CustomizableGui;
-import com.songoda.core.gui.GuiUtils;
-import com.songoda.core.input.ChatPrompt;
-import com.songoda.core.utils.NumberUtils;
-import com.songoda.core.utils.TextUtils;
-import com.songoda.core.utils.TimeUtils;
+import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.gui.CustomizableGui;
+import com.craftaro.core.gui.GuiUtils;
+import com.craftaro.core.input.ChatPrompt;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.core.utils.NumberUtils;
+import com.craftaro.core.utils.TextUtils;
+import com.craftaro.core.utils.TimeUtils;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.Furnace;
@@ -65,7 +66,7 @@ public class GUIOverview extends CustomizableGui {
 
         // main furnace information icon
         setItem("information", 1, 4, GuiUtils.createButtonItem(
-                CompatibleMaterial.getMaterial(this.furnace.getLocation().getBlock().getType()),
+                CompatibleMaterial.getMaterial(this.furnace.getLocation().getBlock().getType()).get(),
                 this.plugin.getLocale().getMessage("interface.furnace.currentlevel")
                         .processPlaceholder("level", level.getLevel()).getMessage(),
                 getFurnaceDescription(this.furnace, level, nextLevel)));
@@ -92,14 +93,14 @@ public class GUIOverview extends CustomizableGui {
 
         if (level.getPerformance() != 0) {
             setItem("performance", infoIconOrder[num][current++], GuiUtils.createButtonItem(
-                    Settings.PERFORMANCE_ICON.getMaterial(CompatibleMaterial.REDSTONE),
+                    Settings.PERFORMANCE_ICON.getMaterial(XMaterial.REDSTONE),
                     this.plugin.getLocale().getMessage("interface.furnace.performancetitle").getMessage(),
                     this.plugin.getLocale().getMessage("interface.furnace.performanceinfo")
                             .processPlaceholder("amount", level.getPerformance()).getMessage().split("\\|")));
         }
         if (level.getReward() != null) {
             setItem("reward", infoIconOrder[num][current++], GuiUtils.createButtonItem(
-                    Settings.REWARD_ICON.getMaterial(CompatibleMaterial.GOLDEN_APPLE),
+                    Settings.REWARD_ICON.getMaterial(XMaterial.GOLDEN_APPLE),
                     this.plugin.getLocale().getMessage("interface.furnace.rewardtitle").getMessage(),
                     this.plugin.getLocale().getMessage("interface.furnace.rewardinfo")
                             .processPlaceholder("amount", level.getReward().split(":")[0].replace("%", ""))
@@ -107,7 +108,7 @@ public class GUIOverview extends CustomizableGui {
         }
         if (level.getFuelDuration() != 0) {
             setItem("fuel", infoIconOrder[num][current++], GuiUtils.createButtonItem(
-                    Settings.FUEL_DURATION_ICON.getMaterial(CompatibleMaterial.COAL),
+                    Settings.FUEL_DURATION_ICON.getMaterial(XMaterial.COAL),
                     this.plugin.getLocale().getMessage("interface.furnace.fueldurationtitle").getMessage(),
                     this.plugin.getLocale().getMessage("interface.furnace.fueldurationinfo")
                             .processPlaceholder("amount", level.getFuelDuration())
@@ -115,7 +116,7 @@ public class GUIOverview extends CustomizableGui {
         }
         if (level.getFuelShare() != 0) {
             setItem("fuel_share", infoIconOrder[num][current++], GuiUtils.createButtonItem(
-                    Settings.FUEL_SHARE_ICON.getMaterial(CompatibleMaterial.COAL_BLOCK),
+                    Settings.FUEL_SHARE_ICON.getMaterial(XMaterial.COAL_BLOCK),
                     this.plugin.getLocale().getMessage("interface.furnace.fuelsharetitle").getMessage(),
                     this.plugin.getLocale().getMessage("interface.furnace.fuelshareinfo")
                             .processPlaceholder("amount", level.getOverheat() * 3)
@@ -123,7 +124,7 @@ public class GUIOverview extends CustomizableGui {
         }
         if (level.getOverheat() != 0) {
             setItem("overheat", infoIconOrder[num][current++], GuiUtils.createButtonItem(
-                    Settings.OVERHEAT_ICON.getMaterial(CompatibleMaterial.FIRE_CHARGE),
+                    Settings.OVERHEAT_ICON.getMaterial(XMaterial.FIRE_CHARGE),
                     this.plugin.getLocale().getMessage("interface.furnace.overheattitle").getMessage(),
                     this.plugin.getLocale().getMessage("interface.furnace.overheatinfo")
                             .processPlaceholder("amount", level.getOverheat() * 3)
@@ -133,7 +134,7 @@ public class GUIOverview extends CustomizableGui {
         // remote control
         if (Settings.REMOTE.getBoolean() && this.player.hasPermission("EpicFurnaces.Remote")) {
             setButton("remote", 4, GuiUtils.createButtonItem(
-                            CompatibleMaterial.TRIPWIRE_HOOK,
+                            XMaterial.TRIPWIRE_HOOK,
                             this.plugin.getLocale().getMessage("interface.furnace.remotefurnace").getMessage(),
                             getFurnaceRemoteLore(this.furnace)),
                     ClickType.LEFT, (event) -> {
@@ -164,7 +165,7 @@ public class GUIOverview extends CustomizableGui {
                 && level.getCostExperience() != -1
                 && this.player.hasPermission("EpicFurnaces.Upgrade.XP")) {
             setButton("upgrade_xp", 1, 2, GuiUtils.createButtonItem(
-                            Settings.XP_ICON.getMaterial(CompatibleMaterial.EXPERIENCE_BOTTLE),
+                            Settings.XP_ICON.getMaterial(XMaterial.EXPERIENCE_BOTTLE),
                             this.plugin.getLocale().getMessage("interface.furnace.upgradewithxp").getMessage(),
                             nextLevel != null
                                     ? this.plugin.getLocale().getMessage("interface.furnace.upgradewithxplore")
@@ -179,7 +180,7 @@ public class GUIOverview extends CustomizableGui {
                 && level.getCostEconomy() != -1
                 && this.player.hasPermission("EpicFurnaces.Upgrade.ECO")) {
             setButton("upgrade_economy", 1, 6, GuiUtils.createButtonItem(
-                            Settings.ECO_ICON.getMaterial(CompatibleMaterial.SUNFLOWER),
+                            Settings.ECO_ICON.getMaterial(XMaterial.SUNFLOWER),
                             this.plugin.getLocale().getMessage("interface.furnace.upgradewitheconomy").getMessage(),
                             nextLevel != null
                                     ? this.plugin.getLocale().getMessage("interface.furnace.upgradewitheconomylore")
@@ -215,7 +216,7 @@ public class GUIOverview extends CustomizableGui {
 
             if (Settings.UPGRADE_BY_SMELTING.getBoolean()) {
                 lore.add(this.plugin.getLocale().getMessage("interface.furnace.itemsneeded").getMessage());
-                for (Map.Entry<CompatibleMaterial, Integer> entry : level.getMaterials().entrySet()) {
+                for (Map.Entry<XMaterial, Integer> entry : level.getMaterials().entrySet()) {
                     lore.add(this.plugin.getLocale().getMessage("interface.furnace.neededitem")
                             .processPlaceholder("amount", entry.getValue() - furnace.getToLevel(entry.getKey()))
                             .processPlaceholder("type", Methods.cleanString(entry.getKey().name()))

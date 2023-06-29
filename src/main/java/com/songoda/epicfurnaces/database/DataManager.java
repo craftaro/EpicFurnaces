@@ -1,8 +1,9 @@
 package com.songoda.epicfurnaces.database;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
-import com.songoda.core.database.DataManagerAbstract;
-import com.songoda.core.database.DatabaseConnector;
+import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.database.DataManagerAbstract;
+import com.craftaro.core.database.DatabaseConnector;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.boost.BoostData;
 import com.songoda.epicfurnaces.furnace.Furnace;
@@ -154,7 +155,7 @@ public class DataManager extends DataManagerAbstract {
 
                 String createNewLevel = "INSERT INTO " + this.getTablePrefix() + "to_level_new (furnace_id, item, amount) VALUES (?, ?, ?)";
                 try (PreparedStatement statement = connection.prepareStatement(createNewLevel)) {
-                    for (Map.Entry<CompatibleMaterial, Integer> entry : furnace.getToLevel().entrySet()) {
+                    for (Map.Entry<XMaterial, Integer> entry : furnace.getToLevel().entrySet()) {
                         statement.setInt(1, furnace.getId());
                         statement.setString(2, entry.getKey().name());
                         statement.setInt(3, entry.getValue());
@@ -271,7 +272,7 @@ public class DataManager extends DataManagerAbstract {
         });
     }
 
-    public void updateLevelupItems(Furnace furnace, CompatibleMaterial material, int amount) {
+    public void updateLevelupItems(Furnace furnace, XMaterial material, int amount) {
         this.runAsync(() -> {
             try (Connection connection = this.databaseConnector.getConnection()) {
                 String deleteLevelupItem = "DELETE FROM " + this.getTablePrefix() + "to_level_new WHERE furnace_id = ? AND item = ?";
@@ -356,7 +357,7 @@ public class DataManager extends DataManagerAbstract {
                     ResultSet result = statement.executeQuery(selectLevelupItems);
                     while (result.next()) {
                         int id = result.getInt("furnace_id");
-                        CompatibleMaterial material = CompatibleMaterial.getMaterial(result.getString("item"));
+                        XMaterial material = CompatibleMaterial.getMaterial(result.getString("item")).get();
                         int amount = result.getInt("amount");
 
                         Furnace furnace = furnaces.get(id);

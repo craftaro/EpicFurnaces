@@ -1,6 +1,6 @@
 package com.songoda.epicfurnaces.tasks;
 
-import com.songoda.core.hooks.HologramManager;
+import com.craftaro.core.hooks.HologramManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import org.bukkit.scheduler.BukkitRunnable;
 

@@ -1,11 +1,10 @@
 package com.songoda.epicfurnaces.furnace.levels;
 
-import com.songoda.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
 import com.songoda.epicfurnaces.EpicFurnaces;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,13 +17,13 @@ public class Level {
     private final int overheat;
     private final int fuelShare;
 
-    private Map<CompatibleMaterial, Integer> materials;
+    private Map<XMaterial, Integer> materials;
 
     private final String reward;
 
     private final List<String> description = new ArrayList<>();
 
-    Level(int level, int costExperience, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare, Map<CompatibleMaterial, Integer> materials) {
+    Level(int level, int costExperience, int costEconomy, int performance, String reward, int fuelDuration, int overheat, int fuelShare, Map<XMaterial, Integer> materials) {
         this.level = level;
         this.costExperience = costExperience;
         this.costEconomy = costEconomy;
@@ -118,7 +117,7 @@ public class Level {
         return this.costEconomy;
     }
 
-    public Map<CompatibleMaterial, Integer> getMaterials() {
+    public Map<XMaterial, Integer> getMaterials() {
         return Collections.unmodifiableMap(this.materials);
     }
 }

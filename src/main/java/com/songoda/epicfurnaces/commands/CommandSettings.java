@@ -1,8 +1,8 @@
 package com.songoda.epicfurnaces.commands;
 
-import com.songoda.core.commands.AbstractCommand;
-import com.songoda.core.configuration.editor.PluginConfigGui;
-import com.songoda.core.gui.GuiManager;
+import com.craftaro.core.commands.AbstractCommand;
+import com.craftaro.core.configuration.editor.PluginConfigGui;
+import com.craftaro.core.gui.GuiManager;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

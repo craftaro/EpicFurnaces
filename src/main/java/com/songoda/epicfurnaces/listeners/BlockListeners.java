@@ -1,6 +1,6 @@
 package com.songoda.epicfurnaces.listeners;
 
-import com.songoda.core.utils.PlayerUtils;
+import com.craftaro.core.utils.PlayerUtils;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import com.songoda.epicfurnaces.furnace.Furnace;
 import com.songoda.epicfurnaces.furnace.FurnaceBuilder;

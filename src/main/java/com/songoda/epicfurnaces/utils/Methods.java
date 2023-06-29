@@ -1,6 +1,6 @@
 package com.songoda.epicfurnaces.utils;
 
-import com.songoda.core.utils.TextUtils;
+import com.craftaro.core.utils.TextUtils;
 import com.songoda.epicfurnaces.EpicFurnaces;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
