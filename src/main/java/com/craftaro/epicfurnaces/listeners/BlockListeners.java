@@ -110,6 +110,7 @@ public class BlockListeners implements Listener {
         }
 
         Furnace furnace = this.plugin.getFurnaceManager().getFurnace(block);
+        org.bukkit.block.Furnace state = (org.bukkit.block.Furnace) block.getState();
 
         if (furnace == null) {
             return;
@@ -126,8 +127,10 @@ public class BlockListeners implements Listener {
                     : block.getType(), level, furnace.getUses());
 
             // By canceling the event, we destroy any chance of items dropping from the furnace. This fixes the problem.
-            //furnace.dropItems(); No need to drop items. dropItemNaturally() will drop the items inside the furnace
+            furnace.dropItems();
 
+            //Clear furnace inventory before destroying it to make sure no items duplicated
+            state.getInventory().clear();
             event.getBlock().setType(Material.AIR);
             event.getBlock().getLocation().getWorld().dropItemNaturally(event.getBlock().getLocation(), item);
         }
