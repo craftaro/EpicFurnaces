@@ -230,7 +230,7 @@ public class EpicFurnaces extends SongodaPlugin {
 
                 this.dataManager.loadBatch(Furnace.class, "active_furnaces").forEach((furnace) -> {
                     this.furnaceManager.addFurnace((Furnace) furnace);
-                    this.boostManager.addBoosts(this.dataManager.loadBatch(BoostData.class, "boosts"));
+                    this.boostManager.addBoosts(this.dataManager.loadBatch(BoostData.class, "boosted_players"));
                 });
             });
         });
