@@ -19,7 +19,7 @@ public class _1_InitialMigration extends DataMigration {
 
         // Create furnaces table.
         try (Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE " + tablePrefix + "active_furnaces (" +
+            statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "active_furnaces (" +
                     "id INTEGER PRIMARY KEY AUTO_INCREMENT, " +
                     "level INTEGER NOT NULL, " +
                     "uses INTEGER NOT NULL," +
@@ -34,7 +34,7 @@ public class _1_InitialMigration extends DataMigration {
 
         // Create access lists.
         try (Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE " + tablePrefix + "access_list (" +
+            statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "access_list (" +
                     "furnace_id INTEGER NOT NULL, " +
                     "uuid VARCHAR(36)" +
                     ")");
@@ -42,7 +42,7 @@ public class _1_InitialMigration extends DataMigration {
 
         // Create items to level up.
         try (Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE " + tablePrefix + "to_level_new (" +
+            statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "to_level_new (" +
                     "furnace_id INTEGER NOT NULL, " +
                     "item TEXT NOT NULL," +
                     "amount INT NOT NULL " +
@@ -51,7 +51,7 @@ public class _1_InitialMigration extends DataMigration {
 
         // Create player boosts
         try (Statement statement = connection.createStatement()) {
-            statement.execute("CREATE TABLE " + tablePrefix + "boosted_players (" +
+            statement.execute("CREATE TABLE IF NOT EXISTS " + tablePrefix + "boosted_players (" +
                     "player VARCHAR(36) NOT NULL, " +
                     "multiplier INTEGER NOT NULL," +
                     "end_time BIGINT NOT NULL " +
