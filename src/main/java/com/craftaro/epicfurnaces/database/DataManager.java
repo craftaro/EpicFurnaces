@@ -2,7 +2,7 @@ package com.craftaro.epicfurnaces.database;
 
 import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.database.DatabaseConnector;
-import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.epicfurnaces.furnace.FurnaceBuilder;
 import com.craftaro.epicfurnaces.EpicFurnaces;
 import com.craftaro.epicfurnaces.boost.BoostData;

@@ -1,6 +1,6 @@
 package com.craftaro.epicfurnaces.furnace;
 
-import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.epicfurnaces.furnace.levels.Level;
 import org.bukkit.Location;
 

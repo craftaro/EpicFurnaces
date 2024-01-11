@@ -9,11 +9,12 @@ import com.craftaro.core.database.Data;
 import com.craftaro.core.database.DatabaseConnector;
 import com.craftaro.core.database.MySQLConnector;
 import com.craftaro.core.database.SQLiteConnector;
+import com.craftaro.core.dependency.Dependency;
 import com.craftaro.core.gui.GuiManager;
 import com.craftaro.core.hooks.EconomyManager;
 import com.craftaro.core.hooks.HologramManager;
 import com.craftaro.core.hooks.ProtectionManager;
-import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.epicfurnaces.commands.CommandBoost;
@@ -89,6 +90,11 @@ public class EpicFurnaces extends SongodaPlugin {
     @Deprecated
     public static EpicFurnaces getInstance() {
         return EpicFurnaces.getPlugin(EpicFurnaces.class);
+    }
+
+    @Override
+    protected Set<Dependency> getDependencies() {
+        return new HashSet<>();
     }
 
     @Override

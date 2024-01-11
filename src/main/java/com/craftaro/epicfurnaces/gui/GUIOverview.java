@@ -4,7 +4,7 @@ import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.gui.CustomizableGui;
 import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.input.ChatPrompt;
-import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.core.utils.NumberUtils;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.core.utils.TimeUtils;

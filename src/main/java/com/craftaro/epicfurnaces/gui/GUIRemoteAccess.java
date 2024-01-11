@@ -4,7 +4,7 @@ import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.core.gui.CustomizableGui;
 import com.craftaro.core.gui.GuiUtils;
 import com.craftaro.core.input.ChatPrompt;
-import com.craftaro.core.third_party.com.cryptomorin.xseries.XMaterial;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.core.utils.TextUtils;
 import com.craftaro.epicfurnaces.settings.Settings;
 import com.craftaro.epicfurnaces.EpicFurnaces;
