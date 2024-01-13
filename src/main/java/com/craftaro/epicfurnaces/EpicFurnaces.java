@@ -6,17 +6,14 @@ import com.craftaro.core.commands.CommandManager;
 import com.craftaro.core.compatibility.CompatibleMaterial;
 import com.craftaro.core.configuration.Config;
 import com.craftaro.core.database.Data;
-import com.craftaro.core.database.DatabaseConnector;
-import com.craftaro.core.database.MySQLConnector;
-import com.craftaro.core.database.SQLiteConnector;
-import com.craftaro.core.dependency.Dependency;
 import com.craftaro.core.gui.GuiManager;
 import com.craftaro.core.hooks.EconomyManager;
 import com.craftaro.core.hooks.HologramManager;
 import com.craftaro.core.hooks.ProtectionManager;
-import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.core.third_party.de.tr7zw.nbtapi.NBTItem;
 import com.craftaro.core.utils.TextUtils;
+import com.craftaro.epicfurnaces.boost.BoostData;
+import com.craftaro.epicfurnaces.boost.BoostManager;
 import com.craftaro.epicfurnaces.commands.CommandBoost;
 import com.craftaro.epicfurnaces.commands.CommandGive;
 import com.craftaro.epicfurnaces.commands.CommandReload;
@@ -24,7 +21,8 @@ import com.craftaro.epicfurnaces.commands.CommandRemote;
 import com.craftaro.epicfurnaces.commands.CommandSettings;
 import com.craftaro.epicfurnaces.compatibility.FabledSkyBlockLoader;
 import com.craftaro.epicfurnaces.database.DataHelper;
-import com.craftaro.epicfurnaces.database.DataManager;
+import com.craftaro.epicfurnaces.database.migrations._1_InitialMigration;
+import com.craftaro.epicfurnaces.furnace.Furnace;
 import com.craftaro.epicfurnaces.furnace.FurnaceBuilder;
 import com.craftaro.epicfurnaces.furnace.FurnaceManager;
 import com.craftaro.epicfurnaces.furnace.levels.LevelManager;
@@ -32,19 +30,16 @@ import com.craftaro.epicfurnaces.handlers.BlacklistHandler;
 import com.craftaro.epicfurnaces.listeners.BlockListeners;
 import com.craftaro.epicfurnaces.listeners.EntityListeners;
 import com.craftaro.epicfurnaces.listeners.FurnaceListeners;
+import com.craftaro.epicfurnaces.listeners.InteractListeners;
 import com.craftaro.epicfurnaces.listeners.InventoryListeners;
 import com.craftaro.epicfurnaces.settings.Settings;
 import com.craftaro.epicfurnaces.storage.Storage;
 import com.craftaro.epicfurnaces.storage.StorageRow;
 import com.craftaro.epicfurnaces.storage.types.StorageYaml;
-import com.craftaro.epicfurnaces.boost.BoostData;
-import com.craftaro.epicfurnaces.boost.BoostManager;
-import com.craftaro.epicfurnaces.database.migrations._1_InitialMigration;
-import com.craftaro.epicfurnaces.furnace.Furnace;
-import com.craftaro.epicfurnaces.listeners.InteractListeners;
 import com.craftaro.epicfurnaces.tasks.FurnaceTask;
 import com.craftaro.epicfurnaces.tasks.HologramTask;
 import com.craftaro.epicfurnaces.utils.Methods;
+import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -83,18 +78,12 @@ public class EpicFurnaces extends SongodaPlugin {
     private BlacklistHandler blacklistHandler;
     private DataHelper dataHelper;
 
-
     /**
      * @deprecated Use {@link #getPlugin(Class)} instead
      */
     @Deprecated
     public static EpicFurnaces getInstance() {
         return EpicFurnaces.getPlugin(EpicFurnaces.class);
-    }
-
-    @Override
-    protected Set<Dependency> getDependencies() {
-        return new HashSet<>();
     }
 
     @Override
