@@ -1,4 +1,4 @@
-package com.craftaro.epicfurnaces.furnace.levels;
+package com.craftaro.epicfurnaces.level;
 
 import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.epicfurnaces.EpicFurnaces;
@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Level {
+
     private final int level;
     private final int costExperience;
     private final int costEconomy;
@@ -19,7 +20,9 @@ public class Level {
 
     private Map<XMaterial, Integer> materials;
 
-    private final String reward;
+    private final String rewardRaw;
+    private int rewardPercentage = 100;
+    private int rewardMin = 1, rewardMax = 1;
 
     private final List<String> description = new ArrayList<>();
 
@@ -28,7 +31,6 @@ public class Level {
         this.costExperience = costExperience;
         this.costEconomy = costEconomy;
         this.performance = performance;
-        this.reward = reward;
         this.fuelDuration = fuelDuration;
         this.overheat = overheat;
         this.fuelShare = fuelShare;
@@ -70,6 +72,25 @@ public class Level {
                     .processPlaceholder("amount", overheat)
                     .getMessage());
         }
+
+        rewardRaw = reward;
+        if (reward == null)
+            return;
+
+        if (reward.contains(":")) { // Optionally this can be multiple values.
+            String[] rewardSplit = reward.split(":");
+            rewardPercentage = Integer.parseInt(rewardSplit[0].substring(0, rewardSplit[0].length() - 1));
+            if (rewardSplit[1].contains("-")) {
+                String[] split = rewardSplit[1].split("-");
+                rewardMin = Integer.parseInt(split[0]);
+                rewardMax = Integer.parseInt(split[1]);
+            } else {
+                rewardMin = Integer.parseInt(rewardSplit[1]);
+                rewardMax = rewardMin;
+            }
+        } else {
+            rewardPercentage = Integer.parseInt(reward.substring(0, reward.length() - 1));
+        }
     }
 
 
@@ -85,11 +106,6 @@ public class Level {
 
     public int getPerformance() {
         return this.performance;
-    }
-
-
-    public String getReward() {
-        return this.reward;
     }
 
 
@@ -119,5 +135,17 @@ public class Level {
 
     public Map<XMaterial, Integer> getMaterials() {
         return Collections.unmodifiableMap(this.materials);
+    }
+
+    public int getRandomReward() {
+        return rewardMin == rewardMax ? rewardMin : (int) (Math.random() * ((rewardMax - rewardMin) + 1)) + rewardMin;
+    }
+
+    public boolean hasReward() {
+        return rewardRaw != null;
+    }
+
+    public int getRewardPercent() {
+        return rewardPercentage;
     }
 }

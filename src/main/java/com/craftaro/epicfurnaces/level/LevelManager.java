@@ -1,4 +1,4 @@
-package com.craftaro.epicfurnaces.furnace.levels;
+package com.craftaro.epicfurnaces.level;
 
 import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 
