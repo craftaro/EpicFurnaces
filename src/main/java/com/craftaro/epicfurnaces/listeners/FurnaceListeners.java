@@ -34,18 +34,15 @@ public class FurnaceListeners implements Listener {
     @EventHandler
     public void onFuel(FurnaceBurnEvent event) {
         Furnace furnace = this.plugin.getFurnaceManager().getFurnace(event.getBlock().getLocation());
-        if (furnace == null) {
+        if (furnace == null)
             return;
-        }
 
         Level level = furnace.getLevel();
 
-        if (level.getFuelDuration() != 0) {
+        if (level.getFuelDuration() == 0)
             return;
-        }
 
-        int num = level.getFuelDuration();
-        int per = (event.getBurnTime() / 100) * num;
-        event.setBurnTime(event.getBurnTime() + per);
+        int percent = (event.getBurnTime() / 100) * level.getFuelDuration();
+        event.setBurnTime(event.getBurnTime() + percent);
     }
 }
