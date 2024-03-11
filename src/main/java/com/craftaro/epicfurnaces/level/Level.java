@@ -21,7 +21,8 @@ public class Level {
     private Map<XMaterial, Integer> materials;
 
     private final String rewardRaw;
-    private final int rewardMin, rewardMax;
+    private int rewardPercentage = 100;
+    private int rewardMin = 1, rewardMax = 1;
 
     private final List<String> description = new ArrayList<>();
 
@@ -73,9 +74,12 @@ public class Level {
         }
 
         rewardRaw = reward;
+        if (reward == null)
+            return;
+
         if (reward.contains(":")) { // Optionally this can be multiple values.
             String[] rewardSplit = reward.split(":");
-            reward = rewardSplit[0].substring(0, rewardSplit[0].length() - 1);
+            rewardPercentage = Integer.parseInt(rewardSplit[0].substring(0, rewardSplit[0].length() - 1));
             if (rewardSplit[1].contains("-")) {
                 String[] split = rewardSplit[1].split("-");
                 rewardMin = Integer.parseInt(split[0]);
@@ -85,7 +89,7 @@ public class Level {
                 rewardMax = rewardMin;
             }
         } else {
-            rewardMin =
+            rewardPercentage = Integer.parseInt(reward.substring(0, reward.length() - 1));
         }
     }
 
@@ -102,11 +106,6 @@ public class Level {
 
     public int getPerformance() {
         return this.performance;
-    }
-
-
-    public String getReward() {
-        return this.reward;
     }
 
 
@@ -140,5 +139,13 @@ public class Level {
 
     public int getRandomReward() {
         return rewardMin == rewardMax ? rewardMin : (int) (Math.random() * ((rewardMax - rewardMin) + 1)) + rewardMin;
+    }
+
+    public boolean hasReward() {
+        return rewardRaw != null;
+    }
+
+    public int getRewardPercent() {
+        return rewardPercentage;
     }
 }

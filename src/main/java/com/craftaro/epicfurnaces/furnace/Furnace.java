@@ -103,23 +103,20 @@ public class Furnace implements Data {
             return;
         }
 
-        this.uses++;
-        this.plugin.getDataHelper().queueFurnaceForUpdate(this);
+        uses++;
+        plugin.getDataHelper().queueFurnaceForUpdate(this);
 
         XMaterial material = CompatibleMaterial.getMaterial(event.getResult().getType()).get();
         int needed = -1;
 
-        if (this.level.getMaterials().containsKey(material)) {
+        if (level.getMaterials().containsKey(material)) {
             int amount = addToLevel(material, 1);
-            this.plugin.getDataHelper().updateLevelupItems(this, material, amount);
-            needed = this.level.getMaterials().get(material) - getToLevel(material);
+            plugin.getDataHelper().updateLevelupItems(this, material, amount);
+            needed = level.getMaterials().get(material) - getToLevel(material);
         }
 
-
-        if (this.level.getReward() == null)
+        if (!level.hasReward())
             return;
-
-        String reward = this.level.getReward();
 
         if (Settings.UPGRADE_BY_SMELTING.getBoolean() &&
                 needed == 0 &&
@@ -128,7 +125,7 @@ public class Furnace implements Data {
             levelUp();
         }
 
-        this.updateCook();
+        updateCook();
 
         FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
 
@@ -138,9 +135,9 @@ public class Furnace implements Data {
             return;
         }
 
-        int num = Integer.parseInt(reward);
+        int percent = level.getRewardPercent();
         double rand = Math.random() * 100;
-        if (rand >= num
+        if (rand >= percent
                 || event.getResult().equals(Material.SPONGE)
                 || Settings.NO_REWARDS_FROM_RECIPES.getBoolean()
                 && this.plugin.getFurnaceRecipeFile().contains("Recipes." + inventory.getSmelting().getType())) {
