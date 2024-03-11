@@ -25,7 +25,7 @@ import com.craftaro.epicfurnaces.database.migrations._1_InitialMigration;
 import com.craftaro.epicfurnaces.furnace.Furnace;
 import com.craftaro.epicfurnaces.furnace.FurnaceBuilder;
 import com.craftaro.epicfurnaces.furnace.FurnaceManager;
-import com.craftaro.epicfurnaces.furnace.levels.LevelManager;
+import com.craftaro.epicfurnaces.level.LevelManager;
 import com.craftaro.epicfurnaces.handlers.BlacklistHandler;
 import com.craftaro.epicfurnaces.listeners.BlockListeners;
 import com.craftaro.epicfurnaces.listeners.EntityListeners;

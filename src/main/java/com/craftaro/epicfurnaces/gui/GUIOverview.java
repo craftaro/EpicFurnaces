@@ -11,7 +11,7 @@ import com.craftaro.core.utils.TimeUtils;
 import com.craftaro.epicfurnaces.EpicFurnaces;
 import com.craftaro.epicfurnaces.boost.BoostData;
 import com.craftaro.epicfurnaces.furnace.Furnace;
-import com.craftaro.epicfurnaces.furnace.levels.Level;
+import com.craftaro.epicfurnaces.level.Level;
 import com.craftaro.epicfurnaces.settings.Settings;
 import com.craftaro.epicfurnaces.utils.CostType;
 import com.craftaro.epicfurnaces.utils.Methods;

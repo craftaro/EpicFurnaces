@@ -11,7 +11,7 @@ import com.craftaro.core.math.MathUtils;
 import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
 import com.craftaro.epicfurnaces.EpicFurnaces;
-import com.craftaro.epicfurnaces.furnace.levels.Level;
+import com.craftaro.epicfurnaces.level.Level;
 import com.craftaro.epicfurnaces.settings.Settings;
 import com.craftaro.epicfurnaces.boost.BoostData;
 import com.craftaro.epicfurnaces.gui.GUIOverview;
@@ -116,25 +116,10 @@ public class Furnace implements Data {
         }
 
 
-        if (this.level.getReward() == null) {
+        if (this.level.getReward() == null)
             return;
-        }
 
         String reward = this.level.getReward();
-        int min = 1;
-        int max = 1;
-        if (reward.contains(":")) {
-            String[] rewardSplit = reward.split(":");
-            reward = rewardSplit[0].substring(0, rewardSplit[0].length() - 1);
-            if (rewardSplit[1].contains("-")) {
-                String[] split = rewardSplit[1].split("-");
-                min = Integer.parseInt(split[0]);
-                max = Integer.parseInt(split[1]);
-            } else {
-                min = Integer.parseInt(rewardSplit[1]);
-                max = min;
-            }
-        }
 
         if (Settings.UPGRADE_BY_SMELTING.getBoolean() &&
                 needed == 0 &&
@@ -162,7 +147,7 @@ public class Furnace implements Data {
             return;
         }
 
-        int randomAmount = min == max ? min : (int) (Math.random() * ((max - min) + 1)) + min;
+        int randomAmount = level.getRandomReward();
 
         BoostData boostData = this.plugin.getBoostManager().getBoost(this.placedBy);
         randomAmount = randomAmount * (boostData == null ? 1 : boostData.getMultiplier());
