@@ -11,7 +11,7 @@ import com.craftaro.core.math.MathUtils;
 import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.third_party.com.cryptomorin.xseries.XSound;
 import com.craftaro.epicfurnaces.EpicFurnaces;
-import com.craftaro.epicfurnaces.furnace.levels.Level;
+import com.craftaro.epicfurnaces.level.Level;
 import com.craftaro.epicfurnaces.settings.Settings;
 import com.craftaro.epicfurnaces.boost.BoostData;
 import com.craftaro.epicfurnaces.gui.GUIOverview;
@@ -108,38 +108,20 @@ public class Furnace implements Data {
             return;
         }
 
-        this.uses++;
-        this.plugin.getDataHelper().queueFurnaceForUpdate(this);
+        uses++;
+        plugin.getDataHelper().queueFurnaceForUpdate(this);
 
         XMaterial material = CompatibleMaterial.getMaterial(event.getResult().getType()).get();
         int needed = -1;
 
-        if (this.level.getMaterials().containsKey(material)) {
+        if (level.getMaterials().containsKey(material)) {
             int amount = addToLevel(material, 1);
-            this.plugin.getDataHelper().updateLevelupItems(this, material, amount);
-            needed = this.level.getMaterials().get(material) - getToLevel(material);
+            plugin.getDataHelper().updateLevelupItems(this, material, amount);
+            needed = level.getMaterials().get(material) - getToLevel(material);
         }
 
-
-        if (this.level.getReward() == null) {
+        if (!level.hasReward())
             return;
-        }
-
-        String reward = this.level.getReward();
-        int min = 1;
-        int max = 1;
-        if (reward.contains(":")) {
-            String[] rewardSplit = reward.split(":");
-            reward = rewardSplit[0].substring(0, rewardSplit[0].length() - 1);
-            if (rewardSplit[1].contains("-")) {
-                String[] split = rewardSplit[1].split("-");
-                min = Integer.parseInt(split[0]);
-                max = Integer.parseInt(split[1]);
-            } else {
-                min = Integer.parseInt(rewardSplit[1]);
-                max = min;
-            }
-        }
 
         if (Settings.UPGRADE_BY_SMELTING.getBoolean() &&
                 needed == 0 &&
@@ -148,7 +130,7 @@ public class Furnace implements Data {
             levelUp();
         }
 
-        this.updateCook();
+        updateCook();
 
         FurnaceInventory inventory = (FurnaceInventory) ((InventoryHolder) block.getState()).getInventory();
 
@@ -158,16 +140,16 @@ public class Furnace implements Data {
             return;
         }
 
-        int num = Integer.parseInt(reward);
+        int percent = level.getRewardPercent();
         double rand = Math.random() * 100;
-        if (rand >= num
+        if (rand >= percent
                 || event.getResult().equals(Material.SPONGE)
                 || Settings.NO_REWARDS_FROM_RECIPES.getBoolean()
                 && this.plugin.getFurnaceRecipeFile().contains("Recipes." + inventory.getSmelting().getType())) {
             return;
         }
 
-        int randomAmount = min == max ? min : (int) (Math.random() * ((max - min) + 1)) + min;
+        int randomAmount = level.getRandomReward();
 
         BoostData boostData = this.plugin.getBoostManager().getBoost(this.placedBy);
         randomAmount = randomAmount * (boostData == null ? 1 : boostData.getMultiplier());

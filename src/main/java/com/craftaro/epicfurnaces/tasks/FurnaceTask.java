@@ -18,20 +18,18 @@ public class FurnaceTask extends BukkitRunnable {
     private static FurnaceTask instance;
 
     private final EpicFurnaces plugin;
-    final HashSet<Location> toRemove = new HashSet<>();
-    boolean doParticles;
+    private final HashSet<Location> toRemove = new HashSet<>();
+    private boolean doParticles;
 
     private FurnaceTask(EpicFurnaces plugin) {
         this.plugin = plugin;
     }
 
-    public static FurnaceTask startTask(EpicFurnaces plugin) {
+    public static void startTask(EpicFurnaces plugin) {
         if (instance == null) {
             instance = new FurnaceTask(plugin);
             instance.runTaskTimer(plugin, 0, Settings.TICK_SPEED.getInt());
         }
-
-        return instance;
     }
 
     @Override
@@ -50,7 +48,7 @@ public class FurnaceTask extends BukkitRunnable {
                             overheat(furnace);
                         }
                         if (furnace.getLevel().getFuelShare() != 0) {
-                            fuelshare(furnace);
+                            fuelShare(furnace);
                         }
                     }
                 });
@@ -68,14 +66,12 @@ public class FurnaceTask extends BukkitRunnable {
 
         for (Location location : furnace.getRadius(true)) {
             int random = ThreadLocalRandom.current().nextInt(0, 10);
-            if (random != 1) {
+            if (random != 1)
                 continue;
-            }
 
             Block block = location.getBlock();
-            if (block.getType() == Material.AIR || block.getRelative(BlockFace.UP).getType() != Material.AIR) {
+            if (block.getType() == Material.AIR || block.getRelative(BlockFace.UP).getType() != Material.AIR)
                 continue;
-            }
 
             if (block.getType() == Material.SNOW) {
                 block.setType(Material.AIR);
@@ -94,7 +90,7 @@ public class FurnaceTask extends BukkitRunnable {
         }
     }
 
-    private void fuelshare(Furnace furnace) {
+    private void fuelShare(Furnace furnace) {
         if (furnace.getRadius(false) == null || furnace.getRadiusLast(false) != furnace.getLevel().getOverheat()) {
             furnace.setRadiusLast(furnace.getLevel().getOverheat(), false);
             cache(furnace, false);
@@ -103,19 +99,17 @@ public class FurnaceTask extends BukkitRunnable {
         for (Location location : furnace.getRadius(false)) {
             int random = ThreadLocalRandom.current().nextInt(0, 10);
 
-            if (random != 1) {
+            if (random != 1)
                 continue;
-            }
 
             Block block = location.getBlock();
 
-            if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER")) {
+            if (!block.getType().name().contains("FURNACE") && !block.getType().name().contains("SMOKER"))
                 continue;
-            }
             Furnace furnace1 = this.plugin.getFurnaceManager().getFurnace(block);
-            if (furnace == furnace1) {
+            if (furnace == furnace1)
                 continue;
-            }
+
             org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) block.getState());
             if (furnaceBlock.getBurnTime() == 0) {
                 furnaceBlock.setBurnTime((short) 100);
@@ -140,15 +134,12 @@ public class FurnaceTask extends BukkitRunnable {
         int by = block.getY();
         int bz = block.getZ();
 
-        for (int fx = -radius; fx <= radius; fx++) {
-            for (int fy = -2; fy <= 1; fy++) {
-                for (int fz = -radius; fz <= radius; fz++) {
+        for (int fx = -radius; fx <= radius; fx++)
+            for (int fy = -2; fy <= 1; fy++)
+                for (int fz = -radius; fz <= radius; fz++)
                     if ((fx * fx) + (fz * fz) <= rSquared) {
                         Location location = new Location(block.getWorld(), bx + fx, by + fy, bz + fz);
                         furnace.addToRadius(location, overheat);
                     }
-                }
-            }
-        }
     }
 }

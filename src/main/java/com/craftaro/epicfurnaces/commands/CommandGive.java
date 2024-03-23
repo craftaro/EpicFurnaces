@@ -1,7 +1,7 @@
 package com.craftaro.epicfurnaces.commands;
 
 import com.craftaro.core.commands.AbstractCommand;
-import com.craftaro.epicfurnaces.furnace.levels.Level;
+import com.craftaro.epicfurnaces.level.Level;
 import com.craftaro.epicfurnaces.EpicFurnaces;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

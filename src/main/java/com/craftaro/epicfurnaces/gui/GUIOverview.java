@@ -11,7 +11,7 @@ import com.craftaro.core.utils.TimeUtils;
 import com.craftaro.epicfurnaces.EpicFurnaces;
 import com.craftaro.epicfurnaces.boost.BoostData;
 import com.craftaro.epicfurnaces.furnace.Furnace;
-import com.craftaro.epicfurnaces.furnace.levels.Level;
+import com.craftaro.epicfurnaces.level.Level;
 import com.craftaro.epicfurnaces.settings.Settings;
 import com.craftaro.epicfurnaces.utils.CostType;
 import com.craftaro.epicfurnaces.utils.Methods;
@@ -73,21 +73,16 @@ public class GUIOverview extends CustomizableGui {
 
         // check how many info icons we have to show
         int num = -1;
-        if (level.getPerformance() != 0) {
+        if (level.getPerformance() != 0)
             num++;
-        }
-        if (level.getReward() != null) {
+        if (level.hasReward())
             num++;
-        }
-        if (level.getFuelDuration() != 0) {
+        if (level.getFuelDuration() != 0)
             num++;
-        }
-        if (level.getFuelShare() != 0) {
+        if (level.getFuelShare() != 0)
             num++;
-        }
-        if (level.getOverheat() != 0) {
+        if (level.getOverheat() != 0)
             num++;
-        }
 
         int current = 0;
 
@@ -98,12 +93,12 @@ public class GUIOverview extends CustomizableGui {
                     this.plugin.getLocale().getMessage("interface.furnace.performanceinfo")
                             .processPlaceholder("amount", level.getPerformance()).getMessage().split("\\|")));
         }
-        if (level.getReward() != null) {
+        if (level.hasReward()) {
             setItem("reward", infoIconOrder[num][current++], GuiUtils.createButtonItem(
                     Settings.REWARD_ICON.getMaterial(XMaterial.GOLDEN_APPLE),
                     this.plugin.getLocale().getMessage("interface.furnace.rewardtitle").getMessage(),
                     this.plugin.getLocale().getMessage("interface.furnace.rewardinfo")
-                            .processPlaceholder("amount", level.getReward().split(":")[0].replace("%", ""))
+                            .processPlaceholder("amount", level.getRewardPercent())
                             .getMessage().split("\\|")));
         }
         if (level.getFuelDuration() != 0) {
