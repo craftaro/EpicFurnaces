@@ -223,7 +223,20 @@ public class EpicFurnaces extends SongodaPlugin {
                     Bukkit.getConsoleSender().sendMessage("[" + getDescription().getName() + "] " + ChatColor.GREEN + "Conversion complete :)");
                 }
 
+                //Load tolevel
+                Map<Integer, Map<XMaterial, Integer>> toLevel = new HashMap<>();
+                this.dataManager.getDatabaseConnector().connectDSL(dslContext -> {
+                    dslContext.select().from(getDataManager().getTablePrefix() + "to_level_new").fetch().forEach(record -> {
+                        int furnaceId = record.get("furnace_id", Integer.class);
+                        XMaterial material = CompatibleMaterial.getMaterial(record.get("item", String.class)).get();
+                        int amount = record.get("amount", Integer.class);
+                        toLevel.computeIfAbsent(furnaceId, k -> new HashMap<>()).put(material, amount);
+                    });
+                });
+
                 this.dataManager.loadBatch(Furnace.class, "active_furnaces").forEach((furnace) -> {
+                    Furnace furnace1 = (Furnace) furnace;
+                    furnace1.setToLevel(toLevel.getOrDefault(furnace1.getId(), new HashMap<>()));
                     this.furnaceManager.addFurnace((Furnace) furnace);
                     this.boostManager.addBoosts(this.dataManager.loadBatch(BoostData.class, "boosted_players"));
                 });
