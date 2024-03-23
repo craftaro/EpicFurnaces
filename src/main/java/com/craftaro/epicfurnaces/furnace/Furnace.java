@@ -80,6 +80,11 @@ public class Furnace implements Data {
         this.location = SerializedLocation.of(map);
     }
 
+    public void setToLevel(Map<XMaterial, Integer> toLevel) {
+        this.toLevel.clear();
+        this.toLevel.putAll(toLevel);
+    }
+
     public void overview(GuiManager guiManager, Player player) {
         if (this.placedBy == null) {
             this.placedBy = player.getUniqueId();
