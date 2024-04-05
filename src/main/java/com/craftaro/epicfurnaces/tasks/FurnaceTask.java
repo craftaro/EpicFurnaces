@@ -112,7 +112,7 @@ public class FurnaceTask extends BukkitRunnable {
 
             org.bukkit.block.Furnace furnaceBlock = ((org.bukkit.block.Furnace) block.getState());
             if (furnaceBlock.getBurnTime() == 0) {
-                furnaceBlock.setBurnTime((short) 100);
+                furnaceBlock.setBurnTime((short) 300);
                 furnaceBlock.update();
 
                 if (this.doParticles) {
