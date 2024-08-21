@@ -91,7 +91,7 @@ public class GUIRemoteAccess extends CustomizableGui {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(entry);
                 ItemStack itemStack = GuiUtils.createButtonItem(XMaterial.PLAYER_HEAD, TextUtils.formatText("&6" + offlinePlayer.getName()),
                         this.plugin.getLocale().getMessage("interface.remoteaccess.playerinfo")
-                                .getMessage().split("\\|"));
+                                .toText().split("\\|"));
                 SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
 
                 if (ServerVersion.isServerVersionAtLeast(ServerVersion.V1_13)) {

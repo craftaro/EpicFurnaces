@@ -322,7 +322,7 @@ public class EpicFurnaces extends SongodaPlugin {
 
                 progress = TextUtils.formatText(sb.toString());
             } else {
-                progress = getLocale().getMessage("general.hologram.outoffuel").getMessage();
+                progress = getLocale().getMessage("general.hologram.outoffuel").toText();
             }
 
             int inAmt = 0;
@@ -336,7 +336,7 @@ public class EpicFurnaces extends SongodaPlugin {
 
             String stats = getLocale().getMessage("general.hologram.stats")
                     .processPlaceholder("in", inAmt)
-                    .processPlaceholder("out", Math.min(outAmt, 64)).getMessage();
+                    .processPlaceholder("out", Math.min(outAmt, 64)).toText();
 
             List<String> hologramLines = Arrays.asList(progress, stats);
             if (!HologramManager.isHologramLoaded(furnace.getHologramId())) {

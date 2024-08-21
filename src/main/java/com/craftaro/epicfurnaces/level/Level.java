@@ -42,35 +42,35 @@ public class Level {
             this.description.add(plugin.getLocale()
                     .getMessage("interface.furnace.performance")
                     .processPlaceholder("amount", performance + "%")
-                    .getMessage());
+                    .toText());
         }
 
         if (reward != null) {
             this.description.add(plugin.getLocale()
                     .getMessage("interface.furnace.reward")
                     .processPlaceholder("amount", reward.split("%:")[0] + "%")
-                    .getMessage());
+                    .toText());
         }
 
         if (fuelDuration != 0) {
             this.description.add(plugin.getLocale()
                     .getMessage("interface.furnace.fuelduration")
                     .processPlaceholder("amount", fuelDuration + "%")
-                    .getMessage());
+                    .toText());
         }
 
         if (fuelShare != 0) {
             this.description.add(plugin.getLocale()
                     .getMessage("interface.furnace.fuelshare")
                     .processPlaceholder("amount", fuelShare)
-                    .getMessage());
+                    .toText());
         }
 
         if (overheat != 0) {
             this.description.add(plugin.getLocale()
                     .getMessage("interface.furnace.overheat")
                     .processPlaceholder("amount", overheat)
-                    .getMessage());
+                    .toText());
         }
 
         rewardRaw = reward;
