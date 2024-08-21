@@ -6,7 +6,7 @@
 
     <groupId>com.craftaro</groupId>
     <artifactId>EpicFurnaces</artifactId>
-    <version>5.2.0-SNAPSHOT</version>
+    <version>5.2.1</version>
 
     <name>EpicFurnaces</name>
     <description>EpicFurnaces allows you to upgrade basic Minecraft features to make the game way more entertaining</description>
