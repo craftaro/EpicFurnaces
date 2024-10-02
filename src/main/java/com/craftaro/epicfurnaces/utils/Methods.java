@@ -25,7 +25,7 @@ public class Methods {
                 .getLocale()
                 .getMessage("general.nametag.nameformat")
                 .processPlaceholder("level", level)
-                .getMessage();
+                .toText();
 
         return TextUtils.formatText(name);
     }

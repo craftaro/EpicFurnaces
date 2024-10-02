@@ -95,7 +95,7 @@ public class Furnace implements Data {
         }
 
         if (Settings.USE_PROTECTION_PLUGINS.getBoolean() && !ProtectionManager.canInteract(player, this.location)) {
-            player.sendMessage(this.plugin.getLocale().getMessage("event.general.protected").getPrefixedMessage());
+            this.plugin.getLocale().getMessage("event.general.protected").sendPrefixedMessage(player);
             return;
         }
 

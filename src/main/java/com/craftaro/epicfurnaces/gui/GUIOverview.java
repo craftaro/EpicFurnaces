@@ -68,7 +68,7 @@ public class GUIOverview extends CustomizableGui {
         setItem("information", 1, 4, GuiUtils.createButtonItem(
                 CompatibleMaterial.getMaterial(this.furnace.getLocation().getBlock().getType()).get(),
                 this.plugin.getLocale().getMessage("interface.furnace.currentlevel")
-                        .processPlaceholder("level", level.getLevel()).getMessage(),
+                        .processPlaceholder("level", level.getLevel()).toText(),
                 getFurnaceDescription(this.furnace, level, nextLevel)));
 
         // check how many info icons we have to show
@@ -91,7 +91,7 @@ public class GUIOverview extends CustomizableGui {
                     Settings.PERFORMANCE_ICON.getMaterial(XMaterial.REDSTONE),
                     this.plugin.getLocale().getMessage("interface.furnace.performancetitle").getMessage(),
                     this.plugin.getLocale().getMessage("interface.furnace.performanceinfo")
-                            .processPlaceholder("amount", level.getPerformance()).getMessage().split("\\|")));
+                            .processPlaceholder("amount", level.getPerformance()).getMessageLines('|')));
         }
         if (level.hasReward()) {
             setItem("reward", infoIconOrder[num][current++], GuiUtils.createButtonItem(
@@ -99,7 +99,7 @@ public class GUIOverview extends CustomizableGui {
                     this.plugin.getLocale().getMessage("interface.furnace.rewardtitle").getMessage(),
                     this.plugin.getLocale().getMessage("interface.furnace.rewardinfo")
                             .processPlaceholder("amount", level.getRewardPercent())
-                            .getMessage().split("\\|")));
+                            .getMessageLines('|')));
         }
         if (level.getFuelDuration() != 0) {
             setItem("fuel", infoIconOrder[num][current++], GuiUtils.createButtonItem(
@@ -107,7 +107,7 @@ public class GUIOverview extends CustomizableGui {
                     this.plugin.getLocale().getMessage("interface.furnace.fueldurationtitle").getMessage(),
                     this.plugin.getLocale().getMessage("interface.furnace.fueldurationinfo")
                             .processPlaceholder("amount", level.getFuelDuration())
-                            .getMessage().split("\\|")));
+                            .getMessageLines('|')));
         }
         if (level.getFuelShare() != 0) {
             setItem("fuel_share", infoIconOrder[num][current++], GuiUtils.createButtonItem(
@@ -115,7 +115,7 @@ public class GUIOverview extends CustomizableGui {
                     this.plugin.getLocale().getMessage("interface.furnace.fuelsharetitle").getMessage(),
                     this.plugin.getLocale().getMessage("interface.furnace.fuelshareinfo")
                             .processPlaceholder("amount", level.getOverheat() * 3)
-                            .getMessage().split("\\|")));
+                            .getMessageLines('|')));
         }
         if (level.getOverheat() != 0) {
             setItem("overheat", infoIconOrder[num][current++], GuiUtils.createButtonItem(
@@ -123,17 +123,17 @@ public class GUIOverview extends CustomizableGui {
                     this.plugin.getLocale().getMessage("interface.furnace.overheattitle").getMessage(),
                     this.plugin.getLocale().getMessage("interface.furnace.overheatinfo")
                             .processPlaceholder("amount", level.getOverheat() * 3)
-                            .getMessage().split("\\|")));
+                            .getMessageLines('|')));
         }
 
         // remote control
         if (Settings.REMOTE.getBoolean() && this.player.hasPermission("EpicFurnaces.Remote")) {
             setButton("remote", 4, GuiUtils.createButtonItem(
                             XMaterial.TRIPWIRE_HOOK,
-                            this.plugin.getLocale().getMessage("interface.furnace.remotefurnace").getMessage(),
+                            this.plugin.getLocale().getMessage("interface.furnace.remotefurnace").toText(),
                             getFurnaceRemoteLore(this.furnace)),
                     ClickType.LEFT, (event) -> {
-                        ChatPrompt.showPrompt(this.plugin, event.player, this.plugin.getLocale().getMessage("event.remote.enter").getMessage(),
+                        ChatPrompt.showPrompt(this.plugin, event.player, this.plugin.getLocale().getMessage("event.remote.enter").toText(),
                                 promptEvent -> {
                                     for (Furnace other : this.plugin.getFurnaceManager().getFurnaces().values()) {
                                         if (other.getNickname() == null) {
@@ -199,23 +199,23 @@ public class GUIOverview extends CustomizableGui {
     List<String> getFurnaceDescription(Furnace furnace, Level level, Level nextLevel) {
         ArrayList<String> lore = new ArrayList<>();
         lore.add(this.plugin.getLocale().getMessage("interface.furnace.smeltedx")
-                .processPlaceholder("amount", furnace.getUses()).getMessage());
+                .processPlaceholder("amount", furnace.getUses()).toText());
         lore.addAll(level.getDescription());
         lore.add("");
         if (nextLevel == null) {
-            lore.add(this.plugin.getLocale().getMessage("interface.furnace.alreadymaxed").getMessage());
+            lore.add(this.plugin.getLocale().getMessage("interface.furnace.alreadymaxed").toText());
         } else {
             lore.add(this.plugin.getLocale().getMessage("interface.furnace.level")
-                    .processPlaceholder("level", nextLevel.getLevel()).getMessage());
+                    .processPlaceholder("level", nextLevel.getLevel()).toText());
             lore.addAll(nextLevel.getDescription());
 
             if (Settings.UPGRADE_BY_SMELTING.getBoolean()) {
-                lore.add(this.plugin.getLocale().getMessage("interface.furnace.itemsneeded").getMessage());
+                lore.add(this.plugin.getLocale().getMessage("interface.furnace.itemsneeded").toText());
                 for (Map.Entry<XMaterial, Integer> entry : level.getMaterials().entrySet()) {
                     lore.add(this.plugin.getLocale().getMessage("interface.furnace.neededitem")
                             .processPlaceholder("amount", entry.getValue() - furnace.getToLevel(entry.getKey()))
                             .processPlaceholder("type", Methods.cleanString(entry.getKey().name()))
-                            .getMessage());
+                            .toText());
                 }
             }
         }
@@ -225,7 +225,7 @@ public class GUIOverview extends CustomizableGui {
             lore.addAll(Arrays.asList(this.plugin.getLocale().getMessage("interface.button.boostedstats")
                     .processPlaceholder("amount", Integer.toString(boostData.getMultiplier()))
                     .processPlaceholder("time", TimeUtils.makeReadable(boostData.getEndTime() - System.currentTimeMillis()))
-                    .getMessage().split("\\|")));
+                    .toText().split("\\|")));
         }
         return lore;
     }
@@ -233,15 +233,15 @@ public class GUIOverview extends CustomizableGui {
     List<String> getFurnaceRemoteLore(Furnace furnace) {
         String nickname = furnace.getNickname();
         ArrayList<String> loreHook = new ArrayList<>(Arrays.asList(this.plugin.getLocale().getMessage("interface.furnace.remotefurnacelore")
-                .processPlaceholder("nickname", nickname == null ? "Unset" : nickname).getMessage().split("\\|")));
+                .processPlaceholder("nickname", nickname == null ? "Unset" : nickname).toText().split("\\|")));
 
         if (nickname != null) {
             loreHook.addAll(Arrays.asList(this.plugin.getLocale().getMessage("interface.furnace.utilize")
-                    .processPlaceholder("nickname", nickname).getMessage().split("\\|")));
+                    .processPlaceholder("nickname", nickname).toText().split("\\|")));
         }
 
         loreHook.add("");
-        loreHook.add(this.plugin.getLocale().getMessage("interface.furnace.remotelist").getMessage());
+        loreHook.add(this.plugin.getLocale().getMessage("interface.furnace.remotelist").toText());
         for (UUID uuid : furnace.getAccessList()) {
             OfflinePlayer remotePlayer = Bukkit.getOfflinePlayer(uuid);
             loreHook.add(TextUtils.formatText("&6" + remotePlayer.getName()));
