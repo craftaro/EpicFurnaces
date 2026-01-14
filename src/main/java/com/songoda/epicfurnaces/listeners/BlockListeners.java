@@ -110,7 +110,6 @@ public class BlockListeners implements Listener {
         }
 
         Furnace furnace = this.plugin.getFurnaceManager().getFurnace(block);
-        org.bukkit.block.Furnace state = (org.bukkit.block.Furnace) block.getState();
 
         if (furnace == null) {
             return;
@@ -121,20 +120,16 @@ public class BlockListeners implements Listener {
         this.plugin.clearHologram(furnace);
 
         if (level != 0) {
-            event.setCancelled(true);
-
             ItemStack item = this.plugin.createLeveledFurnace(block.getType().name().contains("BURNING") ? Material.FURNACE
                     : block.getType(), level, furnace.getUses());
 
-            // By canceling the event, we destroy any chance of items dropping from the furnace. This fixes the problem.
-            furnace.dropItems();
+            event.setExpToDrop(0);
+            event.setDropItems(false);
 
-            //Clear furnace inventory before destroying it to make sure no items duplicated
-            state.getInventory().clear();
-            event.getBlock().setType(Material.AIR);
+            furnace.dropItems();
             event.getBlock().getLocation().getWorld().dropItemNaturally(event.getBlock().getLocation(), item);
         }
-        this.plugin.getFurnaceManager().removeFurnace(block.getLocation());
+        plugin.getFurnaceManager().removeFurnace(block.getLocation());
         this.plugin.getDataManager().delete(furnace);
     }
 }
